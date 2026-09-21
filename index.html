@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Velvet & Tier Props | Luxury Cake Props & Event Displays</title>
+  <meta name="description" content="Handcrafted dummy cakes, photography prop sets, and luxury dessert table pedestals for wedding designers, bakers, and photo studios.">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <!-- Cookie Consent Toast -->
+  <div id="cookieBanner" class="cookie-banner">
+    <div class="cookie-header">
+      <i data-lucide="cookie"></i>
+      <span>Cookie & Store Preferences</span>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-secondary);">
+      We use essential cookies and local browser storage to save your cart items, order history, and chat messages.
+    </p>
+    <div class="cookie-actions">
+      <button id="acceptCookiesBtn" class="btn-primary" style="padding: 6px 16px; font-size: 0.8rem;">Accept All</button>
+      <button id="essentialCookiesBtn" class="btn-secondary" style="padding: 6px 14px; font-size: 0.8rem;">Essential Only</button>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="header">
+    <div class="container nav-wrapper">
+      <a href="#" class="brand-logo">
+        <div class="brand-icon">
+          <i data-lucide="cake"></i>
+        </div>
+        <div class="brand-title">
+          VELVET & TIER
+          <span>Cake Prop Studio</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#hero" class="nav-link active">Home</a></li>
+        <li><a href="#shop" class="nav-link">Prop Catalog</a></li>
+        <li><a href="#gallery" class="nav-link">Interactive Gallery</a></li>
+        <li><a href="#customQuote" class="nav-link">Custom Props</a></li>
+        <li><a href="#myOrders" id="navMyOrders" class="nav-link">My Orders</a></li>
+      </ul>
+
+      <div class="header-actions">
+        <button id="searchTriggerBtn" class="icon-btn" title="Search Props">
+          <i data-lucide="search"></i>
+        </button>
+        
+        <button id="ordersBtn" class="btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;" title="View Placed Orders">
+          <i data-lucide="receipt"></i>
+          <span style="margin-left: 4px;">Orders</span>
+        </button>
+
+        <button id="cartDrawerBtn" class="icon-btn" title="Shopping Cart">
+          <i data-lucide="shopping-bag"></i>
+          <span id="cartCountBadge" class="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="badge badge-gold" style="margin-bottom: 16px;">
+          <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+          Handcrafted Waterproof Dummy Cakes
+        </div>
+        <h1 class="hero-title">
+          Realistic <em>Cake Props</em> Built for Perfection.
+        </h1>
+        <p class="hero-subtitle">
+          Elevate bakery window displays, studio photography shoots, and wedding table settings with ultra-durable, reusable dummy cakes and pedestals.
+        </p>
+        <div class="hero-buttons">
+          <a href="#shop" class="btn-primary">
+            <i data-lucide="shopping-bag"></i> Explore Collection
+          </a>
+          <a href="#customQuote" class="btn-secondary">
+            <i data-lucide="sliders"></i> Request Custom Height
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h3>100%</h3>
+            <p>Waterproof Finish</p>
+          </div>
+          <div class="stat-item">
+            <h3>4,500+</h3>
+            <p>Studio Clients</p>
+          </div>
+          <div class="stat-item">
+            <h3>Zero</h3>
+            <p>Melting Risk</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <div class="hero-image-wrapper">
+          <img src="/images/hero_cake_prop.png" alt="Luxury 3-tier cake prop display">
+        </div>
+        <div class="floating-badge-card">
+          <div class="icon-box">
+            <i data-lucide="shield-check"></i>
+          </div>
+          <div>
+            <strong style="display:block; font-size:0.9rem;">Polymer Fondant Core</strong>
+            <span style="font-size:0.75rem; color:var(--text-secondary);">Indefinite Reusability</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shop Catalog Section -->
+  <section id="shop" class="section container">
+    <div class="section-header">
+      <div class="section-subtitle">Catalog</div>
+      <h2 class="section-title">Artisanal Prop Collection</h2>
+      <p style="color: var(--text-secondary);">Browse our pre-built dummy cakes, photo prop kits, and fluted display risers ready for immediate dispatch.</p>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+      <button class="tab-btn active" data-category="all">All Props</button>
+      <button class="tab-btn" data-category="wedding">Wedding Tier Dummies</button>
+      <button class="tab-btn" data-category="photography">Studio Photo Kits</button>
+      <button class="tab-btn" data-category="pedestal">Display Pedestals</button>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="productsGrid" class="products-grid">
+      <!-- Dynamic Javascript Insertion -->
+    </div>
+  </section>
+
+  <!-- Interactive Gallery Section -->
+  <section id="gallery" class="section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-subtitle">Inspiration</div>
+        <h2 class="section-title">Real Event & Studio Showcase</h2>
+        <p style="color: var(--text-secondary);">See how top event designers, photographers, and bakeries utilize Velvet & Tier props.</p>
+      </div>
+
+      <div id="galleryGrid" class="gallery-grid">
+        <!-- Dynamic Javascript Insertion -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Custom Quote Calculator Section -->
+  <section id="customQuote" class="section container">
+    <div class="quote-box">
+      <div class="quote-grid">
+        <div>
+          <div class="badge badge-brand" style="margin-bottom: 12px;">Bespoke Service</div>
+          <h2 style="font-size: 2.2rem; margin-bottom: 16px;">Need a Specific Prop Height or Color?</h2>
+          <p style="color: var(--text-secondary); margin-bottom: 24px;">
+            We craft custom foam & resin cake props tailored to your exact diameter, height, tier arrangement, and texture finish. Fill out the details for instant price estimation.
+          </p>
+          <div style="display: flex; gap: 16px; font-size: 0.9rem; color: var(--color-brand); font-weight: 600;">
+            <span><i data-lucide="check-circle-2" style="vertical-align: middle;"></i> Custom Colors</span>
+            <span><i data-lucide="check-circle-2" style="vertical-align: middle;"></i> Custom Texture</span>
+            <span><i data-lucide="check-circle-2" style="vertical-align: middle;"></i> Fast 5-Day Delivery</span>
+          </div>
+        </div>
+
+        <form id="customQuoteForm">
+          <div class="form-group">
+            <label class="form-label">Number of Tiers</label>
+            <select id="quoteTiers" class="form-select">
+              <option value="1">1 Tier Display ($75 - $120)</option>
+              <option value="2">2 Tiers ($140 - $210)</option>
+              <option value="3" selected>3 Tiers ($220 - $310)</option>
+              <option value="4">4 Tiers ($320 - $450)</option>
+              <option value="5">5 Tiers Grand ($480 - $680)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Fondant Coating Texture</label>
+            <select id="quoteFinish" class="form-select">
+              <option value="smooth">Smooth Matte Fondant</option>
+              <option value="textured">Textured Buttercream Replica</option>
+              <option value="gold">24K Gold Leaf Accents</option>
+              <option value="naked">Semi-Naked Rustic Finish</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Your Email or Phone</label>
+            <input type="text" id="quoteContact" class="form-input" placeholder="designer@studio.com" required>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
+            <div>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Estimated Price:</span>
+              <div id="quoteEstimatePrice" style="font-size: 1.5rem; font-weight: 700; color: var(--color-brand);">$245.00</div>
+            </div>
+            <button type="submit" class="btn-gold">
+              <i data-lucide="send"></i> Request Quote
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cart Drawer -->
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+  <aside id="cartDrawer" class="cart-drawer">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="shopping-bag" style="color: var(--color-brand);"></i>
+        <h3 style="font-size: 1.2rem;">Your Prop Basket</h3>
+      </div>
+      <button id="closeCartBtn" class="icon-btn">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div id="drawerCartItems" class="drawer-body">
+      <!-- Dynamic Items Insertion -->
+    </div>
+
+    <div class="drawer-footer">
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <strong id="cartSubtotal">$0.00</strong>
+      </div>
+      <div class="summary-row">
+        <span>Shipping Estimate</span>
+        <span style="color: #22C55E; font-weight: 600;">FREE Studio Shipping</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total Due</span>
+        <span id="cartTotal">$0.00</span>
+      </div>
+      <button id="proceedCheckoutBtn" class="btn-primary" style="width: 100%; margin-top: 16px; justify-content: center;">
+        <i data-lucide="landmark"></i> Checkout via Bank Transfer
+      </button>
+    </div>
+  </aside>
+
+  <!-- Checkout & Bank Transfer Modal -->
+  <div id="checkoutModal" class="modal-overlay">
+    <div class="modal-content" style="padding: 32px;">
+      <button class="modal-close-btn close-modal-btn">
+        <i data-lucide="x"></i>
+      </button>
+      
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div class="badge badge-gold" style="margin-bottom: 8px;">Payment Gateway - Direct Wire</div>
+        <h2 style="font-size: 1.8rem; color: var(--color-brand);">Bank Details & Order Placement</h2>
+        <p style="font-size: 0.9rem; color: var(--text-secondary);">Complete your order below. Transfer the total amount using the provided studio bank details.</p>
+      </div>
+
+      <form id="checkoutForm">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div>
+            <label class="form-label">Full Name *</label>
+            <input type="text" id="custName" class="form-input" placeholder="Jane Doe" required>
+          </div>
+          <div>
+            <label class="form-label">Email Address *</label>
+            <input type="email" id="custEmail" class="form-input" placeholder="jane@example.com" required>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label class="form-label">Delivery Address *</label>
+          <input type="text" id="custAddress" class="form-input" placeholder="123 Studio St, Suite 4B, New York, NY" required>
+        </div>
+
+        <!-- Generated Reference Code Box -->
+        <div class="ref-code-box">
+          <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">Your Order Reference Code</div>
+          <div id="orderRefDisplay" class="ref-code">VT-8942-PAY</div>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Include this code in your bank transfer memo/remarks so we can match your payment.</p>
+        </div>
+
+        <!-- Bank Details Card -->
+        <div class="bank-details-card">
+          <h3 style="font-size: 1.1rem; color: var(--color-brand); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="landmark"></i> Artisanal Commerce Bank Details
+          </h3>
+          <div class="bank-row">
+            <span style="color: var(--text-secondary);">Bank Name:</span>
+            <strong>Artisanal Commerce Bank</strong>
+          </div>
+          <div class="bank-row">
+            <span style="color: var(--text-secondary);">Account Holder:</span>
+            <strong>Velvet & Tier Props Studio LLC</strong>
+          </div>
+          <div class="bank-row">
+            <span style="color: var(--text-secondary);">Account Number:</span>
+            <strong style="font-family: monospace; font-size: 1rem; color: var(--color-brand);">9876 5432 1098 4421</strong>
+          </div>
+          <div class="bank-row">
+            <span style="color: var(--text-secondary);">IFSC / Sort Code:</span>
+            <strong style="font-family: monospace;">ACTB0009841</strong>
+          </div>
+          <div class="bank-row">
+            <span style="color: var(--text-secondary);">SWIFT / IBAN:</span>
+            <strong style="font-family: monospace;">ACTBUS33XXX</strong>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label class="form-label">Transaction UTR / Reference No. (Optional)</label>
+          <input type="text" id="custUtr" class="form-input" placeholder="e.g. UTR-99823145 or Bank Reference">
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px;">
+          <div>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Payable Amount:</span>
+            <div id="checkoutTotalAmount" style="font-size: 1.6rem; font-weight: 800; color: var(--color-brand);">$0.00</div>
+          </div>
+          <button type="submit" class="btn-primary">
+            <i data-lucide="check-circle-2"></i> Confirm & Submit Order
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- My Orders Modal -->
+  <div id="ordersModal" class="modal-overlay">
+    <div class="modal-content" style="padding: 32px; max-width: 760px;">
+      <button class="modal-close-btn close-modal-btn">
+        <i data-lucide="x"></i>
+      </button>
+
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.8rem; color: var(--color-brand);">Your Cake Prop Orders</h2>
+        <p style="font-size: 0.9rem; color: var(--text-secondary);">Track status, view bank details, and reference past purchases.</p>
+      </div>
+
+      <div id="ordersListContainer">
+        <!-- Dynamic Orders List Insertion -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick View Modal -->
+  <div id="quickViewModal" class="modal-overlay">
+    <div id="quickViewContent" class="modal-content" style="padding: 32px; max-width: 720px;">
+      <!-- Dynamic Content -->
+    </div>
+  </div>
+
+  <!-- Floating Live Chat Widget -->
+  <div class="chat-widget">
+    <button id="chatTriggerBtn" class="chat-trigger" title="Live Cake Prop Assistant">
+      <i data-lucide="message-square-text" style="width: 28px; height: 28px;"></i>
+      <span class="chat-pulse-badge"></span>
+    </button>
+  </div>
+
+  <div id="chatWindow" class="chat-window">
+    <div class="chat-header">
+      <div class="chat-agent-info">
+        <div class="chat-avatar">VT</div>
+        <div>
+          <strong style="font-size: 0.9rem; display: block;">Prop Studio Assistant</strong>
+          <span style="font-size: 0.72rem; opacity: 0.9;">Online • Instant Replies</span>
+        </div>
+      </div>
+      <button id="closeChatBtn" style="color: #FFF;">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div id="chatMessages" class="chat-body">
+      <div class="chat-msg bot">
+        Hello! 👋 Welcome to <strong>Velvet & Tier Cake Prop Studio</strong>. How can I assist you with dummy cakes, photo props, or Bank Transfer orders today?
+      </div>
+      <div class="chat-faq-chips" id="chatFaqChips">
+        <!-- Dynamic FAQ Chips -->
+      </div>
+    </div>
+
+    <form id="chatForm" class="chat-footer">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Ask about props or bank payments..." required>
+      <button type="submit" class="icon-btn" style="background: var(--color-brand); color: #FFF; width: 36px; height: 36px;">
+        <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+      </button>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h3 class="footer-title" style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--color-gold-light);">VELVET & TIER</h3>
+        <p style="font-size: 0.88rem; color: #AAA; margin-bottom: 16px; max-width: 300px;">
+          Premium handcrafted dummy cakes, food photography props, and architectural event pedestals.
+        </p>
+        <p style="font-size: 0.8rem; color: #888;">
+          © 2026 Velvet & Tier Props Studio. All rights reserved.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="footer-title">Shop Collection</h4>
+        <ul class="footer-links">
+          <li><a href="#shop">Wedding Tier Dummies</a></li>
+          <li><a href="#shop">Photo Studio Sets</a></li>
+          <li><a href="#shop">Display Risers</a></li>
+          <li><a href="#customQuote">Custom Sizing</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-title">Customer Service</h4>
+        <ul class="footer-links">
+          <li><a href="#myOrders" id="footerOrdersLink">Track My Order</a></li>
+          <li><a href="#" id="reopenCookiesBtn">Cookie Preferences</a></li>
+          <li><a href="#" id="bankInfoFooterLink">Bank Details Info</a></li>
+          <li><a href="#hero">Care & Cleaning Guide</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-title">Bank Payment Info</h4>
+        <p style="font-size: 0.82rem; color: #AAA; line-height: 1.5;">
+          Direct transfers supported via Artisanal Commerce Bank.<br>
+          <strong style="color: var(--color-gold-light);">Ref ID generated at checkout.</strong>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
