@@ -63,11 +63,15 @@ export function initAdminDashboard() {
     loadAdminData();
     renderAdminDashboard();
   });
+  window.addEventListener('gj_orders_updated', () => {
+    loadAdminData();
+    renderAdminDashboard();
+  });
 }
 
 // Load products and orders from localStorage
 export function loadAdminData() {
-  const savedProducts = localStorage.getItem('vt_products');
+  const savedProducts = localStorage.getItem('gj_products') || localStorage.getItem('vt_products');
   if (savedProducts) {
     try {
       adminProducts = JSON.parse(savedProducts);
@@ -76,10 +80,10 @@ export function loadAdminData() {
     }
   } else {
     adminProducts = [...PRODUCTS];
-    localStorage.setItem('vt_products', JSON.stringify(adminProducts));
+    localStorage.setItem('gj_products', JSON.stringify(adminProducts));
   }
 
-  const savedOrders = localStorage.getItem('vt_orders');
+  const savedOrders = localStorage.getItem('gj_orders') || localStorage.getItem('vt_orders');
   if (savedOrders) {
     try {
       adminOrders = JSON.parse(savedOrders);
@@ -88,19 +92,23 @@ export function loadAdminData() {
     }
   } else {
     adminOrders = [...INITIAL_ORDERS];
-    localStorage.setItem('vt_orders', JSON.stringify(adminOrders));
+    localStorage.setItem('gj_orders', JSON.stringify(adminOrders));
   }
 }
 
 // Save Products & Dispatch Update Event
 function saveAdminProducts() {
+  localStorage.setItem('gj_products', JSON.stringify(adminProducts));
   localStorage.setItem('vt_products', JSON.stringify(adminProducts));
+  window.dispatchEvent(new CustomEvent('gj_products_updated', { detail: adminProducts }));
   window.dispatchEvent(new CustomEvent('vt_products_updated', { detail: adminProducts }));
 }
 
 // Save Orders & Dispatch Update Event
 function saveAdminOrders() {
+  localStorage.setItem('gj_orders', JSON.stringify(adminOrders));
   localStorage.setItem('vt_orders', JSON.stringify(adminOrders));
+  window.dispatchEvent(new CustomEvent('gj_orders_updated', { detail: adminOrders }));
   window.dispatchEvent(new CustomEvent('vt_orders_updated', { detail: adminOrders }));
 }
 

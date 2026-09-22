@@ -1,12 +1,12 @@
 export const BANK_DETAILS = {
   bankName: "Artisanal Commerce Bank",
-  accountName: "Velvet & Tier Props Studio LLC",
+  accountName: "Get Jakes Props & Toppers LLC",
   accountNumber: "9876 5432 1098 4421",
   ifscCode: "ACTB0009841",
   swiftCode: "ACTBUS33XXX",
   branch: "5th Avenue Craft District, NY 10001",
-  supportEmail: "payments@velvettierprops.com",
-  phone: "+1 (800) 555-PROP"
+  supportEmail: "support@getjakes.com",
+  phone: "+1 (800) GET-JAKES"
 };
 
 export const PRODUCTS = [
@@ -30,14 +30,14 @@ export const PRODUCTS = [
   },
   {
     id: "prop-02",
-    name: "Ophelia Gold Leaf Textured Statement Prop",
+    name: "Ophelia Cyan & Gold Leaf Statement Prop",
     category: "wedding",
     price: 279.00,
     rating: 5.0,
     reviewsCount: 24,
     image: "/images/hero_cake_prop.png",
     tag: "Handcrafted",
-    description: "Minimalist 3-tier organic textured white cake with authentic 24k champagne gold leaf gilding. Reusable & washable.",
+    description: "Minimalist 3-tier organic textured white cake with authentic metallic leaf gilding and Get Jakes signature finish. Reusable & washable.",
     specs: {
       height: "22 inches (56 cm)",
       tiers: "3 Tiers (6\", 8\", 10\")",
@@ -72,7 +72,7 @@ export const PRODUCTS = [
     reviewsCount: 19,
     image: "/images/pedestal_prop_set.png",
     tag: "Trending",
-    description: "Pair of ribbed architectural cylinder pedestals in warm plaster white and vintage brushed brass. Engineered for weight capacities up to 60 lbs.",
+    description: "Pair of ribbed architectural cylinder pedestals in warm plaster white and cyan-brushed accents. Engineered for weight capacities up to 60 lbs.",
     specs: {
       heights: "12\" and 18\" Elevated Risers",
       diameter: "10\" Top Surface",
@@ -155,11 +155,11 @@ export const GALLERY_ITEMS = [
 export const INITIAL_CHAT_FAQS = [
   {
     q: "How do I make payment via Bank Transfer?",
-    a: "Select your items and proceed to checkout. Choose 'Direct Bank Transfer' as your payment option. You will receive our bank details and a unique Order Reference ID (e.g., VT-9842-PAY). Transfer the amount using your banking app and submit your transaction reference number!"
+    a: "Select your items and proceed to checkout. Choose 'Direct Bank Transfer' as your payment option. You will receive our bank details and a unique Order Reference ID (e.g., GJ-9842-PAY). Transfer the amount using your banking app and submit your transaction reference number!"
   },
   {
-    q: "Are the cake props waterproof and reusable?",
-    a: "Yes! All Velvet & Tier props are coated with our signature hard-shell polymer fondant finish. They can be wiped down with a damp cloth, sanitized, and reused indefinitely."
+    q: "Are Get Jakes cake props waterproof and reusable?",
+    a: "Yes! All Get Jakes props are coated with our signature hard-shell polymer finish. They can be wiped down with a damp cloth, sanitized, and reused indefinitely."
   },
   {
     q: "Can I request custom heights or tier counts?",
@@ -173,7 +173,7 @@ export const INITIAL_CHAT_FAQS = [
 
 export const INITIAL_ORDERS = [
   {
-    orderId: "VT-9842-PAY",
+    orderId: "GJ-9842-PAY",
     date: "Sep 20, 2026",
     customerName: "Eleanor Vance",
     customerEmail: "eleanor@chateauxevents.com",
@@ -201,7 +201,7 @@ export const INITIAL_ORDERS = [
     adminNotes: "Bank payment received via wire. Order scheduled for studio packing."
   },
   {
-    orderId: "VT-5109-PAY",
+    orderId: "GJ-5109-PAY",
     date: "Sep 21, 2026",
     customerName: "Marcus Sterling",
     customerEmail: "marcus@voguephotostudio.io",
@@ -222,7 +222,7 @@ export const INITIAL_ORDERS = [
     adminNotes: "Customer notified via email to attach transfer receipt."
   },
   {
-    orderId: "VT-3420-PAY",
+    orderId: "GJ-3420-PAY",
     date: "Sep 18, 2026",
     customerName: "Sophia Laurent",
     customerEmail: "sophia@maisondesucre.fr",
@@ -243,4 +243,5 @@ export const INITIAL_ORDERS = [
     adminNotes: "Tracking # DHL-EXPRESS-99281. Express delivery in transit."
   }
 ];
+
 

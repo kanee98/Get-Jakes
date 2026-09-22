@@ -4,9 +4,9 @@ import { createIcons, icons } from 'lucide';
 import confetti from 'canvas-confetti';
 
 // State Management
-let cart = JSON.parse(localStorage.getItem('vt_cart')) || [];
-let orders = JSON.parse(localStorage.getItem('vt_orders')) || [];
-let dynamicProducts = JSON.parse(localStorage.getItem('vt_products')) || PRODUCTS;
+let cart = JSON.parse(localStorage.getItem('gj_cart') || localStorage.getItem('vt_cart')) || [];
+let orders = JSON.parse(localStorage.getItem('gj_orders') || localStorage.getItem('vt_orders')) || [];
+let dynamicProducts = JSON.parse(localStorage.getItem('gj_products') || localStorage.getItem('vt_products')) || PRODUCTS;
 let activeCategory = 'all';
 
 // Initialize Lucide Icons
@@ -21,7 +21,7 @@ function formatCurrency(amount) {
 
 // Reload Dynamic Products from Storage
 function reloadDynamicProducts() {
-  const saved = localStorage.getItem('vt_products');
+  const saved = localStorage.getItem('gj_products') || localStorage.getItem('vt_products');
   if (saved) {
     try {
       dynamicProducts = JSON.parse(saved);
@@ -33,8 +33,72 @@ function reloadDynamicProducts() {
   }
 }
 
+// Animated Brand Loader Controller
+function setupAppLoader() {
+  const loader = document.getElementById('appLoader');
+  const progressBar = document.getElementById('loaderProgressBar');
+  const percentText = document.getElementById('loaderPercent');
+  const statusText = document.getElementById('loaderStatusText');
+
+  if (!loader) return;
+
+  const statusSteps = [
+    { p: 15, text: "Opening Get Jakes studio..." },
+    { p: 40, text: "Sculpting dummy cake tiers..." },
+    { p: 70, text: "Polishing waterproof finish..." },
+    { p: 90, text: "Prepping props & toppers..." },
+    { p: 100, text: "Welcome to Get Jakes!" }
+  ];
+
+  function runLoader() {
+    loader.classList.remove('hide');
+    let currentPercent = 0;
+    if (progressBar) progressBar.style.width = '0%';
+    if (percentText) percentText.textContent = '0%';
+
+    const interval = setInterval(() => {
+      currentPercent += 2;
+      if (currentPercent > 100) currentPercent = 100;
+
+      if (progressBar) progressBar.style.width = `${currentPercent}%`;
+      if (percentText) percentText.textContent = `${currentPercent}%`;
+
+      const matchedStep = statusSteps.find(s => currentPercent <= s.p);
+      if (matchedStep && statusText) {
+        statusText.textContent = matchedStep.text;
+      }
+
+      if (currentPercent >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          loader.classList.add('hide');
+        }, 400);
+      }
+    }, 28);
+  }
+
+  runLoader();
+
+  // Replay Loader handlers
+  const replayBtn = document.getElementById('replayLoaderBtn');
+  const headerLogoBtn = document.getElementById('headerLogoBtn');
+
+  replayBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    runLoader();
+  });
+
+  headerLogoBtn?.addEventListener('click', (e) => {
+    // Only replay loader if clicking near top or intentional
+    if (window.scrollY < 100) {
+      runLoader();
+    }
+  });
+}
+
 // Document Ready
 document.addEventListener('DOMContentLoaded', () => {
+  setupAppLoader();
   reloadDynamicProducts();
   initIcons();
   setupCookieBanner();
@@ -51,34 +115,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Listen for admin product catalog updates
   window.addEventListener('vt_products_updated', (e) => {
-    dynamicProducts = e.detail || JSON.parse(localStorage.getItem('vt_products')) || PRODUCTS;
+    dynamicProducts = e.detail || JSON.parse(localStorage.getItem('gj_products') || localStorage.getItem('vt_products')) || PRODUCTS;
+    renderProducts();
+  });
+
+  window.addEventListener('gj_products_updated', (e) => {
+    dynamicProducts = e.detail || JSON.parse(localStorage.getItem('gj_products')) || PRODUCTS;
     renderProducts();
   });
 
   // Listen for admin order updates
   window.addEventListener('vt_orders_updated', () => {
-    orders = JSON.parse(localStorage.getItem('vt_orders')) || [];
+    orders = JSON.parse(localStorage.getItem('gj_orders') || localStorage.getItem('vt_orders')) || [];
   });
 });
 
 /* Cookie Consent Management */
 function setupCookieBanner() {
   const banner = document.getElementById('cookieBanner');
-  const consent = localStorage.getItem('vt_cookie_consent');
+  const consent = localStorage.getItem('gj_cookie_consent') || localStorage.getItem('vt_cookie_consent');
 
   if (!consent) {
     setTimeout(() => {
       banner.classList.add('show');
-    }, 1200);
+    }, 1800);
   }
 
   document.getElementById('acceptCookiesBtn').addEventListener('click', () => {
-    localStorage.setItem('vt_cookie_consent', 'all');
+    localStorage.setItem('gj_cookie_consent', 'all');
     banner.classList.remove('show');
   });
 
   document.getElementById('essentialCookiesBtn').addEventListener('click', () => {
-    localStorage.setItem('vt_cookie_consent', 'essential');
+    localStorage.setItem('gj_cookie_consent', 'essential');
     banner.classList.remove('show');
   });
 
@@ -124,7 +193,7 @@ function renderProducts() {
       </div>
       <div class="product-info">
         <div class="product-rating">
-          <i data-lucide="star" style="width: 14px; height: 14px; fill: var(--color-gold);"></i>
+          <i data-lucide="star" style="width: 14px; height: 14px; fill: var(--color-brand); color: var(--color-brand);"></i>
           <span>${p.rating} (${p.reviewsCount} reviews)</span>
         </div>
         <h3 class="product-title">${p.name}</h3>
@@ -178,6 +247,7 @@ function addToCart(productId, qty = 1) {
 
 /* Save Cart to LocalStorage */
 function saveCart() {
+  localStorage.setItem('gj_cart', JSON.stringify(cart));
   localStorage.setItem('vt_cart', JSON.stringify(cart));
   updateCartBadge();
   renderCartItems();
@@ -234,7 +304,7 @@ function renderCartItems() {
       <div style="text-align: center; padding: 60px 20px;">
         <i data-lucide="shopping-bag" style="width: 48px; height: 48px; color: var(--text-muted); margin-bottom: 12px;"></i>
         <h4 style="font-size: 1.1rem; color: var(--text-secondary);">Your basket is currently empty</h4>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Explore our cake prop collection and add items to your order.</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Explore our Get Jakes prop collection and add items to your order.</p>
       </div>
     `;
     subtotalEl.textContent = '$0.00';
@@ -313,13 +383,13 @@ function openQuickView(productId) {
       <i data-lucide="x"></i>
     </button>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center;">
-      <div style="border-radius: var(--radius-md); overflow: hidden; height: 320px; background: #F5EFE9;">
+      <div style="border-radius: var(--radius-md); overflow: hidden; height: 320px; background: var(--bg-secondary);">
         <img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
       <div>
-        <span class="badge badge-gold" style="margin-bottom: 8px;">${item.tag}</span>
-        <h2 style="font-size: 1.6rem; color: var(--color-brand); margin-bottom: 8px;">${item.name}</h2>
-        <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;">${formatCurrency(item.price)}</div>
+        <span class="badge badge-brand" style="margin-bottom: 8px;">${item.tag}</span>
+        <h2 style="font-size: 1.6rem; color: var(--color-black); margin-bottom: 8px;">${item.name}</h2>
+        <div style="font-size: 1.4rem; font-weight: 800; color: var(--color-black); margin-bottom: 12px;">${formatCurrency(item.price)}</div>
         <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">${item.description}</p>
         
         <div style="background: var(--bg-secondary); padding: 12px 16px; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 20px;">
@@ -353,10 +423,10 @@ function renderGallery() {
     <div class="gallery-card" data-id="${g.id}">
       <img src="${g.image}" alt="${g.title}" loading="lazy">
       <div class="gallery-overlay">
-        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-gold-light); font-weight: 700;">${g.client}</span>
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-brand); font-weight: 800;">${g.client}</span>
         <h3 style="font-size: 1.2rem; margin: 4px 0;">${g.title}</h3>
         <p style="font-size: 0.82rem; opacity: 0.9; margin-bottom: 12px;">${g.desc}</p>
-        <button class="btn-secondary" style="padding: 6px 14px; font-size: 0.78rem; border-color: #FFF; color: #FFF; background: rgba(0,0,0,0.4);" onclick="alert('Inquiring about custom replica for: ${g.title}')">
+        <button class="btn-secondary" style="padding: 6px 14px; font-size: 0.78rem; border-color: #FFF; color: #FFF; background: rgba(0,0,0,0.6);" onclick="alert('Inquiring about Get Jakes custom replica for: ${g.title}')">
           Request Similar Display
         </button>
       </div>
@@ -381,7 +451,7 @@ function setupQuoteCalculator() {
     e.preventDefault();
     const contact = document.getElementById('quoteContact').value;
     const tiers = tiersSelect.value;
-    alert(`Thank you! Your quote request for a ${tiers}-tier custom prop has been logged. Our specialist will contact ${contact} within 2 hours.`);
+    alert(`Thank you! Your quote request for a ${tiers}-tier Get Jakes custom prop has been logged. Our studio specialist will contact ${contact} within 2 hours.`);
     form.reset();
   });
 }
@@ -422,6 +492,7 @@ function setupCheckoutModal() {
     };
 
     orders.unshift(newOrder);
+    localStorage.setItem('gj_orders', JSON.stringify(orders));
     localStorage.setItem('vt_orders', JSON.stringify(orders));
     window.dispatchEvent(new CustomEvent('vt_orders_updated', { detail: orders }));
 
@@ -433,8 +504,9 @@ function setupCheckoutModal() {
 
     // Trigger Celebration Confetti!
     confetti({
-      particleCount: 120,
-      spread: 70,
+      particleCount: 140,
+      spread: 80,
+      colors: ['#36DFE2', '#0FB3B6', '#0F1415'],
       origin: { y: 0.6 }
     });
 
@@ -448,7 +520,7 @@ function setupCheckoutModal() {
 function openCheckoutModal() {
   const modal = document.getElementById('checkoutModal');
   const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-  const refCode = `VT-${Math.floor(1000 + Math.random() * 9000)}-PAY`;
+  const refCode = `GJ-${Math.floor(1000 + Math.random() * 9000)}-PAY`;
 
   document.getElementById('orderRefDisplay').textContent = refCode;
   document.getElementById('checkoutTotalAmount').textContent = formatCurrency(total);
@@ -495,10 +567,10 @@ function openOrdersModal() {
       <div style="background: var(--bg-secondary); border-radius: var(--radius-md); padding: 20px; margin-bottom: 20px; border: 1px solid var(--border-color);">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
           <div>
-            <strong style="color: var(--color-brand); font-size: 1.1rem;">${order.orderId}</strong>
+            <strong style="color: var(--color-black); font-size: 1.1rem;">${order.orderId}</strong>
             <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 12px;">Placed on ${order.date}</span>
           </div>
-          <span class="badge badge-gold">${order.status}</span>
+          <span class="badge badge-brand">${order.status}</span>
         </div>
 
         <div style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 12px;">
@@ -510,7 +582,7 @@ function openOrdersModal() {
             <span>Payment Mode: <strong>${order.paymentMethod}</strong></span><br>
             <span>UTR Ref: <strong style="font-family: monospace;">${order.utrNumber}</strong></span>
           </div>
-          <div style="font-size: 1.2rem; font-weight: 700; color: var(--color-brand);">
+          <div style="font-size: 1.2rem; font-weight: 800; color: var(--color-black);">
             ${formatCurrency(order.totalAmount)}
           </div>
         </div>
@@ -530,7 +602,6 @@ function setupChatWidget() {
   const chipsContainer = document.getElementById('chatFaqChips');
   const form = document.getElementById('chatForm');
   const input = document.getElementById('chatInput');
-  const messagesEl = document.getElementById('chatMessages');
 
   // Render initial FAQ chips
   chipsContainer.innerHTML = INITIAL_CHAT_FAQS.map((faq, idx) => `
@@ -569,12 +640,12 @@ function setupChatWidget() {
     // Auto simulated reply logic
     setTimeout(() => {
       const lower = text.toLowerCase();
-      let botReply = "Thank you for reaching out! Our studio specialist will assist you shortly. You can also view our Bank Transfer payment details or custom quote builder on the page.";
+      let botReply = "Thank you for reaching out! Our Get Jakes studio specialist will assist you shortly. You can also view our Bank Transfer payment details or custom quote builder on the page.";
 
       if (lower.includes('bank') || lower.includes('transfer') || lower.includes('pay')) {
-        botReply = `To pay via Bank Transfer, proceed to checkout in your cart. You will receive reference code VT-XXXX-PAY and bank account ${BANK_DETAILS.accountNumber} (${BANK_DETAILS.bankName}).`;
+        botReply = `To pay via Bank Transfer, proceed to checkout in your cart. You will receive reference code GJ-XXXX-PAY and bank account ${BANK_DETAILS.accountNumber} (${BANK_DETAILS.bankName}).`;
       } else if (lower.includes('waterproof') || lower.includes('clean')) {
-        botReply = "All Velvet & Tier cake props are coated in waterproof polymer fondant finish! Simply wipe clean with a warm soft damp cloth.";
+        botReply = "All Get Jakes cake props & toppers are coated in waterproof polymer finish! Simply wipe clean with a warm soft damp cloth.";
       } else if (lower.includes('order') || lower.includes('track')) {
         botReply = "You can view and track all your placed orders anytime by clicking the 'Orders' button in the top navigation bar.";
       }
@@ -592,3 +663,4 @@ function appendChatMessage(text, sender) {
   container.appendChild(msgDiv);
   container.scrollTop = container.scrollHeight;
 }
+

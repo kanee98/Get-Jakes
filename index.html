@@ -3,19 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Velvet & Tier Props | Luxury Cake Props & Event Displays</title>
-  <meta name="description" content="Handcrafted dummy cakes, photography prop sets, and luxury dessert table pedestals for wedding designers, bakers, and photo studios.">
+  <title>Get Jakes | Cake Props & Toppers</title>
+  <meta name="description" content="Handcrafted dummy cakes, cake toppers, photography prop sets, and luxury dessert table pedestals by Get Jakes.">
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
+
+  <!-- Animated Brand Loader Page Overlay -->
+  <div id="appLoader" class="app-loader">
+    <div class="loader-backdrop-glow"></div>
+    <div class="loader-content">
+      <div class="logo-wrapper-loader">
+        <svg class="loader-svg-ring" viewBox="0 0 200 200">
+          <path class="draw-path-1" d="M 100,10 C 160,8 192,50 188,105 C 184,160 145,190 95,188 C 40,185 10,145 12,90 C 15,35 50,12 100,10 Z" />
+          <path class="draw-path-2" d="M 105,15 C 155,18 185,55 180,100 C 175,150 140,182 90,180 C 45,178 18,140 20,95 C 22,42 60,13 105,15 Z" />
+        </svg>
+        <img src="/logo.png" alt="Get Jakes Logo" class="loader-logo-img">
+      </div>
+      
+      <div class="loader-text-group">
+        <h1 class="loader-title">Get Jakes</h1>
+        <p class="loader-subtitle">CAKE PROPS & TOPPERS</p>
+      </div>
+
+      <div class="loader-progress-box">
+        <div class="loader-bar-bg">
+          <div id="loaderProgressBar" class="loader-bar-fill"></div>
+        </div>
+        <div class="loader-status">
+          <span id="loaderStatusText">Crafting studio experience...</span>
+          <span id="loaderPercent">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Cookie Consent Toast -->
   <div id="cookieBanner" class="cookie-banner">
     <div class="cookie-header">
-      <i data-lucide="cookie"></i>
-      <span>Cookie & Store Preferences</span>
+      <img src="/logo.png" alt="Get Jakes" style="width:20px; height:20px; border-radius:50%;">
+      <span>Get Jakes Cookie & Store Preferences</span>
     </div>
     <p style="font-size: 0.85rem; color: var(--text-secondary);">
-      We use essential cookies and local browser storage to save your cart items, order history, and chat messages.
+      We use essential local storage to save your cart items, order history, and custom quote preferences.
     </p>
     <div class="cookie-actions">
       <button id="acceptCookiesBtn" class="btn-primary" style="padding: 6px 16px; font-size: 0.8rem;">Accept All</button>
@@ -26,35 +56,33 @@
   <!-- Header Navigation -->
   <header class="header">
     <div class="container nav-wrapper">
-      <a href="#" class="brand-logo">
-        <div class="brand-icon">
-          <i data-lucide="cake"></i>
-        </div>
+      <a href="#" class="brand-logo" id="headerLogoBtn" title="Get Jakes - Click to Replay Loader Animation">
+        <img src="/logo.png" alt="Get Jakes Logo" class="brand-logo-img">
         <div class="brand-title">
-          VELVET & TIER
-          <span>Cake Prop Studio</span>
+          GET JAKES
+          <span>CAKE PROPS & TOPPERS</span>
         </div>
       </a>
 
       <ul class="nav-links">
         <li><a href="#hero" class="nav-link active">Home</a></li>
         <li><a href="#shop" class="nav-link">Prop Catalog</a></li>
-        <li><a href="#gallery" class="nav-link">Interactive Gallery</a></li>
+        <li><a href="#gallery" class="nav-link">Gallery</a></li>
         <li><a href="#customQuote" class="nav-link">Custom Props</a></li>
         <li><a href="#myOrders" id="navMyOrders" class="nav-link">My Orders</a></li>
       </ul>
 
       <div class="header-actions">
-        <button id="searchTriggerBtn" class="icon-btn" title="Search Props">
-          <i data-lucide="search"></i>
+        <button id="replayLoaderBtn" class="icon-btn" title="Replay Animated Loader Screen">
+          <i data-lucide="sparkles"></i>
         </button>
-        
+
         <button id="ordersBtn" class="btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;" title="View Placed Orders">
           <i data-lucide="receipt"></i>
           <span style="margin-left: 4px;">Orders</span>
         </button>
 
-        <button id="adminPortalBtn" class="btn-primary-sm" style="padding: 8px 16px; font-size: 0.85rem;" title="Admin Dashboard Portal">
+        <button id="adminPortalBtn" class="btn-primary" style="padding: 8px 16px; font-size: 0.85rem;" title="Admin Dashboard Portal">
           <i data-lucide="layout-dashboard"></i>
           <span style="margin-left: 4px;">Admin Portal</span>
         </button>
@@ -71,21 +99,21 @@
   <section id="hero" class="hero">
     <div class="container hero-grid">
       <div>
-        <div class="badge badge-gold" style="margin-bottom: 16px;">
+        <div class="badge badge-brand" style="margin-bottom: 16px;">
           <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
-          Handcrafted Waterproof Dummy Cakes
+          Handcrafted Waterproof Cake Props & Toppers
         </div>
         <h1 class="hero-title">
-          Realistic <em>Cake Props</em> Built for Perfection.
+          Handcrafted <em>Cake Props & Toppers</em> Built for Perfection.
         </h1>
         <p class="hero-subtitle">
-          Elevate bakery window displays, studio photography shoots, and wedding table settings with ultra-durable, reusable dummy cakes and pedestals.
+          Elevate bakery window displays, studio photography shoots, and wedding table settings with Get Jakes ultra-durable, reusable dummy cakes and pedestals.
         </p>
         <div class="hero-buttons">
           <a href="#shop" class="btn-primary">
             <i data-lucide="shopping-bag"></i> Explore Collection
           </a>
-          <a href="#customQuote" class="btn-secondary">
+          <a href="#customQuote" class="btn-cyan">
             <i data-lucide="sliders"></i> Request Custom Height
           </a>
         </div>
@@ -107,15 +135,15 @@
 
       <div class="hero-media">
         <div class="hero-image-wrapper">
-          <img src="/images/hero_cake_prop.png" alt="Luxury 3-tier cake prop display">
+          <img src="/images/hero_cake_prop.png" alt="Get Jakes Cake Props Display">
         </div>
         <div class="floating-badge-card">
           <div class="icon-box">
-            <i data-lucide="shield-check"></i>
+            <img src="/logo.jpg" alt="Get Jakes Logo Seal" style="width:28px; height:28px; border-radius:50%; object-fit:cover;">
           </div>
           <div>
-            <strong style="display:block; font-size:0.9rem;">Polymer Fondant Core</strong>
-            <span style="font-size:0.75rem; color:var(--text-secondary);">Indefinite Reusability</span>
+            <strong style="display:block; font-size:0.9rem;">Get Jakes Signature Core</strong>
+            <span style="font-size:0.75rem; color:var(--text-secondary);">Indefinite Reusability & Water Resistant</span>
           </div>
         </div>
       </div>
@@ -126,8 +154,8 @@
   <section id="shop" class="section container">
     <div class="section-header">
       <div class="section-subtitle">Catalog</div>
-      <h2 class="section-title">Artisanal Prop Collection</h2>
-      <p style="color: var(--text-secondary);">Browse our pre-built dummy cakes, photo prop kits, and fluted display risers ready for immediate dispatch.</p>
+      <h2 class="section-title">Get Jakes Prop & Topper Collection</h2>
+      <p style="color: var(--text-secondary);">Browse our pre-built dummy cakes, photo prop kits, cake toppers, and fluted display risers ready for immediate dispatch.</p>
     </div>
 
     <!-- Category Tabs -->
@@ -150,7 +178,7 @@
       <div class="section-header">
         <div class="section-subtitle">Inspiration</div>
         <h2 class="section-title">Real Event & Studio Showcase</h2>
-        <p style="color: var(--text-secondary);">See how top event designers, photographers, and bakeries utilize Velvet & Tier props.</p>
+        <p style="color: var(--text-secondary);">See how top event designers, photographers, and bakeries utilize Get Jakes props.</p>
       </div>
 
       <div id="galleryGrid" class="gallery-grid">
@@ -165,14 +193,14 @@
       <div class="quote-grid">
         <div>
           <div class="badge badge-brand" style="margin-bottom: 12px;">Bespoke Service</div>
-          <h2 style="font-size: 2.2rem; margin-bottom: 16px;">Need a Specific Prop Height or Color?</h2>
+          <h2 style="font-size: 2.2rem; margin-bottom: 16px;">Need a Specific Prop Height or Custom Topper?</h2>
           <p style="color: var(--text-secondary); margin-bottom: 24px;">
-            We craft custom foam & resin cake props tailored to your exact diameter, height, tier arrangement, and texture finish. Fill out the details for instant price estimation.
+            We craft custom foam & resin cake props tailored to your exact diameter, height, tier arrangement, color palette, and topper style. Fill out the details for an instant estimate.
           </p>
-          <div style="display: flex; gap: 16px; font-size: 0.9rem; color: var(--color-brand); font-weight: 600;">
-            <span><i data-lucide="check-circle-2" style="vertical-align: middle;"></i> Custom Colors</span>
-            <span><i data-lucide="check-circle-2" style="vertical-align: middle;"></i> Custom Texture</span>
-            <span><i data-lucide="check-circle-2" style="vertical-align: middle;"></i> Fast 5-Day Delivery</span>
+          <div style="display: flex; gap: 16px; font-size: 0.9rem; color: var(--color-black); font-weight: 700;">
+            <span><i data-lucide="check-circle-2" style="vertical-align: middle; color:var(--color-brand-dark);"></i> Custom Colors</span>
+            <span><i data-lucide="check-circle-2" style="vertical-align: middle; color:var(--color-brand-dark);"></i> Custom Texture</span>
+            <span><i data-lucide="check-circle-2" style="vertical-align: middle; color:var(--color-brand-dark);"></i> Fast 5-Day Delivery</span>
           </div>
         </div>
 
@@ -189,11 +217,11 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Fondant Coating Texture</label>
+            <label class="form-label">Coating Texture & Topper</label>
             <select id="quoteFinish" class="form-select">
               <option value="smooth">Smooth Matte Fondant</option>
               <option value="textured">Textured Buttercream Replica</option>
-              <option value="gold">24K Gold Leaf Accents</option>
+              <option value="gold">Cyan & Metallic Leaf Accents</option>
               <option value="naked">Semi-Naked Rustic Finish</option>
             </select>
           </div>
@@ -206,9 +234,9 @@
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
             <div>
               <span style="font-size: 0.8rem; color: var(--text-muted);">Estimated Price:</span>
-              <div id="quoteEstimatePrice" style="font-size: 1.5rem; font-weight: 700; color: var(--color-brand);">$245.00</div>
+              <div id="quoteEstimatePrice" style="font-size: 1.5rem; font-weight: 800; color: var(--color-black);">$245.00</div>
             </div>
-            <button type="submit" class="btn-gold">
+            <button type="submit" class="btn-cyan">
               <i data-lucide="send"></i> Request Quote
             </button>
           </div>
@@ -222,7 +250,7 @@
   <aside id="cartDrawer" class="cart-drawer">
     <div class="drawer-header">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <i data-lucide="shopping-bag" style="color: var(--color-brand);"></i>
+        <img src="/logo.png" alt="Get Jakes" style="width:24px; height:24px; border-radius:50%;">
         <h3 style="font-size: 1.2rem;">Your Prop Basket</h3>
       </div>
       <button id="closeCartBtn" class="icon-btn">
@@ -241,7 +269,7 @@
       </div>
       <div class="summary-row">
         <span>Shipping Estimate</span>
-        <span style="color: #22C55E; font-weight: 600;">FREE Studio Shipping</span>
+        <span style="color: #0FB3B6; font-weight: 700;">FREE Studio Shipping</span>
       </div>
       <div class="summary-row total">
         <span>Total Due</span>
@@ -286,14 +314,14 @@
         <!-- Generated Reference Code Box -->
         <div class="ref-code-box">
           <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">Your Order Reference Code</div>
-          <div id="orderRefDisplay" class="ref-code">VT-8942-PAY</div>
+          <div id="orderRefDisplay" class="ref-code">GJ-8942-PAY</div>
           <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Include this code in your bank transfer memo/remarks so we can match your payment.</p>
         </div>
 
         <!-- Bank Details Card -->
         <div class="bank-details-card">
-          <h3 style="font-size: 1.1rem; color: var(--color-brand); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-            <i data-lucide="landmark"></i> Artisanal Commerce Bank Details
+          <h3 style="font-size: 1.1rem; color: var(--color-black); margin-bottom: 12px; display: flex; align-align: center; gap: 8px;">
+            <i data-lucide="landmark" style="color:var(--color-brand-dark);"></i> Artisanal Commerce Bank Details
           </h3>
           <div class="bank-row">
             <span style="color: var(--text-secondary);">Bank Name:</span>
@@ -301,11 +329,11 @@
           </div>
           <div class="bank-row">
             <span style="color: var(--text-secondary);">Account Holder:</span>
-            <strong>Velvet & Tier Props Studio LLC</strong>
+            <strong>Get Jakes Props & Toppers LLC</strong>
           </div>
           <div class="bank-row">
             <span style="color: var(--text-secondary);">Account Number:</span>
-            <strong style="font-family: monospace; font-size: 1rem; color: var(--color-brand);">9876 5432 1098 4421</strong>
+            <strong style="font-family: monospace; font-size: 1rem; color: var(--color-black);">9876 5432 1098 4421</strong>
           </div>
           <div class="bank-row">
             <span style="color: var(--text-secondary);">IFSC / Sort Code:</span>
@@ -325,7 +353,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px;">
           <div>
             <span style="font-size: 0.85rem; color: var(--text-muted);">Payable Amount:</span>
-            <div id="checkoutTotalAmount" style="font-size: 1.6rem; font-weight: 800; color: var(--color-brand);">$0.00</div>
+            <div id="checkoutTotalAmount" style="font-size: 1.6rem; font-weight: 800; color: var(--color-black);">$0.00</div>
           </div>
           <button type="submit" class="btn-primary">
             <i data-lucide="check-circle-2"></i> Confirm & Submit Order
@@ -343,7 +371,7 @@
       </button>
 
       <div style="margin-bottom: 24px;">
-        <h2 style="font-size: 1.8rem; color: var(--color-brand);">Your Cake Prop Orders</h2>
+        <h2 style="font-size: 1.8rem; color: var(--color-black);">Your Get Jakes Orders</h2>
         <p style="font-size: 0.9rem; color: var(--text-secondary);">Track status, view bank details, and reference past purchases.</p>
       </div>
 
@@ -366,12 +394,10 @@
       <!-- Admin Sidebar / Header Navbar -->
       <div class="admin-sidebar">
         <div class="admin-brand">
-          <div class="admin-brand-icon">
-            <i data-lucide="shield-check"></i>
-          </div>
+          <img src="/logo.png" alt="Get Jakes Logo" style="width:36px; height:36px; border-radius:50%;">
           <div>
-            <h3>STUDIO ADMIN</h3>
-            <span>Backend Dashboard</span>
+            <h3>GET JAKES ADMIN</h3>
+            <span>Studio Control Center</span>
           </div>
         </div>
 
@@ -412,8 +438,8 @@
       </button>
 
       <div style="margin-bottom: 20px;">
-        <span class="badge badge-gold" style="margin-bottom: 6px;">Catalog Editor</span>
-        <h2 id="adminProductModalTitle" style="font-size: 1.6rem; color: var(--color-brand);">Add New Cake Prop</h2>
+        <span class="badge badge-brand" style="margin-bottom: 6px;">Catalog Editor</span>
+        <h2 id="adminProductModalTitle" style="font-size: 1.6rem; color: var(--color-black);">Add New Cake Prop</h2>
       </div>
 
       <form id="adminProductForm">
@@ -478,7 +504,7 @@
 
         <!-- Technical Specifications -->
         <div style="background: var(--bg-secondary); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 20px;">
-          <h4 style="font-size: 0.9rem; color: var(--color-brand); margin-bottom: 10px;">Technical Specifications</h4>
+          <h4 style="font-size: 0.9rem; color: var(--color-black); margin-bottom: 10px;">Technical Specifications</h4>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div>
               <label class="form-label" style="font-size: 0.75rem;">Height</label>
@@ -523,7 +549,7 @@
 
   <!-- Floating Live Chat Widget -->
   <div class="chat-widget">
-    <button id="chatTriggerBtn" class="chat-trigger" title="Live Cake Prop Assistant">
+    <button id="chatTriggerBtn" class="chat-trigger" title="Live Get Jakes Assistant">
       <i data-lucide="message-square-text" style="width: 28px; height: 28px;"></i>
       <span class="chat-pulse-badge"></span>
     </button>
@@ -532,20 +558,20 @@
   <div id="chatWindow" class="chat-window">
     <div class="chat-header">
       <div class="chat-agent-info">
-        <div class="chat-avatar">VT</div>
+        <img src="/logo.png" alt="Get Jakes" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:2px solid #FFF;">
         <div>
-          <strong style="font-size: 0.9rem; display: block;">Prop Studio Assistant</strong>
-          <span style="font-size: 0.72rem; opacity: 0.9;">Online • Instant Replies</span>
+          <strong style="font-size: 0.9rem; display: block; color:#0F1415;">Get Jakes Assistant</strong>
+          <span style="font-size: 0.72rem; color:#0F1415; opacity: 0.85;">Online • Instant Replies</span>
         </div>
       </div>
-      <button id="closeChatBtn" style="color: #FFF;">
+      <button id="closeChatBtn" style="color: #0F1415;">
         <i data-lucide="x"></i>
       </button>
     </div>
 
     <div id="chatMessages" class="chat-body">
       <div class="chat-msg bot">
-        Hello! 👋 Welcome to <strong>Velvet & Tier Cake Prop Studio</strong>. How can I assist you with dummy cakes, photo props, or Bank Transfer orders today?
+        Hello! 👋 Welcome to <strong>Get Jakes Cake Props & Toppers</strong>. How can I assist you with dummy cakes, custom toppers, photo props, or Bank Transfer orders today?
       </div>
       <div class="chat-faq-chips" id="chatFaqChips">
         <!-- Dynamic FAQ Chips -->
@@ -554,7 +580,7 @@
 
     <form id="chatForm" class="chat-footer">
       <input type="text" id="chatInput" class="chat-input" placeholder="Ask about props or bank payments..." required>
-      <button type="submit" class="icon-btn" style="background: var(--color-brand); color: #FFF; width: 36px; height: 36px;">
+      <button type="submit" class="icon-btn" style="background: var(--color-black); color: var(--color-brand); width: 36px; height: 36px;">
         <i data-lucide="send" style="width: 16px; height: 16px;"></i>
       </button>
     </form>
@@ -564,12 +590,18 @@
   <footer class="footer">
     <div class="container footer-grid">
       <div>
-        <h3 class="footer-title" style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--color-gold-light);">VELVET & TIER</h3>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+          <img src="/logo.jpg" alt="Get Jakes Logo" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 12px rgba(54, 223, 226, 0.4);">
+          <div>
+            <h3 class="footer-title" style="font-family: var(--font-heading); font-size: 1.4rem; color: #FFFFFF; margin: 0; line-height: 1;">GET JAKES</h3>
+            <span style="font-size: 0.65rem; letter-spacing: 0.18em; color: #36DFE2; font-weight: 800;">CAKE PROPS & TOPPERS</span>
+          </div>
+        </div>
         <p style="font-size: 0.88rem; color: #AAA; margin-bottom: 16px; max-width: 300px;">
-          Premium handcrafted dummy cakes, food photography props, and architectural event pedestals.
+          Premium handcrafted dummy cakes, custom cake toppers, food photography props, and architectural event pedestals.
         </p>
         <p style="font-size: 0.8rem; color: #888;">
-          © 2026 Velvet & Tier Props Studio. All rights reserved.
+          © 2026 Get Jakes Props & Toppers. All rights reserved.
         </p>
       </div>
 
@@ -579,7 +611,7 @@
           <li><a href="#shop">Wedding Tier Dummies</a></li>
           <li><a href="#shop">Photo Studio Sets</a></li>
           <li><a href="#shop">Display Risers</a></li>
-          <li><a href="#customQuote">Custom Sizing</a></li>
+          <li><a href="#customQuote">Custom Toppers & Sizing</a></li>
         </ul>
       </div>
 
@@ -597,7 +629,7 @@
         <h4 class="footer-title">Bank Payment Info</h4>
         <p style="font-size: 0.82rem; color: #AAA; line-height: 1.5;">
           Direct transfers supported via Artisanal Commerce Bank.<br>
-          <strong style="color: var(--color-gold-light);">Ref ID generated at checkout.</strong>
+          <strong style="color: #36DFE2;">Order Ref ID generated at checkout.</strong>
         </p>
       </div>
     </div>
