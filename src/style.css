@@ -1,9 +1,136 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+/* Local Custom Font Declarations */
+@font-face {
+  font-family: 'Hobo BT';
+  src: url('/fonts/Hobo BT.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-ThinItalic.ttf') format('truetype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-ExtraLightItalic.ttf') format('truetype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins/Poppins-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
 
 :root {
-  --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-script: 'Playfair Display', Georgia, serif;
+  --font-heading: 'Hobo BT', 'Poppins', sans-serif;
+  --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-script: 'Hobo BT', 'Poppins', sans-serif;
   
   /* Strictly derived from Get Jakes Logo */
   --bg-primary: #FFFFFF;
@@ -1333,11 +1460,40 @@ a {
 }
 
 .footer-bottom {
-  text-align: center;
   padding-top: 24px;
+  margin-top: 20px;
   border-top: 1px solid #2B2623;
   font-size: 0.85rem;
   color: #888;
+}
+
+.fusionlabz-credit a:hover {
+  color: #FFF !important;
+  text-shadow: 0 0 10px rgba(54, 223, 226, 0.5);
+}
+
+.heart-icon {
+  animation: heartBeat 1.8s infinite ease-in-out;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.25);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.25);
+  }
+  70% {
+    transform: scale(1);
+  }
 }
 
 /* Responsive Media Queries */
