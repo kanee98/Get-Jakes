@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --port 3000",
+    "server": "node server.js",
+    "db:init": "node database/init-db.js",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -13,6 +15,10 @@
   },
   "dependencies": {
     "canvas-confetti": "^1.9.3",
-    "lucide": "^0.439.0"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "lucide": "^0.439.0",
+    "mysql2": "^3.11.0"
   }
 }

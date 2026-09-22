@@ -2,6 +2,7 @@
  * Prop & Topper Shop Catalog Component
  */
 import { PRODUCTS } from '../data/productsData.js';
+import { fetchProductsApi } from '../services/api.js';
 import { createIcons, icons } from 'lucide';
 
 let dynamicProducts = JSON.parse(localStorage.getItem('gj_products') || localStorage.getItem('vt_products')) || PRODUCTS;
@@ -11,16 +12,21 @@ function refreshIcons() {
   createIcons({ icons });
 }
 
-export function reloadDynamicProducts() {
-  const saved = localStorage.getItem('gj_products') || localStorage.getItem('vt_products');
-  if (saved) {
-    try {
-      dynamicProducts = JSON.parse(saved);
-    } catch (e) {
+export async function reloadDynamicProducts() {
+  const fetched = await fetchProductsApi();
+  if (fetched && fetched.length > 0) {
+    dynamicProducts = fetched;
+  } else {
+    const saved = localStorage.getItem('gj_products') || localStorage.getItem('vt_products');
+    if (saved) {
+      try {
+        dynamicProducts = JSON.parse(saved);
+      } catch (e) {
+        dynamicProducts = [...PRODUCTS];
+      }
+    } else {
       dynamicProducts = [...PRODUCTS];
     }
-  } else {
-    dynamicProducts = [...PRODUCTS];
   }
 }
 

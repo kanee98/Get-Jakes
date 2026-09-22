@@ -2,6 +2,7 @@
  * Custom Quote Estimator Component
  */
 import confetti from 'canvas-confetti';
+import { submitCustomQuoteApi } from '../services/api.js';
 
 export function setupQuoteCalculator() {
   const form = document.getElementById('customQuoteForm');
@@ -26,9 +27,20 @@ export function setupQuoteCalculator() {
   tiersSelect.addEventListener('change', updateEstimate);
   finishSelect.addEventListener('change', updateEstimate);
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const contact = document.getElementById('quoteContact').value;
+    const tierVal = parseInt(tiersSelect.value, 10);
+    const finishVal = finishSelect.value;
+    const estimatedPriceText = priceDisplay.textContent.replace('$', '').replace('.00', '');
+    const estimatedPrice = parseFloat(estimatedPriceText) || 0;
+
+    await submitCustomQuoteApi({
+      contactInfo: contact,
+      tiersCount: tierVal,
+      finishTexture: finishVal,
+      estimatedPrice
+    });
     
     // Confetti effect
     confetti({

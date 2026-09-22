@@ -1,4 +1,5 @@
 import { PRODUCTS, INITIAL_ORDERS, BANK_DETAILS } from '../data/productsData.js';
+import { fetchProductsApi, fetchOrdersApi, saveProductApi, deleteProductApi, updateOrderStatusApi } from '../services/api.js';
 import { createIcons, icons } from 'lucide';
 
 // Helper for Lucide Icons
@@ -53,46 +54,54 @@ let currentEditingProductId = null;
 let currentViewingOrderId = null;
 
 // Initialize Admin Dashboard
-export function initAdminDashboard() {
-  loadAdminData();
+export async function initAdminDashboard() {
+  await loadAdminData();
   setupAdminEventListeners();
   renderAdminDashboard();
 
   // Listen for external order placements from customer checkout
-  window.addEventListener('vt_orders_updated', () => {
-    loadAdminData();
+  window.addEventListener('vt_orders_updated', async () => {
+    await loadAdminData();
     renderAdminDashboard();
   });
-  window.addEventListener('gj_orders_updated', () => {
-    loadAdminData();
+  window.addEventListener('gj_orders_updated', async () => {
+    await loadAdminData();
     renderAdminDashboard();
   });
 }
 
-// Load products and orders from localStorage
-export function loadAdminData() {
-  const savedProducts = localStorage.getItem('gj_products') || localStorage.getItem('vt_products');
-  if (savedProducts) {
-    try {
-      adminProducts = JSON.parse(savedProducts);
-    } catch (e) {
+// Load products and orders from API & Database with local fallback
+export async function loadAdminData() {
+  const fetchedProducts = await fetchProductsApi();
+  if (fetchedProducts && fetchedProducts.length > 0) {
+    adminProducts = fetchedProducts;
+  } else {
+    const savedProducts = localStorage.getItem('gj_products') || localStorage.getItem('vt_products');
+    if (savedProducts) {
+      try {
+        adminProducts = JSON.parse(savedProducts);
+      } catch (e) {
+        adminProducts = [...PRODUCTS];
+      }
+    } else {
       adminProducts = [...PRODUCTS];
     }
-  } else {
-    adminProducts = [...PRODUCTS];
-    localStorage.setItem('gj_products', JSON.stringify(adminProducts));
   }
 
-  const savedOrders = localStorage.getItem('gj_orders') || localStorage.getItem('vt_orders');
-  if (savedOrders) {
-    try {
-      adminOrders = JSON.parse(savedOrders);
-    } catch (e) {
+  const fetchedOrders = await fetchOrdersApi();
+  if (fetchedOrders && fetchedOrders.length > 0) {
+    adminOrders = fetchedOrders;
+  } else {
+    const savedOrders = localStorage.getItem('gj_orders') || localStorage.getItem('vt_orders');
+    if (savedOrders) {
+      try {
+        adminOrders = JSON.parse(savedOrders);
+      } catch (e) {
+        adminOrders = [...INITIAL_ORDERS];
+      }
+    } else {
       adminOrders = [...INITIAL_ORDERS];
     }
-  } else {
-    adminOrders = [...INITIAL_ORDERS];
-    localStorage.setItem('gj_orders', JSON.stringify(adminOrders));
   }
 }
 
@@ -705,7 +714,7 @@ function openEditProductModal(productId) {
   document.getElementById('adminProductModal').classList.add('open');
 }
 
-function handleProductFormSubmit(e) {
+async function handleProductFormSubmit(e) {
   e.preventDefault();
 
   const id = document.getElementById('prodId').value || `prop-${Date.now().toString().slice(-4)}`;
@@ -727,27 +736,26 @@ function handleProductFormSubmit(e) {
   };
 
   const productData = {
-    id, name, category, price, originalPrice: origPrice, rating, reviewsCount: reviews, image, tag, description: desc, specs
+    id: currentEditingProductId || id, name, category, price, originalPrice: origPrice, rating, reviewsCount: reviews, image, tag, description: desc, specs
   };
 
+  await saveProductApi(productData);
+  await loadAdminData();
+
   if (currentEditingProductId) {
-    const index = adminProducts.findIndex(p => p.id === currentEditingProductId);
-    if (index > -1) adminProducts[index] = productData;
-    showAdminToast('Prop updated successfully.');
+    showAdminToast('Prop updated successfully in database.');
   } else {
-    adminProducts.unshift(productData);
-    showAdminToast('New prop added to catalog.');
+    showAdminToast('New prop added to catalog & database.');
   }
 
-  saveAdminProducts();
   document.getElementById('adminProductModal').classList.remove('open');
   renderAdminTabContent();
 }
 
-function handleDeleteProduct(productId) {
+async function handleDeleteProduct(productId) {
   if (confirm('Are you sure you want to delete this cake prop from catalog?')) {
-    adminProducts = adminProducts.filter(p => p.id !== productId);
-    saveAdminProducts();
+    await deleteProductApi(productId);
+    await loadAdminData();
     showAdminToast('Prop deleted from catalog.', 'warning');
     renderAdminTabContent();
   }
@@ -762,14 +770,11 @@ function handleResetProducts() {
   }
 }
 
-function handleOrderStatusChange(orderId, newStatus) {
-  const order = adminOrders.find(o => o.orderId === orderId);
-  if (order) {
-    order.status = newStatus;
-    saveAdminOrders();
-    showAdminToast(`Order ${orderId} status set to ${newStatus}.`);
-    renderAdminTabContent();
-  }
+async function handleOrderStatusChange(orderId, newStatus) {
+  await updateOrderStatusApi(orderId, { status: newStatus });
+  await loadAdminData();
+  showAdminToast(`Order ${orderId} status set to ${newStatus}.`);
+  renderAdminTabContent();
 }
 
 function openOrderDetailModal(orderId) {

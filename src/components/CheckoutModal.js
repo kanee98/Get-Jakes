@@ -2,6 +2,7 @@
  * Checkout & Bank Transfer Payment Modal Component
  */
 import confetti from 'canvas-confetti';
+import { createOrderApi } from '../services/api.js';
 
 export function setupCheckoutModal(getCart, onOrderPlaced) {
   const modal = document.getElementById('checkoutModal');
@@ -31,7 +32,7 @@ export function setupCheckoutModal(getCart, onOrderPlaced) {
     btn.addEventListener('click', closeCheckoutModal);
   });
 
-  form?.addEventListener('submit', (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const cart = getCart();
     if (cart.length === 0) return;
@@ -40,22 +41,19 @@ export function setupCheckoutModal(getCart, onOrderPlaced) {
     const email = document.getElementById('custEmail').value;
     const address = document.getElementById('custAddress').value;
     const utr = document.getElementById('custUtr').value || 'Pending Wire Reference';
-    const refCode = refDisplay.textContent;
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
-    const newOrder = {
-      orderId: refCode,
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    const orderPayload = {
       customerName: name,
       customerEmail: email,
       shippingAddress: address,
       items: [...cart],
-      totalAmount: totalAmount,
+      total: totalAmount,
       paymentMethod: "Direct Bank Transfer",
-      utrNumber: utr,
-      status: "Awaiting Bank Transfer Verification",
-      adminNotes: "Order submitted via store checkout."
+      utrNumber: utr
     };
+
+    const createdOrder = await createOrderApi(orderPayload);
 
     // Confetti celebration
     confetti({
@@ -67,7 +65,7 @@ export function setupCheckoutModal(getCart, onOrderPlaced) {
     closeCheckoutModal();
     form.reset();
 
-    if (onOrderPlaced) onOrderPlaced(newOrder);
+    if (onOrderPlaced) onOrderPlaced(createdOrder);
   });
 
   return { openCheckoutModal, closeCheckoutModal };

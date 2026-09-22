@@ -3,9 +3,9 @@
  */
 export function setupHeaderComponent() {
   const headerLogoBtn = document.getElementById('headerLogoBtn');
-  const navMyOrders = document.getElementById('navMyOrders');
+  const accountPortalBtn = document.getElementById('accountPortalBtn');
 
-  // Smooth scroll home when logo is clicked (no loader replay)
+  // Smooth scroll home when logo is clicked
   headerLogoBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -15,12 +15,27 @@ export function setupHeaderComponent() {
     document.querySelector('.nav-link[href="#hero"]')?.classList.add('active');
   });
 
+  // Account & Orders button click handler
+  if (accountPortalBtn) {
+    accountPortalBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      // If holding Alt/Option key or clicking secondary, open Admin Portal
+      if (e.altKey || e.shiftKey) {
+        const adminModal = document.getElementById('adminDashboardModal');
+        adminModal?.classList.add('open');
+        return;
+      }
+
+      const ordersModal = document.getElementById('ordersModal');
+      ordersModal?.classList.add('open');
+    });
+  }
+
   // Nav link click smooth scroll & active state tracking
   document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');
       
-      // If clicking "My Orders", open the orders modal
       if (href === '#myOrders' || link.id === 'navMyOrders') {
         e.preventDefault();
         const ordersModal = document.getElementById('ordersModal');
