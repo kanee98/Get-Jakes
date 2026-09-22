@@ -1,10 +1,12 @@
-import { PRODUCTS, GALLERY_ITEMS, INITIAL_CHAT_FAQS, BANK_DETAILS } from './productsData.js';
+import { PRODUCTS, GALLERY_ITEMS, INITIAL_CHAT_FAQS, BANK_DETAILS, INITIAL_ORDERS } from './productsData.js';
+import { initAdminDashboard } from './adminDashboard.js';
 import { createIcons, icons } from 'lucide';
 import confetti from 'canvas-confetti';
 
 // State Management
 let cart = JSON.parse(localStorage.getItem('vt_cart')) || [];
 let orders = JSON.parse(localStorage.getItem('vt_orders')) || [];
+let dynamicProducts = JSON.parse(localStorage.getItem('vt_products')) || PRODUCTS;
 let activeCategory = 'all';
 
 // Initialize Lucide Icons
@@ -17,8 +19,23 @@ function formatCurrency(amount) {
   return `$${parseFloat(amount).toFixed(2)}`;
 }
 
+// Reload Dynamic Products from Storage
+function reloadDynamicProducts() {
+  const saved = localStorage.getItem('vt_products');
+  if (saved) {
+    try {
+      dynamicProducts = JSON.parse(saved);
+    } catch (e) {
+      dynamicProducts = [...PRODUCTS];
+    }
+  } else {
+    dynamicProducts = [...PRODUCTS];
+  }
+}
+
 // Document Ready
 document.addEventListener('DOMContentLoaded', () => {
+  reloadDynamicProducts();
   initIcons();
   setupCookieBanner();
   renderProducts();
@@ -30,6 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
   setupOrdersModal();
   setupChatWidget();
   setupQuoteCalculator();
+  initAdminDashboard();
+
+  // Listen for admin product catalog updates
+  window.addEventListener('vt_products_updated', (e) => {
+    dynamicProducts = e.detail || JSON.parse(localStorage.getItem('vt_products')) || PRODUCTS;
+    renderProducts();
+  });
+
+  // Listen for admin order updates
+  window.addEventListener('vt_orders_updated', () => {
+    orders = JSON.parse(localStorage.getItem('vt_orders')) || [];
+  });
 });
 
 /* Cookie Consent Management */
@@ -76,8 +105,8 @@ function setupCategoryTabs() {
 function renderProducts() {
   const container = document.getElementById('productsGrid');
   const filtered = activeCategory === 'all' 
-    ? PRODUCTS 
-    : PRODUCTS.filter(p => p.category === activeCategory);
+    ? dynamicProducts 
+    : dynamicProducts.filter(p => p.category === activeCategory);
 
   if (filtered.length === 0) {
     container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">No props found in this category.</p>`;
@@ -133,7 +162,7 @@ function renderProducts() {
 
 /* Add Item to Cart */
 function addToCart(productId, qty = 1) {
-  const item = PRODUCTS.find(p => p.id === productId);
+  const item = dynamicProducts.find(p => p.id === productId);
   if (!item) return;
 
   const existing = cart.find(i => i.id === productId);
@@ -273,7 +302,7 @@ function renderCartItems() {
 
 /* Quick View Modal */
 function openQuickView(productId) {
-  const item = PRODUCTS.find(p => p.id === productId);
+  const item = dynamicProducts.find(p => p.id === productId);
   if (!item) return;
 
   const modal = document.getElementById('quickViewModal');
@@ -394,6 +423,7 @@ function setupCheckoutModal() {
 
     orders.unshift(newOrder);
     localStorage.setItem('vt_orders', JSON.stringify(orders));
+    window.dispatchEvent(new CustomEvent('vt_orders_updated', { detail: orders }));
 
     // Clear Cart
     cart = [];

@@ -170,3 +170,77 @@ export const INITIAL_CHAT_FAQS = [
     a: "Standard in-stock props ship within 1-2 business days. Custom sculpted orders take 5-7 business days for handcrafted coating and curing."
   }
 ];
+
+export const INITIAL_ORDERS = [
+  {
+    orderId: "VT-9842-PAY",
+    date: "Sep 20, 2026",
+    customerName: "Eleanor Vance",
+    customerEmail: "eleanor@chateauxevents.com",
+    shippingAddress: "742 Evergreen Terrace, Suite 100, Chicago, IL 60601",
+    items: [
+      {
+        id: "prop-01",
+        name: "Aurelia 4-Tier Luxury Wedding Cake Dummy",
+        price: 389.00,
+        qty: 1,
+        image: "/images/wedding_tier_prop.png"
+      },
+      {
+        id: "prop-04",
+        name: "Imperial Fluted Pedestal Display Set",
+        price: 215.00,
+        qty: 2,
+        image: "/images/pedestal_prop_set.png"
+      }
+    ],
+    totalAmount: 819.00,
+    paymentMethod: "Direct Bank Transfer",
+    utrNumber: "UTR-994827103",
+    status: "Payment Verified",
+    adminNotes: "Bank payment received via wire. Order scheduled for studio packing."
+  },
+  {
+    orderId: "VT-5109-PAY",
+    date: "Sep 21, 2026",
+    customerName: "Marcus Sterling",
+    customerEmail: "marcus@voguephotostudio.io",
+    shippingAddress: "404 Fashion Boulevard, Studio 12, New York, NY 10018",
+    items: [
+      {
+        id: "prop-03",
+        name: "Pastel Studio Food Photography Kit",
+        price: 145.00,
+        qty: 2,
+        image: "/images/photo_prop_set.png"
+      }
+    ],
+    totalAmount: 290.00,
+    paymentMethod: "Direct Bank Transfer",
+    utrNumber: "Pending Wire Reference",
+    status: "Awaiting Bank Transfer Verification",
+    adminNotes: "Customer notified via email to attach transfer receipt."
+  },
+  {
+    orderId: "VT-3420-PAY",
+    date: "Sep 18, 2026",
+    customerName: "Sophia Laurent",
+    customerEmail: "sophia@maisondesucre.fr",
+    shippingAddress: "15 Rue de Rivoli, Paris 75001",
+    items: [
+      {
+        id: "prop-06",
+        name: "Commercial Bakery Window Display Dummy",
+        price: 495.00,
+        qty: 1,
+        image: "/images/hero_cake_prop.png"
+      }
+    ],
+    totalAmount: 495.00,
+    paymentMethod: "Direct Bank Transfer",
+    utrNumber: "FR98342109852",
+    status: "Shipped",
+    adminNotes: "Tracking # DHL-EXPRESS-99281. Express delivery in transit."
+  }
+];
+

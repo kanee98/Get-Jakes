@@ -54,6 +54,11 @@
           <span style="margin-left: 4px;">Orders</span>
         </button>
 
+        <button id="adminPortalBtn" class="btn-primary-sm" style="padding: 8px 16px; font-size: 0.85rem;" title="Admin Dashboard Portal">
+          <i data-lucide="layout-dashboard"></i>
+          <span style="margin-left: 4px;">Admin Portal</span>
+        </button>
+
         <button id="cartDrawerBtn" class="icon-btn" title="Shopping Cart">
           <i data-lucide="shopping-bag"></i>
           <span id="cartCountBadge" class="cart-count">0</span>
@@ -352,6 +357,167 @@
   <div id="quickViewModal" class="modal-overlay">
     <div id="quickViewContent" class="modal-content" style="padding: 32px; max-width: 720px;">
       <!-- Dynamic Content -->
+    </div>
+  </div>
+
+  <!-- BACKEND ADMIN DASHBOARD MODAL -->
+  <div id="adminDashboardModal" class="modal-overlay admin-fullscreen-modal">
+    <div class="modal-content admin-dashboard-content">
+      <!-- Admin Sidebar / Header Navbar -->
+      <div class="admin-sidebar">
+        <div class="admin-brand">
+          <div class="admin-brand-icon">
+            <i data-lucide="shield-check"></i>
+          </div>
+          <div>
+            <h3>STUDIO ADMIN</h3>
+            <span>Backend Dashboard</span>
+          </div>
+        </div>
+
+        <nav class="admin-nav-tabs">
+          <button class="admin-tab-btn active" data-tab="overview">
+            <i data-lucide="layout-dashboard"></i> Overview
+          </button>
+          <button class="admin-tab-btn" data-tab="products">
+            <i data-lucide="package"></i> Prop Catalog
+          </button>
+          <button class="admin-tab-btn" data-tab="orders">
+            <i data-lucide="receipt"></i> Orders & Wires
+          </button>
+          <button class="admin-tab-btn" data-tab="settings">
+            <i data-lucide="settings"></i> Store Settings
+          </button>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+          <button id="closeAdminModalBtn" class="btn-secondary" style="width: 100%; justify-content: center; font-size: 0.82rem;">
+            <i data-lucide="external-link"></i> Return to Live Store
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Admin Content Area -->
+      <div id="adminMainContent" class="admin-main-body">
+        <!-- Dynamic Content Inserted by adminDashboard.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PRODUCT ADD / EDIT MODAL -->
+  <div id="adminProductModal" class="modal-overlay">
+    <div class="modal-content" style="padding: 32px; max-width: 780px;">
+      <button class="modal-close-btn close-modal-btn">
+        <i data-lucide="x"></i>
+      </button>
+
+      <div style="margin-bottom: 20px;">
+        <span class="badge badge-gold" style="margin-bottom: 6px;">Catalog Editor</span>
+        <h2 id="adminProductModalTitle" style="font-size: 1.6rem; color: var(--color-brand);">Add New Cake Prop</h2>
+      </div>
+
+      <form id="adminProductForm">
+        <input type="hidden" id="prodId">
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div>
+            <label class="form-label">Prop Title / Name *</label>
+            <input type="text" id="prodName" class="form-input" placeholder="e.g. Aurelia 4-Tier Luxury Dummy" required>
+          </div>
+          <div>
+            <label class="form-label">Category *</label>
+            <select id="prodCategory" class="form-select" required>
+              <option value="wedding">Wedding Tier Dummies</option>
+              <option value="photography">Studio Photo Kits</option>
+              <option value="pedestal">Display Pedestals</option>
+              <option value="custom">Custom & Commercial</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div>
+            <label class="form-label">Price ($) *</label>
+            <input type="number" step="0.01" id="prodPrice" class="form-input" placeholder="289.00" required>
+          </div>
+          <div>
+            <label class="form-label">Original MSRP ($)</label>
+            <input type="number" step="0.01" id="prodOrigPrice" class="form-input" placeholder="349.00">
+          </div>
+          <div>
+            <label class="form-label">Tag / Badge</label>
+            <select id="prodTag" class="form-select">
+              <option value="Handcrafted">Handcrafted</option>
+              <option value="Bestseller">Bestseller</option>
+              <option value="Trending">Trending</option>
+              <option value="Studio Special">Studio Special</option>
+              <option value="New">New</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 16px; margin-bottom: 16px;">
+          <div>
+            <label class="form-label">Rating (1.0 - 5.0)</label>
+            <input type="number" step="0.1" id="prodRating" class="form-input" value="4.9" min="1" max="5">
+          </div>
+          <div>
+            <label class="form-label">Reviews Count</label>
+            <input type="number" id="prodReviews" class="form-input" value="18">
+          </div>
+          <div>
+            <label class="form-label">Image URL / Path *</label>
+            <input type="text" id="prodImage" class="form-input" placeholder="/images/wedding_tier_prop.png" required>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label class="form-label">Product Description *</label>
+          <textarea id="prodDesc" class="form-input" rows="3" placeholder="Detailed prop description, fondant finish, reusability specs..." required></textarea>
+        </div>
+
+        <!-- Technical Specifications -->
+        <div style="background: var(--bg-secondary); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+          <h4 style="font-size: 0.9rem; color: var(--color-brand); margin-bottom: 10px;">Technical Specifications</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label class="form-label" style="font-size: 0.75rem;">Height</label>
+              <input type="text" id="prodHeight" class="form-input" placeholder='e.g. 28 inches (71 cm)'>
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.75rem;">Tiers / Pieces</label>
+              <input type="text" id="prodTiers" class="form-input" placeholder='e.g. 4 Tiers (6", 8", 10", 12")'>
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.75rem;">Material</label>
+              <input type="text" id="prodMaterial" class="form-input" placeholder="e.g. EPS Foam + Polymer Fondant">
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.75rem;">Weight</label>
+              <input type="text" id="prodWeight" class="form-input" placeholder="e.g. 4.2 lbs">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+          <button type="button" class="btn-secondary close-modal-btn">Cancel</button>
+          <button type="submit" class="btn-primary">
+            <i data-lucide="check-circle-2"></i> Save Product
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN ORDER DETAILS MODAL -->
+  <div id="adminOrderDetailModal" class="modal-overlay">
+    <div class="modal-content" style="padding: 32px; max-width: 760px;">
+      <button class="modal-close-btn close-modal-btn">
+        <i data-lucide="x"></i>
+      </button>
+      <div id="adminOrderDetailContent">
+        <!-- Dynamic Content -->
+      </div>
     </div>
   </div>
 
