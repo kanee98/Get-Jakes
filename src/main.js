@@ -22,6 +22,7 @@ import { setupCategoryTabs, renderProductsGrid, reloadDynamicProducts } from './
 import { setupCartDrawer, updateCartUI } from './components/CartDrawer.js';
 import { setupCheckoutModal } from './components/CheckoutModal.js';
 import { setupOrdersModal } from './components/OrdersModal.js';
+import { setupAuthModal } from './components/AuthModal.js';
 import { openQuickViewModal } from './components/QuickViewModal.js';
 import { setupChatWidget } from './components/ChatWidget.js';
 import { initAdminDashboard } from './admin/adminDashboard.js';
@@ -61,25 +62,42 @@ function initIcons() {
 let cart = JSON.parse(localStorage.getItem('gj_cart') || localStorage.getItem('vt_cart')) || [];
 let orders = JSON.parse(localStorage.getItem('gj_orders') || localStorage.getItem('vt_orders')) || [];
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // 1. Mount modular HTML templates into roots
   mountTemplates();
 
-  // 2. Initialize App Components
+  // 2. Initialize App Components & Auth
   setupAppLoader();
   initIcons();
-  setupHeaderComponent();
+
+  const { openAuthModal } = setupAuthModal((user) => {
+    if (user.role === 'customer') {
+      openOrdersModal();
+    }
+  });
+
+  function openAdminDashboardModal() {
+    const adminModal = document.getElementById('adminDashboardModal');
+    adminModal?.classList.add('open');
+  }
+
+  // 3. Setup Cart Drawer & Modals
+  const { openCheckoutModal } = setupCheckoutModal(() => cart, handleOrderPlaced);
+  const { openCart } = setupCartDrawer(cart, refreshCart, () => openCheckoutModal());
+  const { openOrdersModal } = setupOrdersModal(() => orders, openAuthModal);
+
+  setupHeaderComponent(
+    (tab) => openAuthModal(tab),
+    () => openOrdersModal(),
+    () => openAdminDashboardModal()
+  );
+
   setupFooterComponent();
   setupCookieBanner();
   renderGallery();
   setupQuoteCalculator();
   setupChatWidget();
   initAdminDashboard();
-
-  // 3. Setup Cart Drawer & Modals
-  const { openCheckoutModal } = setupCheckoutModal(() => cart, handleOrderPlaced);
-  const { openCart } = setupCartDrawer(cart, refreshCart, () => openCheckoutModal());
-  const { openOrdersModal } = setupOrdersModal(() => orders);
 
   function refreshCart() {
     updateCartUI(cart, refreshCart);
@@ -114,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 4. Render Shop Grid & Category Filter Tabs
   setupCategoryTabs();
+  await reloadDynamicProducts();
   renderProductsGrid(
     handleAddToCart,
     (product) => openQuickViewModal(product, handleAddToCart)
@@ -122,15 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
   refreshCart();
 
   // 5. Global Store Events
-  window.addEventListener('gj_products_updated', () => {
-    reloadDynamicProducts();
-    renderProductsGrid(
-      handleAddToCart,
-      (product) => openQuickViewModal(product, handleAddToCart)
-    );
-  });
-  window.addEventListener('vt_products_updated', () => {
-    reloadDynamicProducts();
+  window.addEventListener('gj_products_updated', async () => {
+    await reloadDynamicProducts();
     renderProductsGrid(
       handleAddToCart,
       (product) => openQuickViewModal(product, handleAddToCart)
@@ -138,9 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   window.addEventListener('gj_orders_updated', () => {
-    orders = JSON.parse(localStorage.getItem('gj_orders') || localStorage.getItem('vt_orders')) || [];
-  });
-  window.addEventListener('vt_orders_updated', () => {
     orders = JSON.parse(localStorage.getItem('gj_orders') || localStorage.getItem('vt_orders')) || [];
   });
 });

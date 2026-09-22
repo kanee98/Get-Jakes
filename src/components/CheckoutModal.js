@@ -3,6 +3,7 @@
  */
 import confetti from 'canvas-confetti';
 import { createOrderApi } from '../services/api.js';
+import { getCurrentUser } from './AuthModal.js';
 
 export function setupCheckoutModal(getCart, onOrderPlaced) {
   const modal = document.getElementById('checkoutModal');
@@ -14,12 +15,20 @@ export function setupCheckoutModal(getCart, onOrderPlaced) {
     const cart = getCart();
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     
-    // Generate unique Bank Transfer Reference Code
     const randomNum = Math.floor(1000 + Math.random() * 9000);
     const refCode = `GJ-${randomNum}-PAY`;
 
     if (refDisplay) refDisplay.textContent = refCode;
     if (totalAmountDisplay) totalAmountDisplay.textContent = `$${totalAmount.toFixed(2)}`;
+
+    // Autofill logged in user details if available
+    const user = getCurrentUser();
+    if (user) {
+      const custNameInput = document.getElementById('custName');
+      const custEmailInput = document.getElementById('custEmail');
+      if (custNameInput && !custNameInput.value) custNameInput.value = user.fullName || '';
+      if (custEmailInput && !custEmailInput.value) custEmailInput.value = user.email || '';
+    }
 
     modal?.classList.add('open');
   }

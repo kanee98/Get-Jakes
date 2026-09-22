@@ -34,6 +34,100 @@
   </div>
 </aside>
 
+<!-- Authentication & Sign In Modal -->
+<div id="authModal" class="modal-overlay">
+  <div class="modal-content auth-modal-content" style="padding: 36px; max-width: 480px; border-radius: var(--radius-lg);">
+    <button class="modal-close-btn close-modal-btn">
+      <i data-lucide="x"></i>
+    </button>
+
+    <div style="text-align: center; margin-bottom: 24px;">
+      <img src="/logo.png" alt="Get Jakes" style="width: 52px; height: 52px; border-radius: 50%; margin-bottom: 12px; border: 2px solid var(--color-gold);">
+      <h2 style="font-size: 1.6rem; color: var(--color-black); font-weight: 800;">Get Jakes Portal</h2>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 4px;">Sign in to access your orders or the studio dashboard.</p>
+    </div>
+
+    <!-- Auth Tabs -->
+    <div class="auth-tabs" style="display: flex; gap: 8px; background: var(--bg-secondary); padding: 4px; border-radius: var(--radius-md); margin-bottom: 24px;">
+      <button id="authTabLogin" class="auth-tab-btn active" style="flex: 1; padding: 10px; border: none; border-radius: var(--radius-sm); font-weight: 700; cursor: pointer;">
+        <i data-lucide="log-in" style="width: 14px; height: 14px; vertical-align: middle;"></i> Sign In
+      </button>
+      <button id="authTabRegister" class="auth-tab-btn" style="flex: 1; padding: 10px; border: none; border-radius: var(--radius-sm); font-weight: 700; cursor: pointer;">
+        <i data-lucide="user-plus" style="width: 14px; height: 14px; vertical-align: middle;"></i> Register
+      </button>
+    </div>
+
+    <div id="authErrorMessage" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #DC2626; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 16px;"></div>
+
+    <!-- Sign In Form -->
+    <form id="authLoginForm" class="auth-form active">
+      <div style="margin-bottom: 16px;">
+        <label class="form-label">Email Address *</label>
+        <div style="position: relative;">
+          <input type="email" id="authLoginEmail" class="form-input" placeholder="e.g. eleanor@chateauxevents.com" required style="padding-left: 36px;">
+          <i data-lucide="mail" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label class="form-label">Password *</label>
+        <div style="position: relative;">
+          <input type="password" id="authLoginPassword" class="form-input" placeholder="••••••••" required style="padding-left: 36px;">
+          <i data-lucide="lock" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem;">
+        <i data-lucide="arrow-right"></i> Sign In to Account
+      </button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="authRegisterForm" class="auth-form" style="display: none;">
+      <div style="margin-bottom: 16px;">
+        <label class="form-label">Full Name *</label>
+        <div style="position: relative;">
+          <input type="text" id="authRegName" class="form-input" placeholder="Jane Doe" required style="padding-left: 36px;">
+          <i data-lucide="user" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label">Email Address *</label>
+        <div style="position: relative;">
+          <input type="email" id="authRegEmail" class="form-input" placeholder="jane@example.com" required style="padding-left: 36px;">
+          <i data-lucide="mail" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label class="form-label">Create Password *</label>
+        <div style="position: relative;">
+          <input type="password" id="authRegPassword" class="form-input" placeholder="At least 6 characters" required style="padding-left: 36px;">
+          <i data-lucide="lock" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted);"></i>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem;">
+        <i data-lucide="user-check"></i> Create Customer Account
+      </button>
+    </form>
+
+    <!-- Demo Fast Login Shortcuts -->
+    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border-color); text-align: center;">
+      <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 10px;">Quick Demo Sign In</div>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" id="btnDemoCustomerLogin" class="btn-secondary" style="flex: 1; font-size: 0.78rem; padding: 8px; justify-content: center;">
+          <i data-lucide="user" style="width: 13px; height: 13px;"></i> Customer Login
+        </button>
+        <button type="button" id="btnDemoAdminLogin" class="btn-secondary" style="flex: 1; font-size: 0.78rem; padding: 8px; justify-content: center; background: rgba(15, 179, 182, 0.08); border-color: var(--color-brand);">
+          <i data-lucide="shield-check" style="width: 13px; height: 13px; color: var(--color-brand);"></i> Admin Login
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Checkout & Bank Transfer Modal -->
 <div id="checkoutModal" class="modal-overlay">
   <div class="modal-content" style="padding: 32px;">

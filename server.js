@@ -383,39 +383,88 @@ app.get('/api/custom-quotes', async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email.trim()]);
 
     if (rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: 'Account not found with this email. Please register first.' });
     }
 
     const user = rows[0];
-    // In production password_hash is verified with bcrypt
-    // For admin demonstration credentials check:
-    if (email === 'admin@getjakes.com' && password === 'admin123') {
+
+    // Admin authentication check
+    if (user.role === 'admin' || email.toLowerCase() === 'admin@getjakes.com') {
+      if (password !== 'admin123' && user.password_hash !== password) {
+        return res.status(401).json({ error: 'Invalid admin credentials' });
+      }
       return res.json({
         user: {
           id: user.id,
           fullName: user.full_name,
           email: user.email,
-          role: user.role
+          role: 'admin'
         },
-        token: 'simulated-jwt-token-getjakes-admin'
+        token: 'jwt-getjakes-admin-session'
       });
     }
 
+    // Customer authentication
     res.json({
       user: {
         id: user.id,
         fullName: user.full_name,
         email: user.email,
-        role: user.role
+        role: user.role || 'customer'
       },
-      token: 'simulated-jwt-token-customer'
+      token: 'jwt-getjakes-customer-session'
     });
   } catch (err) {
-    console.error('Auth error:', err);
+    console.error('Auth login error:', err);
     res.status(500).json({ error: 'Authentication failed' });
+  }
+});
+
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { fullName, email, password } = req.body;
+    if (!fullName || !email || !password) {
+      return res.status(400).json({ error: 'Full name, email, and password are required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Check existing
+    const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [cleanEmail]);
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'An account with this email already exists. Please sign in.' });
+    }
+
+    const role = cleanEmail.includes('admin') ? 'admin' : 'customer';
+
+    const [result] = await pool.query(
+      `INSERT INTO users (full_name, email, password_hash, auth_provider, role)
+       VALUES (?, ?, ?, 'email', ?)`,
+      [fullName.trim(), cleanEmail, password, role]
+    );
+
+    const newUser = {
+      id: result.insertId,
+      fullName: fullName.trim(),
+      email: cleanEmail,
+      role
+    };
+
+    res.status(201).json({
+      user: newUser,
+      token: `jwt-getjakes-${role}-session`,
+      message: 'Account registered successfully!'
+    });
+  } catch (err) {
+    console.error('Auth registration error:', err);
+    res.status(500).json({ error: 'Registration failed' });
   }
 });
 

@@ -1,45 +1,95 @@
 /**
  * Header & Navigation Component
  */
-export function setupHeaderComponent() {
+import { getCurrentUser, logoutUser } from './AuthModal.js';
+import { createIcons, icons } from 'lucide';
+
+function refreshIcons() {
+  createIcons({ icons });
+}
+
+export function setupHeaderComponent(onOpenAuthModal, onOpenOrdersModal, onOpenAdminModal) {
   const headerLogoBtn = document.getElementById('headerLogoBtn');
   const accountPortalBtn = document.getElementById('accountPortalBtn');
+  const accountBtnLabel = document.getElementById('accountBtnLabel');
+
+  function updateHeaderUserUI() {
+    const user = getCurrentUser();
+    if (user) {
+      const firstName = user.fullName ? user.fullName.split(' ')[0] : 'Account';
+      if (accountBtnLabel) {
+        accountBtnLabel.textContent = `${firstName} (${user.role === 'admin' ? 'Admin' : 'Account'})`;
+      }
+      if (accountPortalBtn) {
+        accountPortalBtn.title = `Logged in as ${user.fullName} (${user.role}). Click to view or sign out.`;
+      }
+    } else {
+      if (accountBtnLabel) {
+        accountBtnLabel.textContent = 'Sign In';
+      }
+      if (accountPortalBtn) {
+        accountPortalBtn.title = 'Client Account & Sign In';
+      }
+    }
+    refreshIcons();
+  }
+
+  updateHeaderUserUI();
+  window.addEventListener('gj_user_changed', updateHeaderUserUI);
 
   // Smooth scroll home when logo is clicked
   headerLogoBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
-    // Update active nav link
     document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
     document.querySelector('.nav-link[href="#hero"]')?.classList.add('active');
   });
 
-  // Account & Orders button click handler
+  // Account Portal Button Click Handler
   if (accountPortalBtn) {
     accountPortalBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      // If holding Alt/Option key or clicking secondary, open Admin Portal
-      if (e.altKey || e.shiftKey) {
-        const adminModal = document.getElementById('adminDashboardModal');
-        adminModal?.classList.add('open');
+      const user = getCurrentUser();
+
+      if (!user) {
+        if (onOpenAuthModal) onOpenAuthModal('login');
         return;
       }
 
-      const ordersModal = document.getElementById('ordersModal');
-      ordersModal?.classList.add('open');
+      if (user.role === 'admin') {
+        if (onOpenAdminModal) onOpenAdminModal();
+        return;
+      }
+
+      // Customer logged in: ask option to View Orders or Sign Out
+      const action = confirm(`Signed in as ${user.fullName} (${user.email}).\n\nClick OK to View Your Orders, or CANCEL to Sign Out.`);
+      if (action) {
+        if (onOpenOrdersModal) onOpenOrdersModal();
+      } else {
+        logoutUser();
+        alert('Signed out successfully.');
+      }
     });
   }
 
-  // Nav link click smooth scroll & active state tracking
+  // Nav Links click handler
   document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');
       
       if (href === '#myOrders' || link.id === 'navMyOrders') {
         e.preventDefault();
-        const ordersModal = document.getElementById('ordersModal');
-        ordersModal?.classList.add('open');
+        const user = getCurrentUser();
+        if (!user) {
+          if (onOpenOrdersModal) onOpenOrdersModal(); // Opens orders modal which shows login prompt
+          return;
+        }
+        if (user.role === 'admin') {
+          if (onOpenAdminModal) onOpenAdminModal();
+          return;
+        }
+        if (onOpenOrdersModal) onOpenOrdersModal();
         return;
       }
 

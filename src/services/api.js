@@ -19,6 +19,65 @@ export async function checkApiHealth() {
 }
 
 // ----------------------------------------------------------------------------
+// Auth API
+// ----------------------------------------------------------------------------
+export async function loginUserApi({ email, password }) {
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Login failed');
+    }
+    return data;
+  } catch (err) {
+    // Offline local simulation check for demo credentials
+    if (email.toLowerCase() === 'admin@getjakes.com' && password === 'admin123') {
+      return {
+        user: { id: 1, fullName: 'Get Jakes Admin', email: 'admin@getjakes.com', role: 'admin' },
+        token: 'local-demo-token-admin'
+      };
+    }
+    if (email.toLowerCase().includes('eleanor')) {
+      return {
+        user: { id: 2, fullName: 'Eleanor Vance', email: 'eleanor@chateauxevents.com', role: 'customer' },
+        token: 'local-demo-token-customer'
+      };
+    }
+    throw err;
+  }
+}
+
+export async function registerUserApi({ fullName, email, password }) {
+  try {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fullName, email, password })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Registration failed');
+    }
+    return data;
+  } catch (err) {
+    if (err.message.includes('already exists')) throw err;
+    // Offline local creation
+    const role = email.toLowerCase().includes('admin') ? 'admin' : 'customer';
+    return {
+      user: { id: Date.now(), fullName, email, role },
+      token: `local-demo-token-${role}`,
+      message: 'Registered locally'
+    };
+  }
+}
+
+// ----------------------------------------------------------------------------
 // Products API
 // ----------------------------------------------------------------------------
 export async function fetchProductsApi() {
