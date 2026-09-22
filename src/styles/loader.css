@@ -1,0 +1,155 @@
+/* Animated Brand Loader Overlay Styles */
+.app-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100000;
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s, transform 0.6s ease;
+  overflow: hidden;
+}
+
+.app-loader.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(1.04);
+}
+
+.loader-backdrop-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(54, 223, 226, 0.3) 0%, rgba(54, 223, 226, 0.05) 50%, transparent 70%);
+  animation: loaderPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes loaderPulse {
+  0% { transform: scale(0.85); opacity: 0.6; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+.loader-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 400px;
+  padding: 30px;
+}
+
+.logo-wrapper-loader {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-svg-ring {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+}
+
+.loader-svg-ring path {
+  fill: none;
+  stroke: #0F1415;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawStroke 2s cubic-bezier(0.65, 0, 0.35, 1) forwards infinite;
+}
+
+.loader-svg-ring .draw-path-2 {
+  stroke: #36DFE2;
+  stroke-width: 3;
+  animation-delay: 0.4s;
+}
+
+@keyframes drawStroke {
+  0% { stroke-dashoffset: 600; }
+  50% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -600; }
+}
+
+.loader-logo-img {
+  width: 145px;
+  height: 145px;
+  object-fit: contain;
+  border-radius: 50%;
+  box-shadow: 0 10px 30px rgba(54, 223, 226, 0.3);
+  animation: logoFloat 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes logoFloat {
+  0% { transform: translateY(0) scale(0.98); }
+  100% { transform: translateY(-8px) scale(1.02); }
+}
+
+.loader-title {
+  font-family: var(--font-heading);
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: #0F1415;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+
+.loader-subtitle {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  color: #36DFE2;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+.loader-progress-box {
+  width: 260px;
+}
+
+.loader-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(54, 223, 226, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.loader-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #36DFE2 0%, #0FB3B6 100%);
+  border-radius: 999px;
+  transition: width 0.15s linear;
+  box-shadow: 0 0 10px rgba(54, 223, 226, 0.6);
+}
+
+.loader-status {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #5A696C;
+}
+
+#loaderPercent {
+  color: #0F1415;
+  font-weight: 700;
+}
