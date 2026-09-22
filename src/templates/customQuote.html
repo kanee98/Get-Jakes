@@ -1,0 +1,57 @@
+<!-- Custom Quote Calculator Section -->
+<section id="customQuote" class="section container">
+  <div class="quote-box">
+    <div class="quote-grid">
+      <div>
+        <div class="badge badge-brand" style="margin-bottom: 12px;">Bespoke Service</div>
+        <h2 style="font-size: 2.2rem; margin-bottom: 16px;">Need a Specific Prop Height or Custom Topper?</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">
+          We craft custom foam & resin cake props tailored to your exact diameter, height, tier arrangement, color palette, and topper style. Fill out the details for an instant estimate.
+        </p>
+        <div style="display: flex; gap: 16px; font-size: 0.9rem; color: var(--color-black); font-weight: 700;">
+          <span><i data-lucide="check-circle-2" style="vertical-align: middle; color:var(--color-brand-dark);"></i> Custom Colors</span>
+          <span><i data-lucide="check-circle-2" style="vertical-align: middle; color:var(--color-brand-dark);"></i> Custom Texture</span>
+          <span><i data-lucide="check-circle-2" style="vertical-align: middle; color:var(--color-brand-dark);"></i> Fast 5-Day Delivery</span>
+        </div>
+      </div>
+
+      <form id="customQuoteForm">
+        <div class="form-group">
+          <label class="form-label">Number of Tiers</label>
+          <select id="quoteTiers" class="form-select">
+            <option value="1">1 Tier Display ($75 - $120)</option>
+            <option value="2">2 Tiers ($140 - $210)</option>
+            <option value="3" selected>3 Tiers ($220 - $310)</option>
+            <option value="4">4 Tiers ($320 - $450)</option>
+            <option value="5">5 Tiers Grand ($480 - $680)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Coating Texture & Topper</label>
+          <select id="quoteFinish" class="form-select">
+            <option value="smooth">Smooth Matte Fondant</option>
+            <option value="textured">Textured Buttercream Replica</option>
+            <option value="gold">Cyan & Metallic Leaf Accents</option>
+            <option value="naked">Semi-Naked Rustic Finish</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Email or Phone</label>
+          <input type="text" id="quoteContact" class="form-input" placeholder="designer@studio.com" required>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
+          <div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Estimated Price:</span>
+            <div id="quoteEstimatePrice" style="font-size: 1.5rem; font-weight: 800; color: var(--color-black);">$245.00</div>
+          </div>
+          <button type="submit" class="btn-cyan">
+            <i data-lucide="send"></i> Request Quote
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

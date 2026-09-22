@@ -1,0 +1,298 @@
+<!-- Cart Drawer -->
+<div id="drawerBackdrop" class="drawer-backdrop"></div>
+<aside id="cartDrawer" class="cart-drawer">
+  <div class="drawer-header">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <img src="/logo.png" alt="Get Jakes" style="width:24px; height:24px; border-radius:50%;">
+      <h3 style="font-size: 1.2rem;">Your Prop Basket</h3>
+    </div>
+    <button id="closeCartBtn" class="icon-btn">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+
+  <div id="drawerCartItems" class="drawer-body">
+    <!-- Dynamic Items Insertion -->
+  </div>
+
+  <div class="drawer-footer">
+    <div class="summary-row">
+      <span>Subtotal</span>
+      <strong id="cartSubtotal">$0.00</strong>
+    </div>
+    <div class="summary-row">
+      <span>Shipping Estimate</span>
+      <span style="color: #0FB3B6; font-weight: 700;">FREE Studio Shipping</span>
+    </div>
+    <div class="summary-row total">
+      <span>Total Due</span>
+      <span id="cartTotal">$0.00</span>
+    </div>
+    <button id="proceedCheckoutBtn" class="btn-primary" style="width: 100%; margin-top: 16px; justify-content: center;">
+      <i data-lucide="landmark"></i> Checkout via Bank Transfer
+    </button>
+  </div>
+</aside>
+
+<!-- Checkout & Bank Transfer Modal -->
+<div id="checkoutModal" class="modal-overlay">
+  <div class="modal-content" style="padding: 32px;">
+    <button class="modal-close-btn close-modal-btn">
+      <i data-lucide="x"></i>
+    </button>
+    
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div class="badge badge-gold" style="margin-bottom: 8px;">Payment Gateway - Direct Wire</div>
+      <h2 style="font-size: 1.8rem; color: var(--color-brand);">Bank Details & Order Placement</h2>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">Complete your order below. Transfer the total amount using the provided studio bank details.</p>
+    </div>
+
+    <form id="checkoutForm">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+          <label class="form-label">Full Name *</label>
+          <input type="text" id="custName" class="form-input" placeholder="Jane Doe" required>
+        </div>
+        <div>
+          <label class="form-label">Email Address *</label>
+          <input type="email" id="custEmail" class="form-input" placeholder="jane@example.com" required>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label">Delivery Address *</label>
+        <input type="text" id="custAddress" class="form-input" placeholder="123 Studio St, Suite 4B, New York, NY" required>
+      </div>
+
+      <!-- Generated Reference Code Box -->
+      <div class="ref-code-box">
+        <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">Your Order Reference Code</div>
+        <div id="orderRefDisplay" class="ref-code">GJ-8942-PAY</div>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Include this code in your bank transfer memo/remarks so we can match your payment.</p>
+      </div>
+
+      <!-- Bank Details Card -->
+      <div class="bank-details-card">
+        <h3 style="font-size: 1.1rem; color: var(--color-black); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="landmark" style="color:var(--color-brand-dark);"></i> Artisanal Commerce Bank Details
+        </h3>
+        <div class="bank-row">
+          <span style="color: var(--text-secondary);">Bank Name:</span>
+          <strong>Artisanal Commerce Bank</strong>
+        </div>
+        <div class="bank-row">
+          <span style="color: var(--text-secondary);">Account Holder:</span>
+          <strong>Get Jakes Props & Toppers LLC</strong>
+        </div>
+        <div class="bank-row">
+          <span style="color: var(--text-secondary);">Account Number:</span>
+          <strong style="font-family: monospace; font-size: 1rem; color: var(--color-black);">9876 5432 1098 4421</strong>
+        </div>
+        <div class="bank-row">
+          <span style="color: var(--text-secondary);">IFSC / Sort Code:</span>
+          <strong style="font-family: monospace;">ACTB0009841</strong>
+        </div>
+        <div class="bank-row">
+          <span style="color: var(--text-secondary);">SWIFT / IBAN:</span>
+          <strong style="font-family: monospace;">ACTBUS33XXX</strong>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label class="form-label">Transaction UTR / Reference No. (Optional)</label>
+        <input type="text" id="custUtr" class="form-input" placeholder="e.g. UTR-99823145 or Bank Reference">
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px;">
+        <div>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Payable Amount:</span>
+          <div id="checkoutTotalAmount" style="font-size: 1.6rem; font-weight: 800; color: var(--color-black);">$0.00</div>
+        </div>
+        <button type="submit" class="btn-primary">
+          <i data-lucide="check-circle-2"></i> Confirm & Submit Order
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- My Orders Modal -->
+<div id="ordersModal" class="modal-overlay">
+  <div class="modal-content" style="padding: 32px; max-width: 760px;">
+    <button class="modal-close-btn close-modal-btn">
+      <i data-lucide="x"></i>
+    </button>
+
+    <div style="margin-bottom: 24px;">
+      <h2 style="font-size: 1.8rem; color: var(--color-black);">Your Get Jakes Orders</h2>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">Track status, view bank details, and reference past purchases.</p>
+    </div>
+
+    <div id="ordersListContainer">
+      <!-- Dynamic Orders List Insertion -->
+    </div>
+  </div>
+</div>
+
+<!-- Quick View Modal -->
+<div id="quickViewModal" class="modal-overlay">
+  <div id="quickViewContent" class="modal-content" style="padding: 32px; max-width: 720px;">
+    <!-- Dynamic Content -->
+  </div>
+</div>
+
+<!-- BACKEND ADMIN DASHBOARD MODAL -->
+<div id="adminDashboardModal" class="modal-overlay admin-fullscreen-modal">
+  <div class="modal-content admin-dashboard-content">
+    <div class="admin-sidebar">
+      <div class="admin-brand">
+        <img src="/logo.png" alt="Get Jakes Logo" style="width:36px; height:36px; border-radius:50%;">
+        <div>
+          <h3>GET JAKES ADMIN</h3>
+          <span>Studio Control Center</span>
+        </div>
+      </div>
+
+      <nav class="admin-nav-tabs">
+        <button class="admin-tab-btn active" data-tab="overview">
+          <i data-lucide="layout-dashboard"></i> Overview
+        </button>
+        <button class="admin-tab-btn" data-tab="products">
+          <i data-lucide="package"></i> Prop Catalog
+        </button>
+        <button class="admin-tab-btn" data-tab="orders">
+          <i data-lucide="receipt"></i> Orders & Wires
+        </button>
+        <button class="admin-tab-btn" data-tab="settings">
+          <i data-lucide="settings"></i> Store Settings
+        </button>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <button id="closeAdminModalBtn" class="btn-secondary" style="width: 100%; justify-content: center; font-size: 0.82rem;">
+          <i data-lucide="external-link"></i> Return to Live Store
+        </button>
+      </div>
+    </div>
+
+    <div id="adminMainContent" class="admin-main-body">
+      <!-- Dynamic Content Inserted by adminDashboard.js -->
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PRODUCT ADD / EDIT MODAL -->
+<div id="adminProductModal" class="modal-overlay">
+  <div class="modal-content" style="padding: 32px; max-width: 780px;">
+    <button class="modal-close-btn close-modal-btn">
+      <i data-lucide="x"></i>
+    </button>
+
+    <div style="margin-bottom: 20px;">
+      <span class="badge badge-brand" style="margin-bottom: 6px;">Catalog Editor</span>
+      <h2 id="adminProductModalTitle" style="font-size: 1.6rem; color: var(--color-black);">Add New Cake Prop</h2>
+    </div>
+
+    <form id="adminProductForm">
+      <input type="hidden" id="prodId">
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+          <label class="form-label">Prop Title / Name *</label>
+          <input type="text" id="prodName" class="form-input" placeholder="e.g. Aurelia 4-Tier Luxury Dummy" required>
+        </div>
+        <div>
+          <label class="form-label">Category *</label>
+          <select id="prodCategory" class="form-select" required>
+            <option value="wedding">Wedding Tier Dummies</option>
+            <option value="photography">Studio Photo Kits</option>
+            <option value="pedestal">Display Pedestals</option>
+            <option value="custom">Custom & Commercial</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+          <label class="form-label">Price ($) *</label>
+          <input type="number" step="0.01" id="prodPrice" class="form-input" placeholder="289.00" required>
+        </div>
+        <div>
+          <label class="form-label">Original MSRP ($)</label>
+          <input type="number" step="0.01" id="prodOrigPrice" class="form-input" placeholder="349.00">
+        </div>
+        <div>
+          <label class="form-label">Tag / Badge</label>
+          <select id="prodTag" class="form-select">
+            <option value="Handcrafted">Handcrafted</option>
+            <option value="Bestseller">Bestseller</option>
+            <option value="Trending">Trending</option>
+            <option value="Studio Special">Studio Special</option>
+            <option value="New">New</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+          <label class="form-label">Rating (1.0 - 5.0)</label>
+          <input type="number" step="0.1" id="prodRating" class="form-input" value="4.9" min="1" max="5">
+        </div>
+        <div>
+          <label class="form-label">Reviews Count</label>
+          <input type="number" id="prodReviews" class="form-input" value="18">
+        </div>
+        <div>
+          <label class="form-label">Image URL / Path *</label>
+          <input type="text" id="prodImage" class="form-input" placeholder="/images/wedding_tier_prop.png" required>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label">Product Description *</label>
+        <textarea id="prodDesc" class="form-input" rows="3" placeholder="Detailed prop description..." required></textarea>
+      </div>
+
+      <div style="background: var(--bg-secondary); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+        <h4 style="font-size: 0.9rem; color: var(--color-black); margin-bottom: 10px;">Technical Specifications</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">Height</label>
+            <input type="text" id="prodHeight" class="form-input" placeholder='e.g. 28 inches (71 cm)'>
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">Tiers / Pieces</label>
+            <input type="text" id="prodTiers" class="form-input" placeholder='e.g. 4 Tiers (6", 8", 10", 12")'>
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">Material</label>
+            <input type="text" id="prodMaterial" class="form-input" placeholder="e.g. EPS Foam + Polymer Fondant">
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">Weight</label>
+            <input type="text" id="prodWeight" class="form-input" placeholder="e.g. 4.2 lbs">
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button type="button" class="btn-secondary close-modal-btn">Cancel</button>
+        <button type="submit" class="btn-primary">
+          <i data-lucide="check-circle-2"></i> Save Product
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ADMIN ORDER DETAILS MODAL -->
+<div id="adminOrderDetailModal" class="modal-overlay">
+  <div class="modal-content" style="padding: 32px; max-width: 760px;">
+    <button class="modal-close-btn close-modal-btn">
+      <i data-lucide="x"></i>
+    </button>
+    <div id="adminOrderDetailContent">
+      <!-- Dynamic Content -->
+    </div>
+  </div>
+</div>
