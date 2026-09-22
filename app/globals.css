@@ -1,0 +1,32 @@
+/* Master Next.js Globals - Import Modular CSS System */
+@import '../src/styles/variables.css';
+@import '../src/styles/header.css';
+@import '../src/styles/footer.css';
+@import '../src/styles/loader.css';
+@import '../src/styles/hero.css';
+@import '../src/styles/shop.css';
+@import '../src/styles/gallery.css';
+@import '../src/styles/quote.css';
+@import '../src/styles/modals.css';
+@import '../src/styles/chat.css';
+@import '../src/styles/admin.css';
+
+/* Fix Next.js App Router root defaults */
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}

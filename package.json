@@ -4,21 +4,18 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host --port 3000",
-    "server": "node server.js",
-    "db:init": "node database/init-db.js",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "vite": "^5.4.2"
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "db:init": "node database/init-db.js"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.3",
-    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "lucide": "^0.439.0",
-    "mysql2": "^3.11.0"
+    "lucide-react": "^0.439.0",
+    "mysql2": "^3.11.0",
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }

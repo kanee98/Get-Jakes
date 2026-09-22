@@ -4,9 +4,10 @@
 
 USE `getjakes_db`;
 
--- Seed Admin User (Password: admin123)
+-- Seed Admin Users & Customers
 INSERT INTO `users` (`full_name`, `email`, `password_hash`, `auth_provider`, `role`) VALUES
 ('Get Jakes Admin', 'admin@getjakes.com', '$2a$12$e0MYzXy8.hB4K5Yg.J/81.kX9O5G8d1cE8f0g1h2i3j4k5l6m7n8o', 'email', 'admin'),
+('Invited Studio Manager', 'invited.admin@getjakes.com', NULL, 'email', 'admin'),
 ('Eleanor Vance', 'eleanor@chateauxevents.com', '$2a$12$e0MYzXy8.hB4K5Yg.J/81.kX9O5G8d1cE8f0g1h2i3j4k5l6m7n8o', 'email', 'customer'),
 ('Marcus Sterling', 'marcus@voguephotostudio.io', NULL, 'google', 'customer');
 

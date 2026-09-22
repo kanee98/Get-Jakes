@@ -2,7 +2,8 @@
 -- Get Jakes Cake Props & Toppers - Production MySQL Database Schema
 -- ============================================================================
 
-CREATE DATABASE IF NOT EXISTS `getjakes_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+DROP DATABASE IF EXISTS `getjakes_db`;
+CREATE DATABASE `getjakes_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `getjakes_db`;
 
 -- ----------------------------------------------------------------------------
