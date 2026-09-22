@@ -4,6 +4,11 @@
 export function setupFooterComponent() {
   const footerOrdersLink = document.getElementById('footerOrdersLink');
   const bankInfoFooterLink = document.getElementById('bankInfoFooterLink');
+  const yearSpan = document.getElementById('currentYear');
+
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
 
   footerOrdersLink?.addEventListener('click', (e) => {
     e.preventDefault();
