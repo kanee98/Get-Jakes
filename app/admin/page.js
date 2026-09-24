@@ -230,9 +230,7 @@ export default function AdminDashboardPage() {
       {/* Industrial Dark Sidebar */}
       <aside className={`admin-sidebar ${mobileSidebarOpen ? 'mobile-open' : ''}`}>
         <div className="admin-sidebar-header">
-          <div className="admin-logo-avatar">
-            <ShieldCheck style={{ width: 20, height: 20 }} />
-          </div>
+          <img src="/logo.png" alt="Get Jakes Logo" className="admin-logo-avatar" />
           <div>
             <div className="admin-sidebar-title">GET JAKES</div>
             <div className="admin-sidebar-subtitle">STUDIO ADMIN</div>
@@ -323,10 +321,11 @@ export default function AdminDashboardPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button
               onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-              className="enterprise-btn-secondary"
-              style={{ display: 'none' }}
+              className="enterprise-btn-secondary admin-mobile-toggle-btn"
+              title="Toggle Admin Menu"
+              aria-label="Toggle Admin Menu"
             >
-              <Menu style={{ width: 18, height: 18 }} />
+              {mobileSidebarOpen ? <X style={{ width: 18, height: 18 }} /> : <Menu style={{ width: 18, height: 18 }} />}
             </button>
             <div className="admin-breadcrumbs">
               <span>Admin Portal</span>

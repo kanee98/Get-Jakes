@@ -35,24 +35,21 @@
 }
 
 .admin-logo-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #0FB3B6 0%, #36DFE2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0F172A;
-  font-weight: 800;
-  box-shadow: 0 4px 12px rgba(54, 223, 226, 0.25);
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 14px rgba(54, 223, 226, 0.4);
+  flex-shrink: 0;
 }
 
 .admin-sidebar-title {
-  font-size: 0.95rem;
+  font-family: 'Hobo BT', 'Poppins', sans-serif !important;
+  font-size: 1.3rem;
   font-weight: 800;
   color: #F8FAFC;
   letter-spacing: -0.01em;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .admin-sidebar-subtitle {
@@ -450,6 +447,10 @@
   border-color: #94A3B8;
 }
 
+.admin-mobile-toggle-btn {
+  display: none;
+}
+
 /* Mobile responsive breakpoints for admin portal */
 @media (max-width: 1024px) {
   .admin-kpi-grid {
@@ -458,16 +459,23 @@
 }
 
 @media (max-width: 768px) {
+  .admin-mobile-toggle-btn {
+    display: inline-flex !important;
+  }
+  .admin-top-header {
+    padding: 0 16px;
+  }
   .admin-body-root {
     flex-direction: column;
   }
   .admin-sidebar {
     width: 100%;
     position: fixed;
-    top: 60px;
+    top: 64px;
     left: 0;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 64px);
     transform: translateX(-100%);
+    z-index: 1300;
   }
   .admin-sidebar.mobile-open {
     transform: translateX(0);
