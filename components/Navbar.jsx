@@ -12,30 +12,30 @@ export default function Navbar() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   return (
-    <header class="header">
-      <div class="container nav-wrapper">
-        <Link href="/" class="brand-logo" title="Get Jakes Home">
-          <img src="/logo.png" alt="Get Jakes Logo" class="brand-logo-img" />
-          <div class="brand-title">
+    <header className="header">
+      <div className="container nav-wrapper">
+        <Link href="/" className="brand-logo" title="Get Jakes Home">
+          <img src="/logo.png" alt="Get Jakes Logo" className="brand-logo-img" />
+          <div className="brand-title">
             GET JAKES
             <span>CAKE PROPS & TOPPERS</span>
           </div>
         </Link>
 
-        <ul class="nav-links">
-          <li><Link href="/" class="nav-link">Home</Link></li>
-          <li><Link href="/#shop" class="nav-link">Prop Catalog</Link></li>
-          <li><Link href="/#gallery" class="nav-link">Gallery</Link></li>
-          <li><Link href="/#customQuote" class="nav-link">Custom Props</Link></li>
-          <li><Link href="/my-orders" class="nav-link">My Orders</Link></li>
+        <ul className="nav-links">
+          <li><Link href="/" className="nav-link">Home</Link></li>
+          <li><Link href="/#shop" className="nav-link">Prop Catalog</Link></li>
+          <li><Link href="/#gallery" className="nav-link">Gallery</Link></li>
+          <li><Link href="/#customQuote" className="nav-link">Custom Props</Link></li>
+          <li><Link href="/my-orders" className="nav-link">My Orders</Link></li>
         </ul>
 
-        <div class="header-actions" style={{ position: 'relative' }}>
+        <div className="header-actions" style={{ position: 'relative' }}>
           {user ? (
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                class="btn-secondary"
+                className="btn-secondary"
                 style={{ padding: '8px 16px', fontSize: '0.85rem' }}
                 title="Account Menu"
               >
@@ -126,7 +126,7 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <Link href="/auth/signin" class="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+            <Link href="/auth/signin" className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
               <User style={{ width: 16, height: 16 }} />
               <span style={{ marginLeft: 4 }}>Sign In</span>
             </Link>
@@ -134,12 +134,12 @@ export default function Navbar() {
 
           <button
             onClick={() => setIsCartOpen(true)}
-            class="icon-btn"
+            className="icon-btn"
             title="Shopping Basket"
             style={{ position: 'relative' }}
           >
             <ShoppingBag style={{ width: 20, height: 20 }} />
-            <span class="cart-count">{cartCount}</span>
+            <span className="cart-count">{cartCount}</span>
           </button>
         </div>
       </div>

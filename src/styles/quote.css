@@ -1,28 +1,68 @@
-/* Custom Quote Calculator Box Styles */
-.quote-box {
-  background: linear-gradient(135deg, #FAF5EE 0%, #F5EDE4 100%);
-  border: 1px solid var(--border-gold);
+/* Custom Quote Section Styles */
+.quote-section {
+  padding: 80px 0;
+  background: var(--bg-secondary);
+}
+
+.quote-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.quote-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 48px;
-  margin-top: 60px;
   box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+  .quote-card {
+    padding: 28px 20px;
+  }
+}
+
+.quote-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.quote-title {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  color: var(--color-black);
+  margin: 12px 0 8px;
+}
+
+.quote-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.quote-form {
+  display: flex;
+  flex-direction: column;
 }
 
 .quote-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
+  gap: 24px;
 }
 
-.form-group {
-  margin-bottom: 20px;
+@media (max-width: 600px) {
+  .quote-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .form-label {
   display: block;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.88rem;
   margin-bottom: 8px;
   color: var(--text-primary);
 }
@@ -37,9 +77,37 @@
   font-size: 0.95rem;
   color: var(--text-primary);
   outline: none;
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .form-select:focus, .form-input:focus, .form-textarea:focus {
-  border-color: var(--color-brand);
+  border-color: var(--color-brand-dark);
+  box-shadow: 0 0 0 3px rgba(54, 223, 226, 0.2);
+}
+
+.quote-price-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-top: 12px;
+}
+
+@media (max-width: 576px) {
+  .quote-price-box {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    text-align: center;
+  }
+}
+
+.quote-price {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-black);
+  line-height: 1;
 }

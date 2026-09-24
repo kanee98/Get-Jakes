@@ -1,112 +1,140 @@
 /* Hero Section Styles */
-.hero {
+.hero-section {
   padding: 80px 0 60px;
-  background: radial-gradient(circle at 80% 20%, rgba(54, 223, 226, 0.22) 0%, transparent 50%),
-              radial-gradient(circle at 20% 80%, rgba(54, 223, 226, 0.12) 0%, transparent 50%);
+  background: radial-gradient(circle at 80% 20%, rgba(54, 223, 226, 0.18) 0%, transparent 50%),
+              radial-gradient(circle at 20% 80%, rgba(54, 223, 226, 0.10) 0%, transparent 50%);
 }
 
-.hero-grid {
+.hero-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.1fr 0.9fr;
   gap: 60px;
   align-items: center;
 }
 
-.hero-title {
-  font-family: var(--font-heading);
-  font-size: 3.5rem;
-  line-height: 1.1;
-  color: var(--text-primary);
-  margin-bottom: 20px;
+@media (max-width: 992px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
 }
 
-.hero-title em {
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: 3.4rem;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin: 20px 0;
+  font-weight: 800;
+}
+
+.hero-title span {
   font-style: normal;
   color: var(--color-black);
-  background: linear-gradient(120deg, rgba(54, 223, 226, 0.5) 0%, rgba(54, 223, 226, 0.15) 100%);
+  background: linear-gradient(120deg, rgba(54, 223, 226, 0.45) 0%, rgba(54, 223, 226, 0.15) 100%);
   padding: 2px 10px;
   border-radius: var(--radius-sm);
+  display: inline-block;
 }
 
 .hero-subtitle {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   color: var(--text-secondary);
   margin-bottom: 32px;
-  max-width: 520px;
+  max-width: 540px;
+  line-height: 1.6;
 }
 
-.hero-buttons {
+.hero-cta-group {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 40px;
+  flex-wrap: wrap;
 }
 
-.hero-stats {
+.hero-features {
   display: flex;
   gap: 32px;
   padding-top: 24px;
   border-top: 1px solid var(--border-color);
+  width: 100%;
+  flex-wrap: wrap;
 }
 
-.stat-item h3 {
-  font-family: var(--font-heading);
-  font-size: 1.8rem;
-  color: var(--color-brand);
-  font-weight: 700;
-}
-
-.stat-item p {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.hero-media {
-  position: relative;
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .hero-image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.hero-image-card {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   border: 4px solid #FFF;
+  background: var(--bg-card);
 }
 
-.hero-image-wrapper img {
+.hero-img {
   width: 100%;
-  height: 520px;
+  height: 480px;
   object-fit: cover;
   display: block;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero-image-wrapper:hover img {
+.hero-image-card:hover .hero-img {
   transform: scale(1.03);
 }
 
-.floating-badge-card {
+.hero-badge-overlay {
   position: absolute;
-  bottom: -24px;
-  left: -24px;
-  background: var(--bg-card);
+  bottom: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
-  padding: 16px 24px;
+  padding: 14px 20px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-gold);
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 10;
 }
 
-.floating-badge-card .icon-box {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--color-gold-light);
-  color: var(--color-gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.badge-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-brand-dark);
+  font-weight: 800;
+}
+
+.hero-badge-overlay strong {
+  font-size: 0.95rem;
+  color: var(--color-black);
+}
+
+.hero-price-tag {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-black);
+  margin-top: 2px;
 }

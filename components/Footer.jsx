@@ -4,21 +4,21 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer class="footer">
-      <div class="container footer-grid">
-        <div class="footer-col">
-          <div class="footer-brand">
-            <img src="/logo.png" alt="Get Jakes Logo" class="footer-logo" />
-            <span class="footer-brand-title">GET JAKES</span>
+    <footer className="footer">
+      <div className="container footer-grid">
+        <div className="footer-col">
+          <div className="footer-brand">
+            <img src="/logo.png" alt="Get Jakes Logo" className="footer-logo" />
+            <span className="footer-brand-title">GET JAKES</span>
           </div>
-          <p class="footer-desc">
+          <p className="footer-desc">
             Handcrafting high-density foam & polymer fondant dummy cakes, food photography studio props, and architectural pedestals for ballrooms, bakeries, and grand showcases worldwide.
           </p>
         </div>
 
-        <div class="footer-col">
-          <h4 class="footer-heading">Studio Navigation</h4>
-          <ul class="footer-links">
+        <div className="footer-col">
+          <h4 className="footer-heading">Studio Navigation</h4>
+          <ul className="footer-links">
             <li><Link href="/">Home Overview</Link></li>
             <li><Link href="/#shop">Prop Catalog</Link></li>
             <li><Link href="/#gallery">Studio Gallery</Link></li>
@@ -27,9 +27,9 @@ export default function Footer() {
           </ul>
         </div>
 
-        <div class="footer-col">
-          <h4 class="footer-heading">Prop Categories</h4>
-          <ul class="footer-links">
+        <div className="footer-col">
+          <h4 className="footer-heading">Prop Categories</h4>
+          <ul className="footer-links">
             <li><Link href="/#shop">Wedding Tier Dummies</Link></li>
             <li><Link href="/#shop">Food Photography Kits</Link></li>
             <li><Link href="/#shop">Architectural Pedestals</Link></li>
@@ -37,22 +37,22 @@ export default function Footer() {
           </ul>
         </div>
 
-        <div class="footer-col">
-          <h4 class="footer-heading">Craft Studio Support</h4>
-          <p class="footer-text">
+        <div className="footer-col">
+          <h4 className="footer-heading">Craft Studio Support</h4>
+          <p className="footer-text">
             <strong>Studio Hours:</strong> Mon - Sat: 9:00 AM - 6:00 PM EST
           </p>
-          <p class="footer-text">
+          <p className="footer-text">
             <strong>Direct Email:</strong> support@getjakes.com
           </p>
-          <p class="footer-text">
+          <p className="footer-text">
             <strong>Hotline:</strong> +1 (800) GET-JAKES
           </p>
         </div>
       </div>
 
-      <div class="footer-bottom">
-        <div class="container footer-bottom-inner">
+      <div className="footer-bottom">
+        <div className="container footer-bottom-inner">
           <p>&copy; {new Date().getFullYear()} Get Jakes Cake Props & Toppers LLC. All Rights Reserved.</p>
         </div>
       </div>
