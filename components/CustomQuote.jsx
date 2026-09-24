@@ -53,14 +53,12 @@ export default function CustomQuote() {
       <div className="container quote-container">
         <div className="quote-card">
           <div className="quote-header">
-            <span className="badge badge-brand" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <Calculator style={{ width: 14, height: 14 }} /> Instant Price Estimator
-            </span>
             <h2 className="quote-title">Configure Custom Bespoke Cake Prop</h2>
             <p className="quote-subtitle">
               Select tier count, finish texture, and dimensions to calculate an instant studio estimate.
             </p>
           </div>
+
 
           <form onSubmit={handleSubmit} className="quote-form">
             <div className="quote-grid">

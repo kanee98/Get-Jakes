@@ -30,9 +30,9 @@ export default function Footer() {
             />
             <div>
               <h3
-                className="footer-title"
+                className="footer-brand-title"
                 style={{
-                  fontFamily: 'var(--font-heading)',
+                  fontFamily: 'var(--font-brand) !important',
                   fontSize: '1.4rem',
                   color: '#FFFFFF',
                   margin: 0,
@@ -41,12 +41,12 @@ export default function Footer() {
               >
                 GET JAKES
               </h3>
-              <span style={{ fontSize: '0.65rem', letterSpacing: '0.18em', color: '#36DFE2', fontWeight: 800 }}>
+              <span style={{ fontSize: '0.65rem', letterSpacing: '0.18em', color: '#0FB3B6', fontWeight: 800 }}>
                 CAKE PROPS & TOPPERS
               </span>
             </div>
           </div>
-          <p style={{ fontSize: '0.88rem', color: '#AAA', marginBottom: '16px', maxWidth: '300px', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginBottom: '16px', maxWidth: '300px', lineHeight: 1.6 }}>
             Premium handcrafted dummy cakes, custom cake toppers, food photography props, and architectural event pedestals.
           </p>
         </div>
@@ -75,7 +75,7 @@ export default function Footer() {
         {/* Bank Payment Info Column */}
         <div>
           <h4 className="footer-title">Bank Payment Info</h4>
-          <p style={{ fontSize: '0.82rem', color: '#AAA', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '0.82rem', color: '#94A3B8', lineHeight: 1.6 }}>
             Direct transfers supported via Artisanal Commerce Bank.<br />
             <strong style={{ color: '#36DFE2' }}>Order Ref ID generated at checkout.</strong>
           </p>
@@ -85,13 +85,13 @@ export default function Footer() {
       {/* Footer Bottom with FusionLabz Credit */}
       <div className="container footer-bottom">
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
-          <p style={{ margin: 0, fontSize: '0.82rem', color: '#888' }}>
+          <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748B' }}>
             © {new Date().getFullYear()} Get Jakes Props & Toppers. All rights reserved.
           </p>
 
           <p
             className="fusionlabz-credit"
-            style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.88rem', color: '#BBB' }}
+            style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.88rem', color: '#CBD5E1' }}
           >
             Made with{' '}
             <Heart
@@ -126,3 +126,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+

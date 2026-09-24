@@ -9,49 +9,9 @@
 
 @font-face {
   font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-Thin.ttf') format('truetype');
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-ThinItalic.ttf') format('truetype');
-  font-weight: 100;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-ExtraLight.ttf') format('truetype');
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-ExtraLightItalic.ttf') format('truetype');
-  font-weight: 200;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
   src: url('/fonts/Poppins/Poppins-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-Italic.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
   font-display: swap;
 }
 
@@ -65,25 +25,9 @@
 
 @font-face {
   font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-MediumItalic.ttf') format('truetype');
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
   src: url('/fonts/Poppins/Poppins-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-SemiBoldItalic.ttf') format('truetype');
-  font-weight: 600;
-  font-style: italic;
   font-display: swap;
 }
 
@@ -95,83 +39,47 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-ExtraBold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-ExtraBoldItalic.ttf') format('truetype');
-  font-weight: 800;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-Black.ttf') format('truetype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Poppins';
-  src: url('/fonts/Poppins/Poppins-BlackItalic.ttf') format('truetype');
-  font-weight: 900;
-  font-style: italic;
-  font-display: swap;
-}
-
 :root {
-  --font-heading: 'Hobo BT', 'Poppins', sans-serif;
+  /* Brand title uses Hobo BT exclusively. All headings use Outfit / Poppins */
+  --font-brand: 'Hobo BT', 'Poppins', sans-serif;
+  --font-heading: 'Outfit', 'Poppins', system-ui, -apple-system, sans-serif;
   --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
-  --font-script: 'Hobo BT', 'Poppins', sans-serif;
   
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F4FBFB;
+  /* Exact Logo Palette: Black (#0A0D12), White (#FFFFFF), Logo Turquoise (#36DFE2) */
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #FFFFFF;
   --bg-card: #FFFFFF;
-  --bg-glass: rgba(255, 255, 255, 0.9);
-  --bg-dark: #0F1415;
+  --bg-glass: rgba(255, 255, 255, 0.95);
+  --bg-dark: #0A0D12;
   
+  /* Exact Logo Turquoise Cyan */
   --color-brand: #36DFE2;
-  --color-brand-hover: #1cc6c9;
+  --color-brand-hover: #1ECBD0;
   --color-brand-dark: #0FB3B6;
-  --color-brand-light: #EBFBFB;
-  --color-brand-alpha: rgba(54, 223, 226, 0.18);
+  --color-brand-light: rgba(54, 223, 226, 0.1);
+  --color-brand-border: rgba(54, 223, 226, 0.35);
   
-  --color-black: #0F1415;
-  --color-black-hover: #22282B;
-  --color-gold: #36DFE2;
-  --color-gold-light: #EBFBFB;
-  --color-accent: #36DFE2;
-  
-  --text-primary: #0F1415;
-  --text-secondary: #3D484B;
-  --text-muted: #6B7C80;
+  --text-primary: #0A0D12;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
   --text-light: #FFFFFF;
   
-  --border-color: rgba(54, 223, 226, 0.22);
-  --border-gold: rgba(54, 223, 226, 0.35);
-  --border-dark: rgba(15, 20, 21, 0.12);
+  --border-color: rgba(10, 13, 18, 0.08);
+  --border-brand: rgba(54, 223, 226, 0.35);
   
-  --shadow-sm: 0 4px 12px rgba(15, 20, 21, 0.04);
-  --shadow-md: 0 8px 24px rgba(54, 223, 226, 0.15);
-  --shadow-lg: 0 16px 40px rgba(15, 20, 21, 0.08);
-  --shadow-brand: 0 8px 25px rgba(54, 223, 226, 0.35);
-  --shadow-gold: 0 8px 25px rgba(54, 223, 226, 0.35);
+  --shadow-sm: 0 4px 14px rgba(10, 13, 18, 0.03);
+  --shadow-md: 0 10px 30px rgba(10, 13, 18, 0.06);
+  --shadow-lg: 0 20px 48px rgba(10, 13, 18, 0.09);
+  --shadow-brand: 0 8px 24px rgba(54, 223, 226, 0.28);
   
   --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
   --radius-full: 9999px;
   
   --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-normal: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-3d: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -182,6 +90,7 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg-primary);
 }
 
 body {
@@ -190,18 +99,28 @@ body {
   color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6,
+/* Hobo BT font ONLY for the brand logo/title */
 .brand-title,
-.footer-title,
-.loader-title,
-.admin-brand,
+.footer-brand-title,
+.admin-sidebar-title {
+  font-family: var(--font-brand) !important;
+  letter-spacing: -0.01em;
+}
+
+/* All headings use Outfit / Poppins */
+h1, h2, h3, h4, h5, h6,
 .section-title,
 .hero-title,
-.font-serif {
-  font-family: var(--font-heading);
-  letter-spacing: -0.01em;
+.footer-title,
+.quote-title,
+.gallery-title,
+.product-title {
+  font-family: var(--font-heading) !important;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
 }
 
 button {
@@ -222,87 +141,74 @@ a {
   padding: 0 24px;
 }
 
+/* Logo Turquoise Micro-Badges */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px;
+  padding: 6px 14px;
   border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.12em;
   font-family: var(--font-heading);
 }
 
-.badge-brand {
-  background: rgba(54, 223, 226, 0.18);
-  color: var(--color-black);
-  border: 1px solid rgba(54, 223, 226, 0.4);
-}
-
+.badge-brand,
 .badge-gold {
-  background: rgba(54, 223, 226, 0.15);
-  color: var(--color-black);
-  border: 1px solid rgba(54, 223, 226, 0.3);
+  background: rgba(54, 223, 226, 0.12);
+  color: #0FB3B6;
+  border: 1px solid rgba(54, 223, 226, 0.35);
 }
 
+/* Primary Button: Deep Black or Logo Turquoise */
 .btn-primary {
-  background: var(--color-black);
-  color: var(--text-light);
-  padding: 14px 28px;
+  background: #0A0D12;
+  color: #FFFFFF;
+  padding: 14px 32px;
   border-radius: var(--radius-full);
   font-weight: 700;
-  font-size: 0.95rem;
-  box-shadow: var(--shadow-md);
-  border: 2px solid transparent;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 24px rgba(10, 13, 18, 0.15);
+  border: none;
+  transition: all var(--transition-3d);
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 
 .btn-primary:hover {
-  background: #000000;
-  border-color: var(--color-brand);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(54, 223, 226, 0.35);
-}
-
-.btn-gold, .btn-cyan {
-  background: var(--color-brand);
-  color: var(--color-black);
-  padding: 14px 28px;
-  border-radius: var(--radius-full);
-  font-weight: 800;
-  box-shadow: var(--shadow-brand);
-  transition: all var(--transition-fast);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-gold:hover, .btn-cyan:hover {
-  transform: translateY(-2px);
-  background: var(--color-brand-hover);
-  box-shadow: 0 10px 30px rgba(54, 223, 226, 0.45);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 14px 35px rgba(54, 223, 226, 0.35);
+  background: #36DFE2;
+  color: #0A0D12;
 }
 
 .btn-secondary {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  padding: 12px 24px;
+  background: #FFFFFF;
+  color: #0A0D12;
+  border: 1px solid rgba(10, 13, 18, 0.12);
+  padding: 14px 28px;
   border-radius: var(--radius-full);
   font-weight: 600;
-  transition: all var(--transition-fast);
+  font-size: 0.92rem;
+  transition: all var(--transition-3d);
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
 
 .btn-secondary:hover {
-  background: #FFF;
-  border-color: var(--color-brand);
-  color: var(--color-brand);
+  background: #F8FAFC;
+  border-color: #36DFE2;
+  color: #0FB3B6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(54, 223, 226, 0.2);
 }
+
+
+
+

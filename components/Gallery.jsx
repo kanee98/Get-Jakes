@@ -12,7 +12,6 @@ export default function Gallery() {
     <section id="gallery" className="section gallery-section">
       <div className="container">
         <div className="section-header">
-          <span className="badge badge-gold">Studio Portfolio</span>
           <h2 className="section-title">Get Jakes In Action</h2>
           <p className="section-subtitle">
             See how master event planners, food stylists, and luxury bakeries showcase Get Jakes prop installations.

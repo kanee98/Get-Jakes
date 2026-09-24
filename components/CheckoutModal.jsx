@@ -82,9 +82,6 @@ export default function CheckoutModal() {
         </button>
 
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div className="badge badge-gold" style={{ marginBottom: 8 }}>
-            Payment Gateway - Direct Wire
-          </div>
           <h2 style={{ fontSize: '1.8rem', color: 'var(--color-brand)', margin: 0 }}>
             Bank Details & Order Placement
           </h2>

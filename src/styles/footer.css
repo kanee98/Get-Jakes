@@ -1,9 +1,9 @@
-/* Footer Styles */
+/* Footer Styles (Black, White, Logo Blue) */
 .footer {
-  background: #0F1415;
+  background: #0A0D12;
   color: #FFFFFF;
-  padding: 70px 0 30px;
-  border-top: 1px solid rgba(54, 223, 226, 0.15);
+  padding: 75px 0 35px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer-grid {
@@ -37,7 +37,7 @@
   margin-bottom: 16px;
 }
 
-/* Crucial: Constrain logo dimensions so it never overflows or scales up */
+/* Constrain logo dimensions */
 .footer-logo {
   width: 48px !important;
   height: 48px !important;
@@ -51,28 +51,28 @@
 }
 
 .footer-brand-title {
-  font-family: var(--font-heading);
+  font-family: var(--font-brand) !important;
   font-size: 1.4rem;
   font-weight: 800;
   color: #FFFFFF;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+}
+
+.footer-title {
+  font-family: var(--font-heading) !important;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #36DFE2;
+  margin-bottom: 18px;
+  letter-spacing: 0.02em;
 }
 
 .footer-desc {
   font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: #94A3B8;
   line-height: 1.6;
   max-width: 380px;
   margin: 0;
-}
-
-.footer-heading {
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--color-brand);
-  margin-bottom: 18px;
-  letter-spacing: 0.02em;
 }
 
 .footer-links {
@@ -85,17 +85,17 @@
 }
 
 .footer-links a {
-  color: rgba(255, 255, 255, 0.75);
+  color: #94A3B8;
   font-size: 0.9rem;
   transition: color var(--transition-fast);
 }
 
 .footer-links a:hover {
-  color: var(--color-brand);
+  color: #36DFE2;
 }
 
 .footer-text {
-  color: rgba(255, 255, 255, 0.75);
+  color: #94A3B8;
   font-size: 0.88rem;
   margin-bottom: 10px;
   line-height: 1.5;
@@ -106,7 +106,7 @@
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 24px;
   margin-top: 40px;
 }
@@ -116,9 +116,13 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: #64748B;
 }
 
 .footer-bottom-inner p {
   margin: 0;
 }
+
+
+
+

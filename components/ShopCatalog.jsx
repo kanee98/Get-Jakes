@@ -36,7 +36,6 @@ export default function ShopCatalog() {
     <section id="shop" className="section shop-section">
       <div className="container">
         <div className="section-header">
-          <span className="badge badge-brand">Prop & Topper Catalog</span>
           <h2 className="section-title">Artisanal Cake Dummies & Risers</h2>
           <p className="section-subtitle">
             Explore our curated catalog of multi-tier faux wedding cakes, food photo sets, and studio pedestals.
@@ -91,30 +90,41 @@ export default function ShopCatalog() {
             {filtered.map((p) => (
               <div key={p.id} className="product-card">
                 <div className="product-image-container">
-                  <span className={`badge ${p.tag === 'Bestseller' ? 'badge-gold' : 'badge-brand'} product-tag`}>
-                    {p.tag}
-                  </span>
                   <img src={p.image} alt={p.name} loading="lazy" />
-                  <button onClick={() => setQuickViewProduct(p)} className="quick-view-btn">
-                    <Eye style={{ width: 14, height: 14, verticalAlign: 'middle', marginRight: 4 }} /> Quick View
+                  <button onClick={() => setQuickViewProduct(p)} className="quick-view-overlay-btn">
+                    <Eye style={{ width: 14, height: 14 }} /> Quick View
                   </button>
                 </div>
                 <div className="product-info">
                   <div className="product-rating">
-                    <Star style={{ width: 14, height: 14, fill: 'var(--color-brand)', color: 'var(--color-brand)' }} />
+                    <Star style={{ width: 14, height: 14, fill: '#0FB3B6', color: '#0FB3B6' }} />
                     <span>{p.rating} ({p.reviewsCount} reviews)</span>
                   </div>
                   <h3 className="product-title">{p.name}</h3>
                   <p className="product-desc">{p.description}</p>
-                  <div className="product-bottom">
+                  
+                  <div className="product-price-row">
                     <div>
                       <span className="product-price">${parseFloat(p.price).toFixed(2)}</span>
                       {p.originalPrice && (
                         <span className="product-price-orig">${parseFloat(p.originalPrice).toFixed(2)}</span>
                       )}
                     </div>
-                    <button onClick={() => addToCart(p)} className="add-cart-btn" title="Add to Prop Basket">
-                      <Plus style={{ width: 18, height: 18 }} />
+                  </div>
+
+                  <div className="product-card-actions">
+                    <button
+                      onClick={() => addToCart(p)}
+                      className="add-basket-btn"
+                    >
+                      Add to Basket
+                    </button>
+                    <button
+                      onClick={() => setQuickViewProduct(p)}
+                      className="card-quickview-icon-btn"
+                      title="Quick View Specs"
+                    >
+                      <Eye style={{ width: 16, height: 16 }} />
                     </button>
                   </div>
                 </div>
@@ -127,8 +137,8 @@ export default function ShopCatalog() {
       {/* Quick View Modal */}
       {quickViewProduct && (
         <div className="modal-overlay open">
-          <div className="modal-content" style={{ padding: 32, maxWidth: 720 }}>
-            <button onClick={() => setQuickViewProduct(null)} className="modal-close-btn">
+          <div className="modal-content" style={{ padding: 32, maxWidth: 720, background: '#FFFFFF', color: '#0A0D12', border: '1px solid rgba(10,13,18,0.1)', boxShadow: '0 20px 50px rgba(10,13,18,0.15)' }}>
+            <button onClick={() => setQuickViewProduct(null)} className="modal-close-btn" style={{ color: '#0A0D12' }}>
               <X style={{ width: 20, height: 20 }} />
             </button>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'center' }}>
@@ -138,19 +148,18 @@ export default function ShopCatalog() {
                 style={{ width: '100%', borderRadius: 'var(--radius-md)', objectFit: 'cover' }}
               />
               <div>
-                <span className="badge badge-brand" style={{ marginBottom: 8 }}>{quickViewProduct.tag}</span>
-                <h3 style={{ fontSize: '1.4rem', color: 'var(--color-black)', margin: '8px 0' }}>
+                <h3 style={{ fontSize: '1.4rem', color: '#0A0D12', margin: '0 0 8px 0', fontFamily: 'var(--font-heading)' }}>
                   {quickViewProduct.name}
                 </h3>
-                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-black)', marginBottom: 12 }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0FB3B6', marginBottom: 12 }}>
                   ${parseFloat(quickViewProduct.price).toFixed(2)}
                 </div>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: 16 }}>
+                <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: 16 }}>
                   {quickViewProduct.description}
                 </p>
 
                 {quickViewProduct.specs && (
-                  <div style={{ background: 'var(--bg-secondary)', padding: 12, borderRadius: 'var(--radius-sm)', marginBottom: 20, fontSize: '0.85rem' }}>
+                  <div style={{ background: '#F8FAFC', padding: 12, borderRadius: 'var(--radius-sm)', marginBottom: 20, fontSize: '0.85rem', color: '#334155', border: '1px solid rgba(10,13,18,0.06)' }}>
                     <div><strong>Height:</strong> {quickViewProduct.specs.height}</div>
                     <div><strong>Tiers:</strong> {quickViewProduct.specs.tiers}</div>
                     <div><strong>Material:</strong> {quickViewProduct.specs.material}</div>
@@ -165,7 +174,7 @@ export default function ShopCatalog() {
                   className="btn-primary"
                   style={{ width: '100%', justifyContent: 'center' }}
                 >
-                  <Plus style={{ width: 18, height: 18 }} /> Add to Prop Basket
+                  Add to Prop Basket
                 </button>
               </div>
             </div>
@@ -175,3 +184,7 @@ export default function ShopCatalog() {
     </section>
   );
 }
+
+
+
+
