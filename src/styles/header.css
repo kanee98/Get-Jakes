@@ -15,6 +15,7 @@
   align-items: center;
   justify-content: space-between;
   height: 84px;
+  position: relative;
 }
 
 .brand-logo {
@@ -24,8 +25,8 @@
 }
 
 .brand-logo-img {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
   border-radius: 50%;
   box-shadow: 0 4px 14px rgba(54, 223, 226, 0.35);
@@ -36,21 +37,9 @@
   transform: scale(1.08) rotate(3deg);
 }
 
-.brand-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(54, 223, 226, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-black);
-  box-shadow: 0 4px 12px rgba(54, 223, 226, 0.25);
-}
-
 .brand-title {
   font-family: var(--font-heading);
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   color: var(--color-black);
   font-weight: 800;
   line-height: 1.1;
@@ -60,9 +49,9 @@
 .brand-title span {
   display: block;
   font-family: var(--font-body);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   color: #1cc6c9;
   font-weight: 800;
 }
@@ -70,8 +59,10 @@
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 28px;
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-link {
@@ -101,12 +92,12 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .icon-btn {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -115,6 +106,8 @@
   color: var(--text-primary);
   position: relative;
   transition: all var(--transition-fast);
+  border: none;
+  cursor: pointer;
 }
 
 .icon-btn:hover {
@@ -137,4 +130,54 @@
   align-items: center;
   justify-content: center;
   border: 2px solid #FFF;
+}
+
+.mobile-nav-toggle {
+  display: none;
+}
+
+/* Mobile responsive navigation bar styles */
+@media (max-width: 768px) {
+  .mobile-nav-toggle {
+    display: flex;
+  }
+
+  .user-name-text {
+    display: none;
+  }
+
+  .brand-title span {
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 84px;
+    left: 0;
+    width: 100%;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px 24px;
+    gap: 8px;
+    display: none;
+    z-index: 1200;
+  }
+
+  .nav-links.mobile-open {
+    display: flex;
+  }
+
+  .nav-link {
+    padding: 12px 0;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
 }

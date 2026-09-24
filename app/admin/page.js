@@ -3,6 +3,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   ShieldCheck,
   LayoutDashboard,
@@ -17,11 +18,18 @@ import {
   X,
   Landmark,
   Search,
-  AlertTriangle
+  Menu,
+  DollarSign,
+  Clock,
+  ExternalLink,
+  LogOut,
+  ChevronRight,
+  TrendingUp,
+  MessageSquareQuote
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
-  const { user, loading } = useAuth();
+  const { user, logout, loading } = useAuth();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState('overview');
@@ -29,6 +37,7 @@ export default function AdminDashboardPage() {
   const [orders, setOrders] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Search & Filter States
   const [productSearch, setProductSearch] = useState('');
@@ -93,8 +102,8 @@ export default function AdminDashboardPage() {
 
   if (loading || !user || user.role !== 'admin') {
     return (
-      <div className="container" style={{ padding: '80px 20px', textAlign: 'center' }}>
-        <p style={{ color: 'var(--text-muted)' }}>Verifying admin permissions...</p>
+      <div style={{ padding: '100px 20px', textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
+        <p style={{ color: '#64748B', fontWeight: 600 }}>Verifying enterprise admin permissions...</p>
       </div>
     );
   }
@@ -102,7 +111,7 @@ export default function AdminDashboardPage() {
   // Calculate Metrics
   const totalRevenue = orders.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0);
   const pendingOrders = orders.filter((o) => o.status?.includes('Awaiting')).length;
-  const verifiedOrders = orders.filter((o) => o.status?.includes('Verified')).length;
+  const verifiedOrders = orders.filter((o) => o.status?.includes('Verified') || o.status?.includes('Production')).length;
 
   // Product Actions
   const handleOpenAddProduct = () => {
@@ -172,18 +181,18 @@ export default function AdminDashboardPage() {
     if (res.ok) {
       setIsProductModalOpen(false);
       loadData();
-      alert(editingProductId ? 'Prop updated in database!' : 'New prop added to MySQL!');
+      alert(editingProductId ? 'Prop updated successfully!' : 'New prop added to inventory database!');
     } else {
       alert('Failed to save product.');
     }
   };
 
   const handleDeleteProduct = async (id) => {
-    if (!confirm('Are you sure you want to delete this prop from MySQL?')) return;
+    if (!confirm('Are you sure you want to remove this prop from the database?')) return;
     const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
     if (res.ok) {
       loadData();
-      alert('Prop deleted from database.');
+      alert('Prop deleted successfully.');
     }
   };
 
@@ -197,7 +206,6 @@ export default function AdminDashboardPage() {
 
     if (res.ok) {
       loadData();
-      alert(`Order status set to ${newStatus}.`);
     }
   };
 
@@ -218,349 +226,575 @@ export default function AdminDashboardPage() {
   });
 
   return (
-    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex' }}>
-      {/* Dedicated Admin Sidebar */}
-      <aside
-        style={{
-          width: 260,
-          background: 'var(--bg-card)',
-          borderRight: '1px solid var(--border-color)',
-          padding: 24,
-          display: 'flex',
-          flexDirection: 'column'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
-          <img src="/logo.png" alt="Get Jakes Logo" style={{ width: 38, height: 38, borderRadius: '50%' }} />
+    <div className="admin-body-root">
+      {/* Industrial Dark Sidebar */}
+      <aside className={`admin-sidebar ${mobileSidebarOpen ? 'mobile-open' : ''}`}>
+        <div className="admin-sidebar-header">
+          <div className="admin-logo-avatar">
+            <ShieldCheck style={{ width: 20, height: 20 }} />
+          </div>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800 }}>GET JAKES ADMIN</h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Dedicated Studio Portal</span>
+            <div className="admin-sidebar-title">GET JAKES</div>
+            <div className="admin-sidebar-subtitle">STUDIO ADMIN</div>
           </div>
         </div>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 8, flexGrow: 1 }}>
+        <div className="admin-nav-group">
+          <div className="admin-nav-label">Studio Workspace</div>
           <button
-            onClick={() => setActiveTab('overview')}
-            className={`admin-tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
-            style={{ width: '100%', textAlign: 'left', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}
+            onClick={() => { setActiveTab('overview'); setMobileSidebarOpen(false); }}
+            className={`admin-nav-item ${activeTab === 'overview' ? 'active' : ''}`}
           >
-            <LayoutDashboard style={{ width: 18, height: 18 }} /> Studio Overview
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <LayoutDashboard style={{ width: 18, height: 18 }} /> Overview
+            </span>
           </button>
-          <button
-            onClick={() => setActiveTab('products')}
-            className={`admin-tab-btn ${activeTab === 'products' ? 'active' : ''}`}
-            style={{ width: '100%', textAlign: 'left', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}
-          >
-            <Package style={{ width: 18, height: 18 }} /> Prop Catalog ({products.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('orders')}
-            className={`admin-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
-            style={{ width: '100%', textAlign: 'left', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}
-          >
-            <Receipt style={{ width: 18, height: 18 }} /> Orders & Wires ({orders.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`admin-tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
-            style={{ width: '100%', textAlign: 'left', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}
-          >
-            <Settings style={{ width: 18, height: 18 }} /> Bank & Store Settings
-          </button>
-        </nav>
 
-        <div style={{ paddingTop: 20, borderTop: '1px solid var(--border-color)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          Logged in as <strong>{user.email}</strong>
+          <button
+            onClick={() => { setActiveTab('products'); setMobileSidebarOpen(false); }}
+            className={`admin-nav-item ${activeTab === 'products' ? 'active' : ''}`}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Package style={{ width: 18, height: 18 }} /> Prop Catalog
+            </span>
+            <span className="nav-badge">{products.length}</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('orders'); setMobileSidebarOpen(false); }}
+            className={`admin-nav-item ${activeTab === 'orders' ? 'active' : ''}`}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Receipt style={{ width: 18, height: 18 }} /> Wire Orders
+            </span>
+            <span className="nav-badge">{orders.length}</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('quotes'); setMobileSidebarOpen(false); }}
+            className={`admin-nav-item ${activeTab === 'quotes' ? 'active' : ''}`}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <MessageSquareQuote style={{ width: 18, height: 18 }} /> Custom Quotes
+            </span>
+            <span className="nav-badge">{quotes.length}</span>
+          </button>
+
+          <div className="admin-nav-label" style={{ marginTop: 16 }}>Management</div>
+          <button
+            onClick={() => { setActiveTab('settings'); setMobileSidebarOpen(false); }}
+            className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Settings style={{ width: 18, height: 18 }} /> Bank & Store Settings
+            </span>
+          </button>
+
+          <div className="admin-nav-label" style={{ marginTop: 16 }}>Storefront</div>
+          <Link href="/" className="admin-nav-item" target="_blank">
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <ExternalLink style={{ width: 18, height: 18 }} /> Live Website
+            </span>
+          </Link>
+        </div>
+
+        {/* User Account Info */}
+        <div className="admin-sidebar-user">
+          <div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#F8FAFC' }}>
+              {user.fullName || 'Admin User'}
+            </div>
+            <div style={{ fontSize: '0.72rem', color: '#64748B' }}>{user.email}</div>
+          </div>
+          <button
+            onClick={() => logout()}
+            title="Sign Out"
+            style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: 4 }}
+          >
+            <LogOut style={{ width: 18, height: 18 }} />
+          </button>
         </div>
       </aside>
 
-      {/* Admin Main Body */}
-      <main style={{ flexGrow: 1, padding: 36, overflowY: 'auto' }}>
-        {loadingData ? (
-          <p style={{ color: 'var(--text-muted)' }}>Loading studio database metrics...</p>
-        ) : (
-          <>
-            {/* 1. OVERVIEW TAB */}
-            {activeTab === 'overview' && (
-              <div>
-                <div style={{ marginBottom: 28 }}>
-                  <h1 style={{ fontSize: '2rem', color: 'var(--color-black)', margin: 0 }}>Studio Dashboard Overview</h1>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: 4 }}>
-                    Live MySQL metrics for bank wire transactions, prop catalog inventory, and custom quote inquiries.
-                  </p>
-                </div>
+      {/* Main Content Area */}
+      <div className="admin-content-area">
+        {/* Top Header Bar */}
+        <header className="admin-top-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button
+              onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+              className="enterprise-btn-secondary"
+              style={{ display: 'none' }}
+            >
+              <Menu style={{ width: 18, height: 18 }} />
+            </button>
+            <div className="admin-breadcrumbs">
+              <span>Admin Portal</span>
+              <ChevronRight style={{ width: 14, height: 14 }} />
+              <strong>
+                {activeTab === 'overview' && 'Studio Overview'}
+                {activeTab === 'products' && 'Prop Catalog'}
+                {activeTab === 'orders' && 'Bank Wire Orders'}
+                {activeTab === 'quotes' && 'Custom Quote Requests'}
+                {activeTab === 'settings' && 'Bank & Store Settings'}
+              </strong>
+            </div>
+          </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 32 }}>
-                  <div className="admin-stat-card">
-                    <span className="stat-label">Total Wire Revenue</span>
-                    <div className="stat-value" style={{ color: 'var(--color-brand)' }}>
-                      ${totalRevenue.toFixed(2)}
+          <div className="admin-top-actions">
+            <button onClick={handleOpenAddProduct} className="enterprise-btn-primary">
+              <Plus style={{ width: 16, height: 16 }} /> Create Prop
+            </button>
+          </div>
+        </header>
+
+        {/* Main Workspace Canvas */}
+        <main className="admin-workspace">
+          {loadingData ? (
+            <p style={{ color: '#64748B', fontWeight: 600 }}>Loading studio telemetry data...</p>
+          ) : (
+            <>
+              {/* 1. OVERVIEW TAB */}
+              {activeTab === 'overview' && (
+                <div>
+                  <div className="admin-page-header">
+                    <div className="admin-page-title">
+                      <h1>Studio Operations Telemetry</h1>
+                      <p>Real-time metrics for bank wire transfers, active prop catalog, and bespoke quote inquiries.</p>
                     </div>
                   </div>
-                  <div className="admin-stat-card">
-                    <span className="stat-label">Awaiting Verification</span>
-                    <div className="stat-value" style={{ color: '#D97706' }}>
-                      {pendingOrders}
+
+                  {/* KPI Metrics Cards */}
+                  <div className="admin-kpi-grid">
+                    <div className="admin-kpi-card">
+                      <div className="kpi-header">
+                        <span className="kpi-title">Total Wire Revenue</span>
+                        <div className="kpi-icon-wrapper brand">
+                          <DollarSign style={{ width: 20, height: 20 }} />
+                        </div>
+                      </div>
+                      <div className="kpi-value">${totalRevenue.toFixed(2)}</div>
+                      <div className="kpi-footer">
+                        <span className="kpi-trend up">
+                          <TrendingUp style={{ width: 14, height: 14 }} /> +14.2%
+                        </span>
+                        <span>vs previous period</span>
+                      </div>
+                    </div>
+
+                    <div className="admin-kpi-card">
+                      <div className="kpi-header">
+                        <span className="kpi-title">Awaiting Verification</span>
+                        <div className="kpi-icon-wrapper amber">
+                          <Clock style={{ width: 20, height: 20 }} />
+                        </div>
+                      </div>
+                      <div className="kpi-value">{pendingOrders}</div>
+                      <div className="kpi-footer">
+                        <span className="kpi-trend warning">Action required</span>
+                        <span>pending bank wires</span>
+                      </div>
+                    </div>
+
+                    <div className="admin-kpi-card">
+                      <div className="kpi-header">
+                        <span className="kpi-title">Verified & Production</span>
+                        <div className="kpi-icon-wrapper emerald">
+                          <CheckCircle2 style={{ width: 20, height: 20 }} />
+                        </div>
+                      </div>
+                      <div className="kpi-value">{verifiedOrders}</div>
+                      <div className="kpi-footer">
+                        <span className="kpi-trend up">Active workflow</span>
+                      </div>
+                    </div>
+
+                    <div className="admin-kpi-card">
+                      <div className="kpi-header">
+                        <span className="kpi-title">Active Prop Catalog</span>
+                        <div className="kpi-icon-wrapper indigo">
+                          <Package style={{ width: 20, height: 20 }} />
+                        </div>
+                      </div>
+                      <div className="kpi-value">{products.length}</div>
+                      <div className="kpi-footer">
+                        <span>Across 4 categories</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="admin-stat-card">
-                    <span className="stat-label">Verified & In Production</span>
-                    <div className="stat-value" style={{ color: '#10B981' }}>
-                      {verifiedOrders}
+
+                  {/* Recent Quotes Table Container */}
+                  <div className="admin-card-container">
+                    <div className="admin-card-title-bar">
+                      <h3>Recent Custom Prop Quote Requests</h3>
+                      <button onClick={() => setActiveTab('quotes')} className="enterprise-btn-secondary">
+                        View All Quotes
+                      </button>
                     </div>
-                  </div>
-                  <div className="admin-stat-card">
-                    <span className="stat-label">Active Catalog Props</span>
-                    <div className="stat-value">{products.length}</div>
+
+                    {quotes.length === 0 ? (
+                      <p style={{ padding: 24, color: '#64748B', margin: 0, fontSize: '0.9rem' }}>
+                        No bespoke quote inquiries received yet.
+                      </p>
+                    ) : (
+                      <div className="table-responsive-wrapper">
+                        <table className="enterprise-table">
+                          <thead>
+                            <tr>
+                              <th>Inquiry ID</th>
+                              <th>Contact Email / Phone</th>
+                              <th>Tiers</th>
+                              <th>Finish Texture</th>
+                              <th>Estimated Price</th>
+                              <th>Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {quotes.slice(0, 5).map((q) => (
+                              <tr key={q.id}>
+                                <td><code style={{ background: '#F1F5F9', padding: '2px 8px', borderRadius: 4, fontWeight: 700, fontSize: '0.82rem' }}>#{q.id}</code></td>
+                                <td><strong style={{ color: '#0F172A' }}>{q.contact_info}</strong></td>
+                                <td>{q.tiers_count} Tiers</td>
+                                <td><span className="status-pill blue">{q.finish_texture}</span></td>
+                                <td><strong style={{ color: '#0F172A' }}>${parseFloat(q.estimated_price).toFixed(2)}</strong></td>
+                                <td>{new Date(q.created_at).toLocaleDateString()}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </div>
+              )}
 
-                {/* Quotes Table */}
-                <div className="admin-card" style={{ padding: 24 }}>
-                  <h3 style={{ fontSize: '1.2rem', color: 'var(--color-black)', marginBottom: 16 }}>
-                    Recent Custom Prop Quote Requests ({quotes.length})
-                  </h3>
-                  {quotes.length === 0 ? (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No bespoke quote inquiries yet.</p>
-                  ) : (
-                    <table className="admin-table">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Contact Info</th>
-                          <th>Tiers Count</th>
-                          <th>Finish Texture</th>
-                          <th>Estimated Price</th>
-                          <th>Submitted Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {quotes.slice(0, 5).map((q) => (
-                          <tr key={q.id}>
-                            <td><strong>#{q.id}</strong></td>
-                            <td><strong>{q.contact_info}</strong></td>
-                            <td>{q.tiers_count} Tiers</td>
-                            <td><span className="badge badge-brand">{q.finish_texture}</span></td>
-                            <td><strong>${parseFloat(q.estimated_price).toFixed(2)}</strong></td>
-                            <td>{new Date(q.created_at).toLocaleDateString()}</td>
+              {/* 2. PROP CATALOG TAB */}
+              {activeTab === 'products' && (
+                <div>
+                  <div className="admin-page-header">
+                    <div className="admin-page-title">
+                      <h1>Prop Catalog Management</h1>
+                      <p>Create, update, or deprecate dummy cake props and architectural pedestals in MySQL.</p>
+                    </div>
+                    <button onClick={handleOpenAddProduct} className="enterprise-btn-primary">
+                      <Plus style={{ width: 16, height: 16 }} /> Add New Cake Prop
+                    </button>
+                  </div>
+
+                  <div className="admin-card-container">
+                    <div className="admin-filter-bar">
+                      <div className="search-field">
+                        <Search style={{ width: 16, height: 16, color: '#94A3B8' }} />
+                        <input
+                          type="text"
+                          placeholder="Search by prop name or category..."
+                          value={productSearch}
+                          onChange={(e) => setProductSearch(e.target.value)}
+                        />
+                      </div>
+                      <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600 }}>
+                        Showing {filteredProducts.length} of {products.length} Props
+                      </span>
+                    </div>
+
+                    <div className="table-responsive-wrapper">
+                      <table className="enterprise-table">
+                        <thead>
+                          <tr>
+                            <th>Preview</th>
+                            <th>Prop Title</th>
+                            <th>Category</th>
+                            <th>Price ($)</th>
+                            <th>Badge Tag</th>
+                            <th>Dimensions & Material</th>
+                            <th>Actions</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* 2. PROP CATALOG TAB */}
-            {activeTab === 'products' && (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                  <div>
-                    <h1 style={{ fontSize: '2rem', color: 'var(--color-black)', margin: 0 }}>Prop Catalog Management</h1>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: 4 }}>
-                      Create, modify, or remove cake props and display pedestals directly in MySQL database.
-                    </p>
+                        </thead>
+                        <tbody>
+                          {filteredProducts.map((p) => (
+                            <tr key={p.id}>
+                              <td>
+                                <img
+                                  src={p.image}
+                                  alt={p.name}
+                                  style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover', border: '1px solid #E2E8F0' }}
+                                />
+                              </td>
+                              <td><strong style={{ color: '#0F172A', fontSize: '0.92rem' }}>{p.name}</strong></td>
+                              <td><span className="status-pill blue">{p.category}</span></td>
+                              <td><strong style={{ color: '#0F172A' }}>${parseFloat(p.price).toFixed(2)}</strong></td>
+                              <td><span className="status-pill amber">{p.tag}</span></td>
+                              <td style={{ fontSize: '0.82rem', color: '#64748B' }}>
+                                {p.specs?.tiers} • {p.specs?.height}
+                              </td>
+                              <td>
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                  <button onClick={() => handleEditProduct(p)} className="enterprise-btn-secondary">
+                                    <Edit style={{ width: 14, height: 14 }} /> Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteProduct(p.id)}
+                                    className="enterprise-btn-secondary"
+                                    style={{ color: '#DC2626', borderColor: '#FECDD3' }}
+                                  >
+                                    <Trash2 style={{ width: 14, height: 14 }} /> Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                  <button onClick={handleOpenAddProduct} className="btn-primary">
-                    <Plus style={{ width: 18, height: 18 }} /> Add New Cake Prop
-                  </button>
                 </div>
+              )}
 
-                <div style={{ marginBottom: 20 }}>
-                  <div className="search-input-wrapper" style={{ maxWidth: 400 }}>
-                    <Search style={{ width: 16, height: 16, color: 'var(--text-muted)' }} />
-                    <input
-                      type="text"
-                      placeholder="Search props by name or category..."
-                      value={productSearch}
-                      onChange={(e) => setProductSearch(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="admin-card">
-                  <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th>Image</th>
-                        <th>Title / Name</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Tag</th>
-                        <th>Specs</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredProducts.map((p) => (
-                        <tr key={p.id}>
-                          <td>
-                            <img src={p.image} alt={p.name} style={{ width: 44, height: 44, borderRadius: 6, objectFit: 'cover' }} />
-                          </td>
-                          <td><strong>{p.name}</strong></td>
-                          <td><span className="badge badge-brand">{p.category}</span></td>
-                          <td><strong>${parseFloat(p.price).toFixed(2)}</strong></td>
-                          <td><span className="badge badge-gold">{p.tag}</span></td>
-                          <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                            {p.specs?.tiers} • {p.specs?.height}
-                          </td>
-                          <td>
-                            <div style={{ display: 'flex', gap: 8 }}>
-                              <button onClick={() => handleEditProduct(p)} className="btn-action-view" title="Edit Prop">
-                                <Edit style={{ width: 14, height: 14 }} /> Edit
-                              </button>
-                              <button onClick={() => handleDeleteProduct(p.id)} className="btn-action-view" style={{ color: '#DC2626' }} title="Delete Prop">
-                                <Trash2 style={{ width: 14, height: 14 }} /> Delete
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* 3. ORDERS & WIRES TAB */}
-            {activeTab === 'orders' && (
-              <div>
-                <div style={{ marginBottom: 24 }}>
-                  <h1 style={{ fontSize: '2rem', color: 'var(--color-black)', margin: 0 }}>Bank Wire Orders Queue</h1>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: 4 }}>
-                    Verify transaction UTR numbers and update order statuses across production and shipping.
-                  </p>
-                </div>
-
-                <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
-                  <div className="search-input-wrapper" style={{ flex: 1, maxWidth: 380 }}>
-                    <Search style={{ width: 16, height: 16, color: 'var(--text-muted)' }} />
-                    <input
-                      type="text"
-                      placeholder="Search orders by Ref Code, customer name, email..."
-                      value={orderSearch}
-                      onChange={(e) => setOrderSearch(e.target.value)}
-                    />
+              {/* 3. ORDERS & BANK WIRES TAB */}
+              {activeTab === 'orders' && (
+                <div>
+                  <div className="admin-page-header">
+                    <div className="admin-page-title">
+                      <h1>Bank Wire Order Queue</h1>
+                      <p>Match transaction UTR numbers with bank wire transfers and advance workshop production.</p>
+                    </div>
                   </div>
 
-                  <select
-                    value={orderStatusFilter}
-                    onChange={(e) => setOrderStatusFilter(e.target.value)}
-                    className="form-select-sm"
-                  >
-                    <option value="all">All Statuses</option>
-                    <option value="Awaiting Bank Transfer Verification">Awaiting Wire Verification</option>
-                    <option value="Payment Verified">Payment Verified</option>
-                    <option value="In Production">In Production</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
-                </div>
+                  <div className="admin-card-container">
+                    <div className="admin-filter-bar">
+                      <div className="search-field">
+                        <Search style={{ width: 16, height: 16, color: '#94A3B8' }} />
+                        <input
+                          type="text"
+                          placeholder="Search Ref Code, customer, UTR number..."
+                          value={orderSearch}
+                          onChange={(e) => setOrderSearch(e.target.value)}
+                        />
+                      </div>
 
-                <div className="admin-card">
-                  <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th>Order Ref ID</th>
-                        <th>Customer</th>
-                        <th>Date</th>
-                        <th>Total</th>
-                        <th>Wire UTR Ref</th>
-                        <th>Status</th>
-                        <th>Details</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredOrders.map((o) => (
-                        <tr key={o.id}>
-                          <td><strong className="ref-code" style={{ fontSize: '0.88rem' }}>{o.id}</strong></td>
-                          <td>
-                            <strong>{o.customerName}</strong>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{o.customerEmail}</div>
-                          </td>
-                          <td>{new Date(o.date).toLocaleDateString()}</td>
-                          <td><strong>${parseFloat(o.total).toFixed(2)}</strong></td>
-                          <td><code style={{ background: 'var(--bg-secondary)', padding: '2px 6px', borderRadius: 4, fontSize: '0.78rem' }}>{o.utrNumber}</code></td>
-                          <td>
-                            <select
-                              value={o.status}
-                              onChange={(e) => handleOrderStatusChange(o.id, e.target.value)}
-                              className="form-select-sm"
-                            >
-                              <option value="Awaiting Bank Transfer Verification">Awaiting Verification</option>
-                              <option value="Payment Verified">Payment Verified</option>
-                              <option value="In Production">In Production</option>
-                              <option value="Shipped">Shipped</option>
-                              <option value="Delivered">Delivered</option>
-                              <option value="Cancelled">Cancelled</option>
-                            </select>
-                          </td>
-                          <td>
-                            <button onClick={() => setSelectedOrder(o)} className="btn-action-view">
-                              <Eye style={{ width: 14, height: 14 }} /> Details
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+                      <select
+                        value={orderStatusFilter}
+                        onChange={(e) => setOrderStatusFilter(e.target.value)}
+                        className="enterprise-btn-secondary"
+                        style={{ outline: 'none' }}
+                      >
+                        <option value="all">All Order Statuses</option>
+                        <option value="Awaiting Bank Transfer Verification">Awaiting Wire Verification</option>
+                        <option value="Payment Verified">Payment Verified</option>
+                        <option value="In Production">In Production</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+                    </div>
 
-            {/* 4. SETTINGS TAB */}
-            {activeTab === 'settings' && (
-              <div>
-                <div style={{ marginBottom: 24 }}>
-                  <h1 style={{ fontSize: '2rem', color: 'var(--color-black)', margin: 0 }}>Store Settings & Bank Details</h1>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: 4 }}>
-                    Configure default studio bank accounts displayed during customer wire transfer checkout.
-                  </p>
-                </div>
-
-                <div className="admin-card" style={{ maxWidth: 600, padding: 28 }}>
-                  <h3 style={{ marginBottom: 20, color: 'var(--color-brand)', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Landmark /> Artisanal Commerce Bank Wire Account
-                  </h3>
-
-                  <div style={{ marginBottom: 16 }}>
-                    <label className="form-label">Bank Name</label>
-                    <input type="text" className="form-input" value={bankName} onChange={(e) => setBankName(e.target.value)} />
+                    <div className="table-responsive-wrapper">
+                      <table className="enterprise-table">
+                        <thead>
+                          <tr>
+                            <th>Order Ref ID</th>
+                            <th>Customer Account</th>
+                            <th>Order Date</th>
+                            <th>Total Amount</th>
+                            <th>Wire UTR Ref</th>
+                            <th>Workflow Status</th>
+                            <th>Details</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredOrders.map((o) => (
+                            <tr key={o.id}>
+                              <td>
+                                <code style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0F172A', background: '#F1F5F9', padding: '4px 8px', borderRadius: 4 }}>
+                                  {o.id}
+                                </code>
+                              </td>
+                              <td>
+                                <strong style={{ color: '#0F172A', display: 'block' }}>{o.customerName}</strong>
+                                <span style={{ fontSize: '0.78rem', color: '#64748B' }}>{o.customerEmail}</span>
+                              </td>
+                              <td>{new Date(o.date).toLocaleDateString()}</td>
+                              <td><strong style={{ color: '#0F172A', fontSize: '0.95rem' }}>${parseFloat(o.total).toFixed(2)}</strong></td>
+                              <td>
+                                <code style={{ background: '#FEF3C7', color: '#B45309', padding: '3px 8px', borderRadius: 4, fontWeight: 700, fontSize: '0.8rem' }}>
+                                  {o.utrNumber}
+                                </code>
+                              </td>
+                              <td>
+                                <select
+                                  value={o.status}
+                                  onChange={(e) => handleOrderStatusChange(o.id, e.target.value)}
+                                  style={{
+                                    padding: '6px 12px',
+                                    borderRadius: 999,
+                                    fontSize: '0.78rem',
+                                    fontWeight: 700,
+                                    border: '1px solid #CBD5E1',
+                                    outline: 'none',
+                                    cursor: 'pointer',
+                                    background: o.status?.includes('Verified') ? '#D1FAE5' : o.status?.includes('Awaiting') ? '#FEF3C7' : '#E0E7FF',
+                                    color: o.status?.includes('Verified') ? '#047857' : o.status?.includes('Awaiting') ? '#B45309' : '#4338CA'
+                                  }}
+                                >
+                                  <option value="Awaiting Bank Transfer Verification">Awaiting Verification</option>
+                                  <option value="Payment Verified">Payment Verified</option>
+                                  <option value="In Production">In Production</option>
+                                  <option value="Shipped">Shipped</option>
+                                  <option value="Delivered">Delivered</option>
+                                  <option value="Cancelled">Cancelled</option>
+                                </select>
+                              </td>
+                              <td>
+                                <button onClick={() => setSelectedOrder(o)} className="enterprise-btn-secondary">
+                                  <Eye style={{ width: 14, height: 14 }} /> Details
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                  <div style={{ marginBottom: 16 }}>
-                    <label className="form-label">Account Holder Name</label>
-                    <input type="text" className="form-input" value={accountName} onChange={(e) => setAccountName(e.target.value)} />
-                  </div>
-                  <div style={{ marginBottom: 16 }}>
-                    <label className="form-label">Account Number</label>
-                    <input type="text" className="form-input" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} />
-                  </div>
-                  <div style={{ marginBottom: 24 }}>
-                    <label className="form-label">IFSC / Sort Code</label>
-                    <input type="text" className="form-input" value={ifscCode} onChange={(e) => setIfscCode(e.target.value)} />
+                </div>
+              )}
+
+              {/* 4. CUSTOM QUOTES TAB */}
+              {activeTab === 'quotes' && (
+                <div>
+                  <div className="admin-page-header">
+                    <div className="admin-page-title">
+                      <h1>Custom Prop Quote Inquiries</h1>
+                      <p>Review bespoke prop configurations submitted via the frontend instant price calculator.</p>
+                    </div>
                   </div>
 
-                  <button onClick={() => alert('Bank settings saved!')} className="btn-primary">
-                    <CheckCircle2 style={{ width: 16, height: 16 }} /> Save Bank Settings
-                  </button>
+                  <div className="admin-card-container">
+                    <div className="table-responsive-wrapper">
+                      <table className="enterprise-table">
+                        <thead>
+                          <tr>
+                            <th>Inquiry ID</th>
+                            <th>Contact Information</th>
+                            <th>Tiers Count</th>
+                            <th>Finish Texture</th>
+                            <th>Calculated Estimate</th>
+                            <th>Submission Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {quotes.map((q) => (
+                            <tr key={q.id}>
+                              <td><code style={{ fontWeight: 800, background: '#F1F5F9', padding: '2px 8px', borderRadius: 4 }}>#{q.id}</code></td>
+                              <td><strong style={{ color: '#0F172A' }}>{q.contact_info}</strong></td>
+                              <td>{q.tiers_count} Tiers</td>
+                              <td><span className="status-pill blue">{q.finish_texture}</span></td>
+                              <td><strong style={{ color: '#059669', fontSize: '0.95rem' }}>${parseFloat(q.estimated_price).toFixed(2)}</strong></td>
+                              <td>{new Date(q.created_at).toLocaleDateString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
-          </>
-        )}
-      </main>
+              )}
+
+              {/* 5. BANK SETTINGS TAB */}
+              {activeTab === 'settings' && (
+                <div>
+                  <div className="admin-page-header">
+                    <div className="admin-page-title">
+                      <h1>Store Settings & Bank Details</h1>
+                      <p>Configure studio wire transfer accounts displayed to customers during checkout.</p>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+                    <div className="admin-card-container" style={{ padding: 28 }}>
+                      <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10, color: '#0F172A' }}>
+                        <Landmark style={{ color: '#0FB3B6' }} /> Bank Transfer Configuration
+                      </h3>
+
+                      <div style={{ marginBottom: 16 }}>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 6, color: '#334155' }}>Bank Name</label>
+                        <input
+                          type="text"
+                          value={bankName}
+                          onChange={(e) => setBankName(e.target.value)}
+                          style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: 16 }}>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 6, color: '#334155' }}>Account Holder Name</label>
+                        <input
+                          type="text"
+                          value={accountName}
+                          onChange={(e) => setAccountName(e.target.value)}
+                          style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: 16 }}>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 6, color: '#334155' }}>Account Number</label>
+                        <input
+                          type="text"
+                          value={accountNumber}
+                          onChange={(e) => setAccountNumber(e.target.value)}
+                          style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: 24 }}>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: 6, color: '#334155' }}>IFSC / Sort Code</label>
+                        <input
+                          type="text"
+                          value={ifscCode}
+                          onChange={(e) => setIfscCode(e.target.value)}
+                          style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
+                        />
+                      </div>
+
+                      <button onClick={() => alert('Bank configuration updated!')} className="enterprise-btn-primary">
+                        <CheckCircle2 style={{ width: 16, height: 16 }} /> Save Bank Settings
+                      </button>
+                    </div>
+
+                    {/* Preview Card */}
+                    <div className="admin-card-container" style={{ padding: 28, background: '#F8FAFC' }}>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#64748B', marginBottom: 16 }}>Customer Checkout Card Preview</h4>
+                      <div style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', padding: 24, borderRadius: 16, color: '#FFF' }}>
+                        <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#36DFE2', fontWeight: 800, marginBottom: 12 }}>
+                          Artisanal Direct Wire Card
+                        </div>
+                        <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 4 }}>{bankName}</div>
+                        <div style={{ fontSize: '0.88rem', color: '#94A3B8', marginBottom: 16 }}>{accountName}</div>
+
+                        <div style={{ background: 'rgba(255,255,255,0.06)', padding: 12, borderRadius: 8, fontFamily: 'monospace', fontSize: '1.1rem', letterSpacing: '0.1em' }}>
+                          {accountNumber}
+                        </div>
+                        <div style={{ marginTop: 12, fontSize: '0.8rem', color: '#94A3B8' }}>
+                          Sort/IFSC Code: <strong style={{ color: '#FFF' }}>{ifscCode}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </main>
+      </div>
 
       {/* PRODUCT ADD/EDIT MODAL */}
       {isProductModalOpen && (
         <div className="modal-overlay open">
-          <div className="modal-content" style={{ padding: 32, maxWidth: 720 }}>
+          <div className="modal-content" style={{ padding: 32, maxWidth: 680, width: '92vw' }}>
             <button onClick={() => setIsProductModalOpen(false)} className="modal-close-btn">
               <X style={{ width: 20, height: 20 }} />
             </button>
-            <h2 style={{ fontSize: '1.6rem', color: 'var(--color-black)', marginBottom: 20 }}>
-              {editingProductId ? 'Edit Prop Details' : 'Add New Cake Prop to Database'}
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', marginBottom: 20 }}>
+              {editingProductId ? 'Edit Prop Specification' : 'Create New Prop Entry'}
             </h2>
 
             <form onSubmit={handleSaveProduct}>
@@ -590,7 +824,7 @@ export default function AdminDashboardPage() {
                   <input type="number" step="0.01" className="form-input" value={prodOrigPrice} onChange={(e) => setProdOrigPrice(e.target.value)} />
                 </div>
                 <div>
-                  <label className="form-label">Tag / Badge</label>
+                  <label className="form-label">Badge Tag</label>
                   <select className="form-select" value={prodTag} onChange={(e) => setProdTag(e.target.value)}>
                     <option value="Handcrafted">Handcrafted</option>
                     <option value="Bestseller">Bestseller</option>
@@ -606,14 +840,14 @@ export default function AdminDashboardPage() {
                 <input type="text" className="form-input" value={prodImage} onChange={(e) => setProdImage(e.target.value)} required />
               </div>
 
-              <div style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 20 }}>
                 <label className="form-label">Product Description *</label>
                 <textarea className="form-input" rows={3} value={prodDesc} onChange={(e) => setProdDesc(e.target.value)} required />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
-                <button type="button" onClick={() => setIsProductModalOpen(false)} className="btn-secondary">Cancel</button>
-                <button type="submit" className="btn-primary">
+                <button type="button" onClick={() => setIsProductModalOpen(false)} className="enterprise-btn-secondary">Cancel</button>
+                <button type="submit" className="enterprise-btn-primary">
                   <CheckCircle2 style={{ width: 16, height: 16 }} /> Save Prop to Database
                 </button>
               </div>
@@ -625,35 +859,36 @@ export default function AdminDashboardPage() {
       {/* ORDER DETAILS MODAL */}
       {selectedOrder && (
         <div className="modal-overlay open">
-          <div className="modal-content" style={{ padding: 32, maxWidth: 680 }}>
+          <div className="modal-content" style={{ padding: 32, maxWidth: 640, width: '92vw' }}>
             <button onClick={() => setSelectedOrder(null)} className="modal-close-btn">
               <X style={{ width: 20, height: 20 }} />
             </button>
             <div style={{ marginBottom: 20 }}>
-              <span className="ref-code" style={{ fontSize: '1.4rem' }}>{selectedOrder.id}</span>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Placed on {new Date(selectedOrder.date).toLocaleDateString()}</div>
+              <code style={{ fontSize: '1.2rem', fontWeight: 800, background: '#F1F5F9', padding: '4px 10px', borderRadius: 6, color: '#0F172A' }}>
+                {selectedOrder.id}
+              </code>
+              <div style={{ fontSize: '0.85rem', color: '#64748B', marginTop: 4 }}>Placed on {new Date(selectedOrder.date).toLocaleDateString()}</div>
             </div>
 
-            <div style={{ background: 'var(--bg-secondary)', padding: 16, borderRadius: 'var(--radius-sm)', marginBottom: 20, fontSize: '0.9rem' }}>
-              <div><strong>Customer Name:</strong> {selectedOrder.customerName}</div>
-              <div><strong>Customer Email:</strong> {selectedOrder.customerEmail}</div>
-              <div><strong>Delivery Address:</strong> {selectedOrder.shippingAddress}</div>
-              <div style={{ marginTop: 6 }}><strong>Wire UTR Ref:</strong> <code>{selectedOrder.utrNumber}</code></div>
+            <div style={{ background: '#F8FAFC', padding: 16, borderRadius: 8, marginBottom: 20, fontSize: '0.88rem', border: '1px solid #E2E8F0' }}>
+              <div><strong>Customer:</strong> {selectedOrder.customerName} ({selectedOrder.customerEmail})</div>
+              <div style={{ marginTop: 4 }}><strong>Address:</strong> {selectedOrder.shippingAddress}</div>
+              <div style={{ marginTop: 4 }}><strong>Bank Wire UTR:</strong> <code>{selectedOrder.utrNumber}</code></div>
             </div>
 
-            <h4 style={{ fontSize: '1rem', color: 'var(--color-black)', marginBottom: 12 }}>Order Line Items</h4>
+            <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0F172A', marginBottom: 12 }}>Order Line Items</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
               {(selectedOrder.items || []).map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', borderBottom: '1px solid var(--border-color)', paddingBottom: 8 }}>
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', borderBottom: '1px solid #F1F5F9', paddingBottom: 8 }}>
                   <span>{item.name} × {item.qty}</span>
                   <strong>${(parseFloat(item.price || 0) * parseInt(item.qty || 1)).toFixed(2)}</strong>
                 </div>
               ))}
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--border-color)', paddingTop: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed #E2E8F0', paddingTop: 12 }}>
               <span>Total Payable Amount:</span>
-              <strong style={{ fontSize: '1.4rem', color: 'var(--color-black)' }}>${parseFloat(selectedOrder.total || 0).toFixed(2)}</strong>
+              <strong style={{ fontSize: '1.4rem', color: '#0F172A' }}>${parseFloat(selectedOrder.total || 0).toFixed(2)}</strong>
             </div>
           </div>
         </div>

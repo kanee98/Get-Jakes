@@ -2,8 +2,12 @@
 
 import { useState } from 'react';
 import { MessageSquareText, X, Send } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export default function ChatWidget() {
+  const pathname = usePathname();
+  if (pathname?.startsWith('/admin')) return null;
+
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([

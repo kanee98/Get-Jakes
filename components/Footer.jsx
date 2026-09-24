@@ -3,9 +3,13 @@
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+  const pathname = usePathname();
   const { setIsCheckoutOpen } = useCart();
+
+  if (pathname?.startsWith('/admin')) return null;
 
   return (
     <footer className="footer">
