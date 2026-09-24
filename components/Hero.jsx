@@ -5,94 +5,81 @@ import { ArrowRight, Sparkles, ShieldCheck, Truck, Eye, Layers } from 'lucide-re
 
 export default function Hero() {
   return (
-    <section id="hero" className="hero-section">
-      {/* Soft Logo Blue Ambient Orbs */}
-      <div className="hero-ambient-glow glow-blue"></div>
-      <div className="hero-ambient-glow glow-light-blue"></div>
+    <>
+      {/* Full-Width E-Commerce Banner Hero */}
+      <section id="hero" className="hero-banner-section">
+        <div className="hero-banner-bg" style={{ backgroundImage: "url('/images/hero_cake_prop.png')" }}>
+          <div className="hero-banner-overlay"></div>
+        </div>
 
-      <div className="container hero-container">
-        {/* Left Column: High-Impact Copy */}
-        <div className="hero-content">
-          <h1 className="hero-title">
-            Transform Grand Venues With <br />
-            <span className="hero-blue-text">Architectural Cake Props</span>
+        <div className="container hero-banner-content">
+          <h1 className="hero-banner-title">
+            Premier supplier of architectural <br />
+            cake props in the market
           </h1>
-
-          <p className="hero-subtitle">
-            Premier supplier of handcrafted dummy cakes, custom cake toppers, food photography props, and architectural event pedestals. Guaranteed 100% water-resistant & food-grade polymer coating.
+          <p className="hero-banner-subtitle">
+            Handcrafted 100% water-resistant & food-grade polymer props engineered for grand venue displays, food photography, and luxury bakeries.
           </p>
-
-          <div className="hero-cta-group">
-            <Link href="#shop" className="btn-primary">
+          <div className="hero-banner-actions">
+            <Link href="#shop" className="btn-primary" style={{ background: '#36DFE2', color: '#0A0D12' }}>
               Explore Prop Catalog <ArrowRight style={{ width: 18, height: 18 }} />
-            </Link>
-            <Link href="#customQuote" className="btn-secondary">
-              Bespoke Price Estimator
             </Link>
           </div>
         </div>
+      </section>
 
-        {/* Right Column: Static Display Stage */}
-        <div className="hero-image-wrapper">
-          <div className="hero-image-card static-stage-card">
-            <div className="hero-stage-img-container">
-              <img
-                src="/images/hero_cake_prop.png"
-                alt="Ophelia Gold Leaf Cake Prop"
-                className="hero-img"
-              />
+      {/* "Your trusted cake prop crafting service" Intro Block */}
+      <section className="trusted-service-section">
+        <div className="container" style={{ textAlign: 'center', maxWidth: 840 }}>
+          <h2 className="trusted-service-title">
+            Your trusted cake prop crafting service
+          </h2>
+          <p className="trusted-service-desc">
+            At Get Jakes, we design and produce museum-grade faux wedding cake dummies, studio photography props, and custom cake toppers. Each piece is hand-finished with food-grade polymer coatings to withstand event transport, outdoor venue lighting, and multi-day commercial displays.
+          </p>
+          <Link href="#customQuote" className="btn-primary" style={{ marginTop: 24, display: 'inline-flex' }}>
+            Request Custom Quote
+          </Link>
+        </div>
+      </section>
+
+      {/* 3-Column Trust Features Block */}
+      <section className="trust-features-section">
+        <div className="container">
+          <div className="hero-trust-grid">
+            <div className="trust-card">
+              <div className="trust-icon-box">
+                <ShieldCheck style={{ width: 26, height: 26, color: '#0FB3B6' }} />
+              </div>
+              <div>
+                <h4 className="trust-title">Water & UV Protected</h4>
+                <p className="trust-desc">100% water-resistant polymer coating. Safe for food displays and outdoor venue lighting.</p>
+              </div>
             </div>
 
-            {/* Bottom Floating Card Info */}
-            <div className="hero-badge-overlay float-layer">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#0A0D12', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
-                    Ophelia Cyan & Gold Leaf
-                  </h3>
-                </div>
-                <div className="hero-price-tag">$279.00</div>
+            <div className="trust-card">
+              <div className="trust-icon-box">
+                <Truck style={{ width: 26, height: 26, color: '#0FB3B6' }} />
+              </div>
+              <div>
+                <h4 className="trust-title">Express Crate Postage</h4>
+                <p className="trust-desc">Fast courier delivery with tracked wooden studio crates. Free express upgrades on orders $150+.</p>
+              </div>
+            </div>
+
+            <div className="trust-card">
+              <div className="trust-icon-box">
+                <Eye style={{ width: 26, height: 26, color: '#0FB3B6' }} />
+              </div>
+              <div>
+                <h4 className="trust-title">Free Preview Service</h4>
+                <p className="trust-desc">Get an instant digital preview of your custom cake prop design before printing & dispatch.</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* 3 Trust Feature Columns (printsoncakes.com.au style) */}
-      <div className="container" style={{ marginTop: 54 }}>
-        <div className="hero-trust-grid">
-          <div className="trust-card">
-            <div className="trust-icon-box">
-              <ShieldCheck style={{ width: 22, height: 22, color: '#0FB3B6' }} />
-            </div>
-            <div>
-              <h4 className="trust-title">Water & UV Protected</h4>
-              <p className="trust-desc">100% water-resistant polymer coating. Safe for food displays and outdoor venue lighting.</p>
-            </div>
-          </div>
-
-          <div className="trust-card">
-            <div className="trust-icon-box">
-              <Truck style={{ width: 22, height: 22, color: '#0FB3B6' }} />
-            </div>
-            <div>
-              <h4 className="trust-title">Express Crate Postage</h4>
-              <p className="trust-desc">Fast courier delivery with tracked wooden studio crates. Free express upgrades on orders $150+.</p>
-            </div>
-          </div>
-
-          <div className="trust-card">
-            <div className="trust-icon-box">
-              <Eye style={{ width: 22, height: 22, color: '#0FB3B6' }} />
-            </div>
-            <div>
-              <h4 className="trust-title">Free Preview Service</h4>
-              <p className="trust-desc">Get an instant 3D digital preview of your custom cake prop design before printing & dispatch.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 

@@ -23,13 +23,97 @@ function formatProduct(row) {
   };
 }
 
+const DEFAULT_PRODUCTS = [
+  {
+    id: 'prop-01',
+    name: 'Aurelia 4-Tier Luxury Wedding Cake Dummy',
+    category: 'wedding',
+    price: 389.00,
+    originalPrice: 449.00,
+    rating: 4.9,
+    reviewsCount: 38,
+    image: '/images/wedding_tier_prop.png',
+    tag: 'Bestseller',
+    description: 'Hand-finished 4-tier wedding dummy cake with durable faux fondant coating, pearl trim, and sugar rose replicas.',
+    specs: { height: '28 inches', tiers: '4 Tiers (6", 8", 10", 12")', material: 'High-Density EPS Foam + Polymer Coating' }
+  },
+  {
+    id: 'prop-02',
+    name: 'Ophelia Cyan & Gold Leaf Statement Prop',
+    category: 'wedding',
+    price: 279.00,
+    originalPrice: null,
+    rating: 5.0,
+    reviewsCount: 24,
+    image: '/images/hero_cake_prop.png',
+    tag: 'Handcrafted',
+    description: 'Minimalist 3-tier organic textured white cake with authentic metallic leaf gilding and Get Jakes signature finish.',
+    specs: { height: '22 inches', tiers: '3 Tiers (6", 8", 10")', material: 'Ultra-Hard Resin Compound Core' }
+  },
+  {
+    id: 'prop-03',
+    name: 'Pastel Studio Food Photography Kit',
+    category: 'photography',
+    price: 145.00,
+    originalPrice: 175.00,
+    rating: 4.8,
+    reviewsCount: 52,
+    image: '/images/photo_prop_set.png',
+    tag: 'Studio Special',
+    description: 'Set of 6 realistic faux cake slices, geometric acrylic blocks, and pastel dummy mini cakes.',
+    specs: { height: 'Modular Set', tiers: '6-Piece Modular Props', material: 'Matte Non-Reflective Foam & Polymer' }
+  },
+  {
+    id: 'prop-04',
+    name: 'Imperial Fluted Pedestal Display Set',
+    category: 'pedestal',
+    price: 215.00,
+    originalPrice: null,
+    rating: 4.9,
+    reviewsCount: 19,
+    image: '/images/pedestal_prop_set.png',
+    tag: 'Trending',
+    description: 'Pair of ribbed architectural cylinder pedestals in warm plaster white and cyan-brushed accents.',
+    specs: { height: '12" and 18" Elevated Risers', tiers: '10" Top Surface', material: 'Reinforced Fiber Composite' }
+  },
+  {
+    id: 'prop-05',
+    name: 'Botanical Cascading Floral Dummy Cake',
+    category: 'wedding',
+    price: 320.00,
+    originalPrice: null,
+    rating: 4.7,
+    reviewsCount: 15,
+    image: '/images/wedding_tier_prop.png',
+    tag: 'New',
+    description: '3-tier romantic dummy cake pre-decorated with artificial cascading sugar eucalyptus and garden roses.',
+    specs: { height: '24 inches', tiers: '3 Tiers', material: 'Polymer Coated Core + Silk Floral Trim' }
+  },
+  {
+    id: 'prop-06',
+    name: 'Commercial Bakery Window Display Dummy',
+    category: 'custom',
+    price: 495.00,
+    originalPrice: 550.00,
+    rating: 5.0,
+    reviewsCount: 29,
+    image: '/images/hero_cake_prop.png',
+    tag: 'Commercial Grade',
+    description: '5-Tier grand display dummy designed specifically for bakery shop windows with UV protective coating.',
+    specs: { height: '36 inches', tiers: '5 Tiers (6", 8", 10", 12", 14")', material: 'UV-Shield Polymer Compound' }
+  }
+];
+
 export async function GET() {
   try {
     const [rows] = await pool.query('SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC');
-    return NextResponse.json(rows.map(formatProduct));
+    if (rows && rows.length > 0) {
+      return NextResponse.json(rows.map(formatProduct));
+    }
+    return NextResponse.json(DEFAULT_PRODUCTS);
   } catch (err) {
-    console.error('Fetch Products Error:', err);
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+    console.error('Fetch Products Error (returning fallback):', err);
+    return NextResponse.json(DEFAULT_PRODUCTS);
   }
 }
 
