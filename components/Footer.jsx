@@ -1,59 +1,122 @@
 'use client';
 
 import Link from 'next/link';
+import { Heart } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 export default function Footer() {
+  const { setIsCheckoutOpen } = useCart();
+
   return (
     <footer className="footer">
       <div className="container footer-grid">
-        <div className="footer-col">
-          <div className="footer-brand">
-            <img src="/logo.png" alt="Get Jakes Logo" className="footer-logo" />
-            <span className="footer-brand-title">GET JAKES</span>
+        {/* Brand Info Column */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+            <img
+              src="/logo.png"
+              alt="Get Jakes Logo"
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                boxShadow: '0 4px 12px rgba(54, 223, 226, 0.4)'
+              }}
+            />
+            <div>
+              <h3
+                className="footer-title"
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '1.4rem',
+                  color: '#FFFFFF',
+                  margin: 0,
+                  lineHeight: 1
+                }}
+              >
+                GET JAKES
+              </h3>
+              <span style={{ fontSize: '0.65rem', letterSpacing: '0.18em', color: '#36DFE2', fontWeight: 800 }}>
+                CAKE PROPS & TOPPERS
+              </span>
+            </div>
           </div>
-          <p className="footer-desc">
-            Handcrafting high-density foam & polymer fondant dummy cakes, food photography studio props, and architectural pedestals for ballrooms, bakeries, and grand showcases worldwide.
+          <p style={{ fontSize: '0.88rem', color: '#AAA', marginBottom: '16px', maxWidth: '300px', lineHeight: 1.6 }}>
+            Premium handcrafted dummy cakes, custom cake toppers, food photography props, and architectural event pedestals.
           </p>
         </div>
 
-        <div className="footer-col">
-          <h4 className="footer-heading">Studio Navigation</h4>
-          <ul className="footer-links">
-            <li><Link href="/">Home Overview</Link></li>
-            <li><Link href="/#shop">Prop Catalog</Link></li>
-            <li><Link href="/#gallery">Studio Gallery</Link></li>
-            <li><Link href="/#customQuote">Bespoke Quote Calculator</Link></li>
-            <li><Link href="/my-orders">Customer Orders</Link></li>
-          </ul>
-        </div>
-
-        <div className="footer-col">
-          <h4 className="footer-heading">Prop Categories</h4>
+        {/* Shop Collection Column */}
+        <div>
+          <h4 className="footer-title">Shop Collection</h4>
           <ul className="footer-links">
             <li><Link href="/#shop">Wedding Tier Dummies</Link></li>
-            <li><Link href="/#shop">Food Photography Kits</Link></li>
-            <li><Link href="/#shop">Architectural Pedestals</Link></li>
-            <li><Link href="/#shop">Commercial Bakery Windows</Link></li>
+            <li><Link href="/#shop">Photo Studio Sets</Link></li>
+            <li><Link href="/#shop">Display Risers</Link></li>
+            <li><Link href="/#customQuote">Custom Toppers & Sizing</Link></li>
           </ul>
         </div>
 
-        <div className="footer-col">
-          <h4 className="footer-heading">Craft Studio Support</h4>
-          <p className="footer-text">
-            <strong>Studio Hours:</strong> Mon - Sat: 9:00 AM - 6:00 PM EST
-          </p>
-          <p className="footer-text">
-            <strong>Direct Email:</strong> support@getjakes.com
-          </p>
-          <p className="footer-text">
-            <strong>Hotline:</strong> +1 (800) GET-JAKES
+        {/* Customer Service Column */}
+        <div>
+          <h4 className="footer-title">Customer Service</h4>
+          <ul className="footer-links">
+            <li><Link href="/my-orders">Track My Order</Link></li>
+            <li><a href="#bankInfoFooter" onClick={(e) => { e.preventDefault(); setIsCheckoutOpen(true); }}>Bank Details Info</a></li>
+            <li><Link href="/#hero">Care & Cleaning Guide</Link></li>
+          </ul>
+        </div>
+
+        {/* Bank Payment Info Column */}
+        <div>
+          <h4 className="footer-title">Bank Payment Info</h4>
+          <p style={{ fontSize: '0.82rem', color: '#AAA', lineHeight: 1.6 }}>
+            Direct transfers supported via Artisanal Commerce Bank.<br />
+            <strong style={{ color: '#36DFE2' }}>Order Ref ID generated at checkout.</strong>
           </p>
         </div>
       </div>
 
-      <div className="footer-bottom">
-        <div className="container footer-bottom-inner">
-          <p>&copy; {new Date().getFullYear()} Get Jakes Cake Props & Toppers LLC. All Rights Reserved.</p>
+      {/* Footer Bottom with FusionLabz Credit */}
+      <div className="container footer-bottom">
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+          <p style={{ margin: 0, fontSize: '0.82rem', color: '#888' }}>
+            © {new Date().getFullYear()} Get Jakes Props & Toppers. All rights reserved.
+          </p>
+
+          <p
+            className="fusionlabz-credit"
+            style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.88rem', color: '#BBB' }}
+          >
+            Made with{' '}
+            <Heart
+              className="heart-icon"
+              style={{
+                width: 16,
+                height: 16,
+                color: '#EF4444',
+                fill: '#EF4444',
+                display: 'inline-block',
+                verticalAlign: 'middle'
+              }}
+            />{' '}
+            in Sri Lanka 🇱🇰 by{' '}
+            <a
+              href="https://fusionlabz.lk/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: '#36DFE2',
+                fontWeight: 700,
+                textDecoration: 'none',
+                letterSpacing: '0.02em',
+                transition: 'color 0.2s'
+              }}
+            >
+              FusionLabz
+            </a>
+          </p>
         </div>
       </div>
     </footer>

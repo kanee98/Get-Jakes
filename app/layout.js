@@ -5,6 +5,8 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import CheckoutModal from '@/components/CheckoutModal';
+import ChatWidget from '@/components/ChatWidget';
+import LoaderScreen from '@/components/LoaderScreen';
 
 export const metadata = {
   title: 'Get Jakes Cake Props & Toppers | Handcrafted Studio Props',
@@ -23,6 +25,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        <LoaderScreen />
         <AuthProvider>
           <CartProvider>
             <Navbar />
@@ -30,6 +33,7 @@ export default function RootLayout({ children }) {
             <Footer />
             <CartDrawer />
             <CheckoutModal />
+            <ChatWidget />
           </CartProvider>
         </AuthProvider>
       </body>
