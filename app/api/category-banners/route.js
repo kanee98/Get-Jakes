@@ -38,11 +38,14 @@ const DEFAULT_CATEGORY_BANNERS = [
   }
 ];
 
+async function ensureBannerColumns() {
+  try { await pool.query('ALTER TABLE category_banners ADD COLUMN is_deleted TINYINT(1) DEFAULT 0'); } catch (e) {}
+  try { await pool.query("ALTER TABLE category_banners ADD COLUMN category_key VARCHAR(50) NOT NULL DEFAULT 'wedding'"); } catch (e) {}
+}
+
 export async function GET() {
   try {
-    try {
-      await pool.query('ALTER TABLE category_banners ADD COLUMN is_deleted TINYINT(1) DEFAULT 0');
-    } catch (e) {}
+    await ensureBannerColumns();
     const [rows] = await pool.query('SELECT * FROM category_banners WHERE (is_deleted = 0 OR is_deleted IS NULL) ORDER BY id ASC');
     if (rows && rows.length > 0) {
       return NextResponse.json(rows);
@@ -55,6 +58,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    await ensureBannerColumns();
     const body = await request.json();
     const { title, subtitle, image_url, link_url, category_key } = body;
 
@@ -62,9 +66,12 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Title and image URL are required' }, { status: 400 });
     }
 
+    const catKey = category_key || 'wedding';
+    const link = link_url || `/collections/${catKey}`;
+
     const [result] = await pool.query(
       'INSERT INTO category_banners (title, subtitle, image_url, link_url, category_key) VALUES (?, ?, ?, ?, ?)',
-      [title, subtitle || '', image_url, link_url || '#shop', category_key || 'wedding']
+      [title, subtitle || '', image_url, link, catKey]
     );
 
     const [rows] = await pool.query('SELECT * FROM category_banners WHERE id = ?', [result.insertId]);

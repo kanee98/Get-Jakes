@@ -11,6 +11,9 @@ const DEFAULT_VERIFIED_REVIEWS = [
     rating: 5,
     comment: 'Great quality and loved they were pre cut! Saved sooo much time!',
     image_url: '/images/photo_prop_set.png',
+    product_id: 'prop-03',
+    product_name: 'Pastel Studio Food Photography Kit',
+    created_at: '2026-04-11T10:30:00.000Z',
     is_verified: 1
   },
   {
@@ -20,6 +23,9 @@ const DEFAULT_VERIFIED_REVIEWS = [
     rating: 5,
     comment: 'Loved this product! Colours were great and picture was very clear. Customer support was great...',
     image_url: '/images/hero_cake_prop.png',
+    product_id: 'prop-02',
+    product_name: 'Ophelia Cyan & Gold Leaf Statement Prop',
+    created_at: '2026-05-18T14:15:00.000Z',
     is_verified: 1
   },
   {
@@ -29,6 +35,9 @@ const DEFAULT_VERIFIED_REVIEWS = [
     rating: 5,
     comment: 'Absolutely fabulous! Turn around and communication with the team was exceptional. As a novice...',
     image_url: '/images/wedding_tier_prop.png',
+    product_id: 'prop-01',
+    product_name: 'Aurelia 4-Tier Luxury Wedding Cake Dummy',
+    created_at: '2026-06-22T09:45:00.000Z',
     is_verified: 1
   },
   {
@@ -38,22 +47,19 @@ const DEFAULT_VERIFIED_REVIEWS = [
     rating: 5,
     comment: 'Very happy. The image was crisp and the colours strong. Great to have the option of picking up in...',
     image_url: '/images/pedestal_prop_set.png',
+    product_id: 'prop-04',
+    product_name: 'Imperial Fluted Pedestal Display Set',
+    created_at: '2026-07-09T16:20:00.000Z',
     is_verified: 1
   }
 ];
 
-// Helper to ensure table schema contains image_url and is_deleted
+// Helper to ensure table schema contains image_url, is_deleted, product_id, product_name
 async function ensureReviewColumns() {
-  try {
-    await pool.query("ALTER TABLE reviews ADD COLUMN image_url LONGTEXT NULL");
-  } catch (e) {
-    // Ignore if column already exists
-  }
-  try {
-    await pool.query("ALTER TABLE reviews ADD COLUMN is_deleted TINYINT(1) DEFAULT 0");
-  } catch (e) {
-    // Ignore if column already exists
-  }
+  try { await pool.query("ALTER TABLE reviews ADD COLUMN image_url LONGTEXT NULL"); } catch (e) {}
+  try { await pool.query("ALTER TABLE reviews ADD COLUMN is_deleted TINYINT(1) DEFAULT 0"); } catch (e) {}
+  try { await pool.query("ALTER TABLE reviews ADD COLUMN product_id VARCHAR(50) NULL"); } catch (e) {}
+  try { await pool.query("ALTER TABLE reviews ADD COLUMN product_name VARCHAR(255) NULL"); } catch (e) {}
 }
 
 export async function GET(request) {
@@ -80,16 +86,28 @@ export async function POST(request) {
   try {
     await ensureReviewColumns();
     const body = await request.json();
-    const { userId, reviewerName, reviewerRole, rating, comment, imageUrl, image_url } = body;
+    const { userId, reviewerName, reviewerRole, rating, comment, imageUrl, image_url, productId, productName } = body;
     const finalImage = imageUrl || image_url || null;
 
     if (!reviewerName || !comment) {
       return NextResponse.json({ error: 'Name and review comment are required' }, { status: 400 });
     }
 
+    let finalProdId = productId || null;
+    let finalProdName = productName || null;
+
+    if (finalProdId && !finalProdName) {
+      try {
+        const [pRows] = await pool.query('SELECT name FROM products WHERE id = ?', [finalProdId]);
+        if (pRows && pRows.length > 0) {
+          finalProdName = pRows[0].name;
+        }
+      } catch (e) {}
+    }
+
     const [result] = await pool.query(
-      'INSERT INTO reviews (user_id, reviewer_name, reviewer_role, rating, comment, image_url, is_verified, is_deleted) VALUES (?, ?, ?, ?, ?, ?, 0, 0)',
-      [userId || null, reviewerName, reviewerRole || 'Verified Customer', rating || 5, comment, finalImage]
+      'INSERT INTO reviews (user_id, reviewer_name, reviewer_role, rating, comment, image_url, product_id, product_name, is_verified, is_deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0)',
+      [userId || null, reviewerName, reviewerRole || 'Verified Customer', rating || 5, comment, finalImage, finalProdId, finalProdName]
     );
 
     const [rows] = await pool.query('SELECT * FROM reviews WHERE id = ?', [result.insertId]);

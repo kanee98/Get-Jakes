@@ -171,6 +171,7 @@ export default function ShopCatalog() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [newReviewName, setNewReviewName] = useState('');
   const [newReviewRole, setNewReviewRole] = useState('');
+  const [newReviewProductId, setNewReviewProductId] = useState('');
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [newReviewComment, setNewReviewComment] = useState('');
   const [newReviewImage, setNewReviewImage] = useState(null);
@@ -215,6 +216,7 @@ export default function ShopCatalog() {
 
     setSubmittingReview(true);
     try {
+      const selectedProductObj = products.find(p => String(p.id) === String(newReviewProductId));
       const res = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -223,7 +225,9 @@ export default function ShopCatalog() {
           reviewerRole: sanitizeInput(newReviewRole || 'Verified Customer'),
           rating: parseInt(newReviewRating, 10),
           comment: sanitizeInput(newReviewComment),
-          imageUrl: newReviewImage
+          imageUrl: newReviewImage,
+          productId: newReviewProductId || null,
+          productName: selectedProductObj ? selectedProductObj.name : null
         })
       });
 
@@ -232,6 +236,7 @@ export default function ShopCatalog() {
         setIsReviewModalOpen(false);
         setNewReviewName('');
         setNewReviewRole('');
+        setNewReviewProductId('');
         setNewReviewComment('');
         setNewReviewImage(null);
       } else {
@@ -360,50 +365,56 @@ export default function ShopCatalog() {
       <section className="section category-banners-section" style={{ background: '#FFFFFF', paddingTop: 40, paddingBottom: 80 }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-            {banners.map((b) => (
-              <div
-                key={b.id}
-                className="category-banner-card"
-                style={{
-                  background: '#FFFFFF',
-                  borderRadius: 'var(--radius-md)',
-                  overflow: 'hidden',
-                  border: '1px solid rgba(10,13,18,0.08)',
-                  boxShadow: '0 6px 20px rgba(10,13,18,0.04)',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-              >
-                <div style={{ height: 180, overflow: 'hidden', background: '#F8FAFC' }}>
-                  <Link href={`/collections/${b.category_key || 'custom'}`} style={{ display: 'block', width: '100%', height: '100%' }}>
-                    <SafeImage
-                      src={b.image_url}
-                      alt={b.title}
-                      fallback="/images/hero_cake_prop.png"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  </Link>
-                </div>
-                <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
-                  <div>
-                    <Link href={`/collections/${b.category_key || 'custom'}`}>
-                      <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0A0D12', marginBottom: 8, fontFamily: 'var(--font-heading)' }}>
-                        {b.title}
-                      </h3>
+            {banners.map((b) => {
+              const bannerHref = (b.category_key && b.category_key !== 'all')
+                ? `/collections/${b.category_key}`
+                : (b.link_url && b.link_url.startsWith('/collections') ? b.link_url : `/collections/${b.category_key || 'wedding'}`);
+
+              return (
+                <div
+                  key={b.id}
+                  className="category-banner-card"
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: 'var(--radius-md)',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(10,13,18,0.08)',
+                    boxShadow: '0 6px 20px rgba(10,13,18,0.04)',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                >
+                  <div style={{ height: 180, overflow: 'hidden', background: '#F8FAFC' }}>
+                    <Link href={bannerHref} style={{ display: 'block', width: '100%', height: '100%' }}>
+                      <SafeImage
+                        src={b.image_url}
+                        alt={b.title}
+                        fallback="/images/hero_cake_prop.png"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
                     </Link>
-                    <p style={{ fontSize: '0.88rem', color: '#475569', marginBottom: 20, lineHeight: 1.5 }}>
-                      {b.subtitle}
-                    </p>
                   </div>
-                  <Link
-                    href={`/collections/${b.category_key || 'custom'}`}
-                    style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0FB3B6', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                  >
-                    View Collection →
-                  </Link>
+                  <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
+                    <div>
+                      <Link href={bannerHref}>
+                        <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0A0D12', marginBottom: 8, fontFamily: 'var(--font-heading)' }}>
+                          {b.title}
+                        </h3>
+                      </Link>
+                      <p style={{ fontSize: '0.88rem', color: '#475569', marginBottom: 20, lineHeight: 1.5 }}>
+                        {b.subtitle}
+                      </p>
+                    </div>
+                    <Link
+                      href={bannerHref}
+                      style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0FB3B6', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                    >
+                      View Collection →
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -682,6 +693,22 @@ export default function ShopCatalog() {
               </div>
 
               <div style={{ marginBottom: 14 }}>
+                <label className="form-label">Product You Are Reviewing (Optional)</label>
+                <select
+                  className="form-select"
+                  value={newReviewProductId}
+                  onChange={(e) => setNewReviewProductId(e.target.value)}
+                >
+                  <option value="">Select a Product from Catalog...</option>
+                  {products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
                 <label className="form-label">Star Rating</label>
                 <select
                   className="form-select"
@@ -933,7 +960,9 @@ export default function ShopCatalog() {
                     ))}
                   </div>
                   <span style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 600 }}>
-                    {selectedReviewModal.created_at ? new Date(selectedReviewModal.created_at).toLocaleDateString('en-US') : '4/11/2023'}
+                    {selectedReviewModal.created_at
+                      ? new Date(selectedReviewModal.created_at).toLocaleDateString('en-US')
+                      : (selectedReviewModal.date || '4/11/2023')}
                   </span>
                 </div>
 
@@ -946,10 +975,12 @@ export default function ShopCatalog() {
               {/* Bottom Footer Section: Product Info & View Button */}
               <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: 16, marginTop: 24 }}>
                 <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 12, lineHeight: 1.4 }}>
-                  {selectedReviewModal.product_name || '15 X 5 CM PRE-CUT STANDARD CUPCAKE CUSTOM EDIBLE ICING IMAGES'}
+                  {selectedReviewModal.product_name ||
+                    (products.find(p => String(p.id) === String(selectedReviewModal.product_id))?.name) ||
+                    'PASTEL STUDIO FOOD PHOTOGRAPHY KIT'}
                 </div>
                 <Link
-                  href="/collections"
+                  href={selectedReviewModal.product_id ? `/products/${selectedReviewModal.product_id}` : '/collections'}
                   onClick={() => setSelectedReviewModal(null)}
                   style={{
                     display: 'inline-flex',

@@ -106,7 +106,8 @@ export default function AdminDashboardPage() {
   const [bannerTitle, setBannerTitle] = useState('');
   const [bannerSubtitle, setBannerSubtitle] = useState('');
   const [bannerImage, setBannerImage] = useState('/images/hero_cake_prop.png');
-  const [bannerLink, setBannerLink] = useState('#shop');
+  const [bannerLink, setBannerLink] = useState('/collections/wedding');
+  const [bannerCatKey, setBannerCatKey] = useState('wedding');
   const [galleryTitle, setGalleryTitle] = useState('');
   const [galleryCat, setGalleryCat] = useState('Studio Portfolio');
   const [galleryImg, setGalleryImg] = useState('/images/wedding_tier_prop.png');
@@ -188,6 +189,7 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     if (!bannerTitle.trim() || !bannerImage.trim()) return;
     try {
+      const targetLink = bannerLink || `/collections/${bannerCatKey}`;
       const res = await fetch('/api/category-banners', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -195,7 +197,8 @@ export default function AdminDashboardPage() {
           title: sanitizeInput(bannerTitle),
           subtitle: sanitizeInput(bannerSubtitle),
           image_url: bannerImage,
-          link_url: bannerLink
+          link_url: targetLink,
+          category_key: bannerCatKey
         })
       });
       if (res.ok) {
@@ -1401,6 +1404,33 @@ export default function AdminDashboardPage() {
                           </label>
                         </div>
                       </div>
+                      <div>
+                        <label className="form-label">Linked Collection Category *</label>
+                        <select
+                          className="form-select"
+                          value={bannerCatKey}
+                          onChange={(e) => {
+                            setBannerCatKey(e.target.value);
+                            setBannerLink(`/collections/${e.target.value}`);
+                          }}
+                        >
+                          <option value="wedding">Wedding Tier Dummies (/collections/wedding)</option>
+                          <option value="photography">Food Studio Kits (/collections/photography)</option>
+                          <option value="pedestal">Display Pedestals (/collections/pedestal)</option>
+                          <option value="custom">Custom & Commercial (/collections/custom)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="form-label">Target Link URL *</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={bannerLink}
+                          onChange={(e) => setBannerLink(e.target.value)}
+                          placeholder="/collections/wedding"
+                          required
+                        />
+                      </div>
                       <div style={{ gridColumn: '1 / -1' }}>
                         <label className="form-label">Subtitle Description</label>
                         <input type="text" className="form-input" placeholder="Bespoke polymer prop design & multi-tier dummy configurations." value={bannerSubtitle} onChange={(e) => setBannerSubtitle(e.target.value)} />
@@ -1416,12 +1446,18 @@ export default function AdminDashboardPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
                     {banners.map((b) => (
                       <div key={b.id} className="admin-card" style={{ overflow: 'hidden', padding: 0 }}>
-                        <div style={{ height: 160, overflow: 'hidden', background: '#F1F5F9' }}>
+                        <div style={{ height: 160, overflow: 'hidden', background: '#F1F5F9', position: 'relative' }}>
                           <img src={b.image_url} alt={b.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <span style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(15,23,42,0.85)', color: '#36DFE2', fontSize: '0.72rem', fontWeight: 800, padding: '3px 8px', borderRadius: 4, backdropFilter: 'blur(4px)' }}>
+                            {b.category_key || 'wedding'}
+                          </span>
                         </div>
                         <div style={{ padding: 16 }}>
                           <h4 style={{ margin: '0 0 6px', fontSize: '1.1rem', color: '#0F172A' }}>{b.title}</h4>
                           <p style={{ fontSize: '0.82rem', color: '#64748B', marginBottom: 14 }}>{b.subtitle}</p>
+                          <div style={{ fontSize: '0.75rem', color: '#0FB3B6', fontWeight: 700, marginBottom: 10 }}>
+                            Target: <code>{b.link_url || `/collections/${b.category_key || 'wedding'}`}</code>
+                          </div>
                           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <button onClick={() => handleDeleteBanner(b.id)} className="action-icon-btn delete" title="Delete Banner">
                               <Trash2 style={{ width: 16, height: 16 }} />
