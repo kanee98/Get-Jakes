@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { User, ShoppingBag, ShieldCheck, LogOut, Menu, X, Search, Sparkles, Truck } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function Navbar() {
@@ -15,6 +15,25 @@ export default function Navbar() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const [announcement, setAnnouncement] = useState('Free Express Crate Shipping on orders over $150!');
+
+  useEffect(() => {
+    async function loadAnnouncements() {
+      try {
+        const res = await fetch('/api/announcements');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setAnnouncement(data[0].message);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch announcement:', err);
+      }
+    }
+    loadAnnouncements();
+  }, []);
 
   if (pathname?.startsWith('/admin')) return null;
 
@@ -35,7 +54,7 @@ export default function Navbar() {
       {/* Announcement Bar (printsoncakes.com.au style) */}
       <div className="announcement-bar">
         <div className="container announcement-content">
-          <span><Truck style={{ width: 14, height: 14, verticalAlign: 'middle', marginRight: 6 }} /> <strong>Free Express Crate Shipping</strong> on orders over $150!</span>
+          <span><Truck style={{ width: 14, height: 14, verticalAlign: 'middle', marginRight: 6 }} /> {announcement}</span>
         </div>
       </div>
 

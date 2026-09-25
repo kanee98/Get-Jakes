@@ -118,3 +118,52 @@ CREATE TABLE IF NOT EXISTS `custom_quotes` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------------------------------------------------------
+-- 7. Announcements Bar Table
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `announcements` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `message` VARCHAR(255) NOT NULL,
+  `is_active` TINYINT(1) DEFAULT 1,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------------------------------------------------------
+-- 8. Category Banners Table
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `category_banners` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` VARCHAR(150) NOT NULL,
+  `subtitle` TEXT NULL,
+  `image_url` VARCHAR(255) NOT NULL,
+  `link_url` VARCHAR(255) NULL,
+  `category_key` VARCHAR(50) NOT NULL DEFAULT 'wedding',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------------------------------------------------------
+-- 9. Gallery Items Table
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gallery_items` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` VARCHAR(200) NOT NULL,
+  `category` VARCHAR(100) NOT NULL,
+  `image_url` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------------------------------------------------------
+-- 10. Customer Reviews Table
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `reviews` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NULL,
+  `reviewer_name` VARCHAR(150) NOT NULL,
+  `reviewer_role` VARCHAR(150) DEFAULT 'Verified Customer',
+  `rating` INT DEFAULT 5,
+  `comment` TEXT NOT NULL,
+  `is_verified` TINYINT(1) DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

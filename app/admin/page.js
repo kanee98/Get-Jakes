@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
+import { useModal } from '@/context/ModalContext';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -25,17 +26,31 @@ import {
   LogOut,
   ChevronRight,
   TrendingUp,
-  MessageSquareQuote
+  MessageSquareQuote,
+  Megaphone,
+  Image,
+  Grid,
+  Star,
+  Check,
+  ThumbsUp
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const { user, logout, loading } = useAuth();
+  const { showAlert, showConfirm } = useModal();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState('overview');
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [quotes, setQuotes] = useState([]);
+
+  // Management Datasets
+  const [announcements, setAnnouncements] = useState([]);
+  const [banners, setBanners] = useState([]);
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [reviews, setReviews] = useState([]);
+
   const [loadingData, setLoadingData] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -43,6 +58,21 @@ export default function AdminDashboardPage() {
   const [productSearch, setProductSearch] = useState('');
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+
+  // Custom Quote Search & Filters
+  const [quoteSearch, setQuoteSearch] = useState('');
+  const [quoteStatusFilter, setQuoteStatusFilter] = useState('all');
+  const [quoteTextureFilter, setQuoteTextureFilter] = useState('all');
+
+  // Pagination States
+  const [quotePage, setQuotePage] = useState(1);
+  const [quotesPerPage] = useState(5);
+  const [productPage, setProductPage] = useState(1);
+  const [productsPerPage] = useState(5);
+  const [orderPage, setOrderPage] = useState(1);
+  const [ordersPerPage] = useState(5);
+  const [reviewPage, setReviewPage] = useState(1);
+  const [reviewsPerPage] = useState(5);
 
   // Product Modal State
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -61,6 +91,16 @@ export default function AdminDashboardPage() {
   const [prodMaterial, setProdMaterial] = useState('EPS Foam + Fondant');
   const [prodWeight, setProdWeight] = useState('4.2 lbs');
 
+  // Management Form States
+  const [annMsg, setAnnMsg] = useState('');
+  const [bannerTitle, setBannerTitle] = useState('');
+  const [bannerSubtitle, setBannerSubtitle] = useState('');
+  const [bannerImage, setBannerImage] = useState('/images/hero_cake_prop.png');
+  const [bannerLink, setBannerLink] = useState('#shop');
+  const [galleryTitle, setGalleryTitle] = useState('');
+  const [galleryCat, setGalleryCat] = useState('Studio Portfolio');
+  const [galleryImg, setGalleryImg] = useState('/images/wedding_tier_prop.png');
+
   // Order Detail Modal State
   const [selectedOrder, setSelectedOrder] = useState(null);
 
@@ -78,19 +118,192 @@ export default function AdminDashboardPage() {
 
   const loadData = async () => {
     try {
-      const [resProd, resOrders, resQuotes] = await Promise.all([
+      const [resProd, resOrders, resQuotes, resAnn, resBanners, resGallery, resRev] = await Promise.all([
         fetch('/api/products'),
         fetch('/api/orders'),
-        fetch('/api/custom-quotes')
+        fetch('/api/custom-quotes'),
+        fetch('/api/announcements'),
+        fetch('/api/category-banners'),
+        fetch('/api/gallery'),
+        fetch('/api/reviews?admin=true')
       ]);
 
       if (resProd.ok) setProducts(await resProd.json());
       if (resOrders.ok) setOrders(await resOrders.json());
       if (resQuotes.ok) setQuotes(await resQuotes.json());
+      if (resAnn.ok) setAnnouncements(await resAnn.json());
+      if (resBanners.ok) setBanners(await resBanners.json());
+      if (resGallery.ok) setGalleryItems(await resGallery.json());
+      if (resRev.ok) setReviews(await resRev.json());
     } catch (err) {
       console.error('Error loading admin data:', err);
     } finally {
       setLoadingData(false);
+    }
+  };
+
+  // Management Handlers with Custom Modals
+  const handleCreateAnnouncement = async (e) => {
+    e.preventDefault();
+    if (!annMsg.trim()) return;
+    try {
+      const res = await fetch('/api/announcements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: annMsg })
+      });
+      if (res.ok) {
+        setAnnMsg('');
+        loadData();
+        await showAlert('Success', 'Announcement created successfully!', 'success');
+      }
+    } catch (err) {
+      await showAlert('Error', 'Failed to create announcement', 'warning');
+    }
+  };
+
+  const handleDeleteAnnouncement = async (id) => {
+    const ok = await showConfirm('Delete Announcement', 'Are you sure you want to delete this announcement?', { type: 'warning', confirmText: 'Delete' });
+    if (!ok) return;
+    try {
+      await fetch(`/api/announcements?id=${id}`, { method: 'DELETE' });
+      loadData();
+      await showAlert('Deleted', 'Announcement deleted successfully.', 'success');
+    } catch (err) {
+      await showAlert('Error', 'Failed to delete announcement', 'warning');
+    }
+  };
+
+  const handleCreateBanner = async (e) => {
+    e.preventDefault();
+    if (!bannerTitle.trim() || !bannerImage.trim()) return;
+    try {
+      const res = await fetch('/api/category-banners', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: bannerTitle,
+          subtitle: bannerSubtitle,
+          image_url: bannerImage,
+          link_url: bannerLink
+        })
+      });
+      if (res.ok) {
+        setBannerTitle('');
+        setBannerSubtitle('');
+        loadData();
+        await showAlert('Success', 'Category banner created successfully!', 'success');
+      }
+    } catch (err) {
+      await showAlert('Error', 'Failed to create category banner', 'warning');
+    }
+  };
+
+  const handleDeleteBanner = async (id) => {
+    const ok = await showConfirm('Delete Banner', 'Are you sure you want to delete this category banner?', { type: 'warning', confirmText: 'Delete' });
+    if (!ok) return;
+    try {
+      await fetch(`/api/category-banners?id=${id}`, { method: 'DELETE' });
+      loadData();
+      await showAlert('Deleted', 'Category banner deleted successfully.', 'success');
+    } catch (err) {
+      await showAlert('Error', 'Failed to delete category banner', 'warning');
+    }
+  };
+
+  const handleCreateGallery = async (e) => {
+    e.preventDefault();
+    if (!galleryTitle.trim() || !galleryImg.trim()) return;
+    try {
+      const res = await fetch('/api/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: galleryTitle,
+          category: galleryCat,
+          image_url: galleryImg
+        })
+      });
+      if (res.ok) {
+        setGalleryTitle('');
+        loadData();
+        await showAlert('Success', 'Gallery showcase photo added successfully!', 'success');
+      }
+    } catch (err) {
+      await showAlert('Error', 'Failed to create gallery item', 'warning');
+    }
+  };
+
+  const handleDeleteGallery = async (id) => {
+    const ok = await showConfirm('Delete Gallery Photo', 'Are you sure you want to delete this gallery item?', { type: 'warning', confirmText: 'Delete' });
+    if (!ok) return;
+    try {
+      await fetch(`/api/gallery?id=${id}`, { method: 'DELETE' });
+      loadData();
+      await showAlert('Deleted', 'Gallery item removed successfully.', 'success');
+    } catch (err) {
+      await showAlert('Error', 'Failed to delete gallery item', 'warning');
+    }
+  };
+
+  const handleVerifyReview = async (id, isVerified) => {
+    try {
+      await fetch('/api/reviews', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, isVerified })
+      });
+      loadData();
+      await showAlert('Review Updated', `Customer review ${isVerified ? 'verified & published' : 'unpublished'}!`, 'success');
+    } catch (err) {
+      await showAlert('Error', 'Failed to update review verification status', 'warning');
+    }
+  };
+
+  const handleDeleteReview = async (id) => {
+    const ok = await showConfirm('Delete Review', 'Are you sure you want to delete this review?', { type: 'warning', confirmText: 'Delete' });
+    if (!ok) return;
+    try {
+      await fetch(`/api/reviews?id=${id}`, { method: 'DELETE' });
+      loadData();
+      await showAlert('Deleted', 'Customer review deleted successfully.', 'success');
+    } catch (err) {
+      await showAlert('Error', 'Failed to delete review', 'warning');
+    }
+  };
+
+  const handleQuoteStatusChange = async (quoteId, newStatus) => {
+    try {
+      const res = await fetch('/api/custom-quotes', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: quoteId, status: newStatus })
+      });
+      if (res.ok) {
+        loadData();
+        await showAlert('Status Updated', `Custom quote #${quoteId} workflow status updated to "${newStatus}".`, 'success');
+      }
+    } catch (err) {
+      await showAlert('Update Error', 'Failed to update custom quote status.', 'warning');
+    }
+  };
+
+  const handleDeleteQuote = async (quoteId) => {
+    const ok = await showConfirm(
+      'Delete Quote Inquiry',
+      `Are you sure you want to delete custom quote inquiry #${quoteId}?`,
+      { type: 'warning', confirmText: 'Delete' }
+    );
+    if (!ok) return;
+
+    try {
+      const res = await fetch(`/api/custom-quotes?id=${quoteId}`, { method: 'DELETE' });
+      if (res.ok) {
+        loadData();
+        await showAlert('Quote Deleted', `Custom quote inquiry #${quoteId} removed from database.`, 'success');
+      }
+    } catch (err) {
+      await showAlert('Delete Error', 'Failed to delete quote inquiry.', 'warning');
     }
   };
 
@@ -181,18 +394,19 @@ export default function AdminDashboardPage() {
     if (res.ok) {
       setIsProductModalOpen(false);
       loadData();
-      alert(editingProductId ? 'Prop updated successfully!' : 'New prop added to inventory database!');
+      await showAlert('Success', editingProductId ? 'Prop updated successfully!' : 'New prop added to inventory database!', 'success');
     } else {
-      alert('Failed to save product.');
+      await showAlert('Error', 'Failed to save product.', 'warning');
     }
   };
 
   const handleDeleteProduct = async (id) => {
-    if (!confirm('Are you sure you want to remove this prop from the database?')) return;
+    const ok = await showConfirm('Delete Prop', 'Are you sure you want to remove this prop from the database?', { type: 'warning', confirmText: 'Delete' });
+    if (!ok) return;
     const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
     if (res.ok) {
       loadData();
-      alert('Prop deleted successfully.');
+      await showAlert('Deleted', 'Prop deleted successfully.', 'success');
     }
   };
 
@@ -209,11 +423,16 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Filtered Lists
+  // Filtered & Paginated Lists
   const filteredProducts = products.filter(
     (p) =>
       p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
       p.category.toLowerCase().includes(productSearch.toLowerCase())
+  );
+  const totalProductPages = Math.ceil(filteredProducts.length / productsPerPage) || 1;
+  const paginatedProducts = filteredProducts.slice(
+    (productPage - 1) * productsPerPage,
+    productPage * productsPerPage
   );
 
   const filteredOrders = orders.filter((o) => {
@@ -224,6 +443,32 @@ export default function AdminDashboardPage() {
     const matchesStatus = orderStatusFilter === 'all' || o.status === orderStatusFilter;
     return matchesSearch && matchesStatus;
   });
+  const totalOrderPages = Math.ceil(filteredOrders.length / ordersPerPage) || 1;
+  const paginatedOrders = filteredOrders.slice(
+    (orderPage - 1) * ordersPerPage,
+    orderPage * ordersPerPage
+  );
+
+  const filteredQuotes = quotes.filter((q) => {
+    const matchesSearch =
+      (q.contact_info || '').toLowerCase().includes(quoteSearch.toLowerCase()) ||
+      (q.id || '').toString().includes(quoteSearch) ||
+      (q.finish_texture || '').toLowerCase().includes(quoteSearch.toLowerCase());
+    const matchesStatus = quoteStatusFilter === 'all' || (q.status || 'Pending') === quoteStatusFilter;
+    const matchesTexture = quoteTextureFilter === 'all' || q.finish_texture === quoteTextureFilter;
+    return matchesSearch && matchesStatus && matchesTexture;
+  });
+  const totalQuotePages = Math.ceil(filteredQuotes.length / quotesPerPage) || 1;
+  const paginatedQuotes = filteredQuotes.slice(
+    (quotePage - 1) * quotesPerPage,
+    quotePage * quotesPerPage
+  );
+
+  const totalReviewPages = Math.ceil(reviews.length / reviewsPerPage) || 1;
+  const paginatedReviews = reviews.slice(
+    (reviewPage - 1) * reviewsPerPage,
+    reviewPage * reviewsPerPage
+  );
 
   return (
     <div className="admin-body-root">
@@ -276,6 +521,51 @@ export default function AdminDashboardPage() {
               <MessageSquareQuote style={{ width: 18, height: 18 }} /> Custom Quotes
             </span>
             <span className="nav-badge">{quotes.length}</span>
+          </button>
+
+          <div className="admin-nav-label" style={{ marginTop: 16 }}>Storefront Content</div>
+          <button
+            onClick={() => { setActiveTab('announcements'); setMobileSidebarOpen(false); }}
+            className={`admin-nav-item ${activeTab === 'announcements' ? 'active' : ''}`}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Megaphone style={{ width: 18, height: 18 }} /> Top Announcement
+            </span>
+            <span className="nav-badge">{announcements.length}</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('banners'); setMobileSidebarOpen(false); }}
+            className={`admin-nav-item ${activeTab === 'banners' ? 'active' : ''}`}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Image style={{ width: 18, height: 18 }} /> Category Banners
+            </span>
+            <span className="nav-badge">{banners.length}</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('gallery'); setMobileSidebarOpen(false); }}
+            className={`admin-nav-item ${activeTab === 'gallery' ? 'active' : ''}`}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Grid style={{ width: 18, height: 18 }} /> Gallery Showcase
+            </span>
+            <span className="nav-badge">{galleryItems.length}</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('reviews'); setMobileSidebarOpen(false); }}
+            className={`admin-nav-item ${activeTab === 'reviews' ? 'active' : ''}`}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Star style={{ width: 18, height: 18 }} /> Customer Reviews
+            </span>
+            {reviews.filter(r => r.is_verified === 0).length > 0 && (
+              <span className="nav-badge" style={{ background: '#36DFE2', color: '#0A0D12' }}>
+                {reviews.filter(r => r.is_verified === 0).length} Pending
+              </span>
+            )}
           </button>
 
           <div className="admin-nav-label" style={{ marginTop: 16 }}>Management</div>
@@ -335,15 +625,13 @@ export default function AdminDashboardPage() {
                 {activeTab === 'products' && 'Prop Catalog'}
                 {activeTab === 'orders' && 'Bank Wire Orders'}
                 {activeTab === 'quotes' && 'Custom Quote Requests'}
+                {activeTab === 'announcements' && 'Top Announcement Bar'}
+                {activeTab === 'banners' && 'Category Banners'}
+                {activeTab === 'gallery' && 'Gallery Showcase'}
+                {activeTab === 'reviews' && 'Customer Reviews Moderation'}
                 {activeTab === 'settings' && 'Bank & Store Settings'}
               </strong>
             </div>
-          </div>
-
-          <div className="admin-top-actions">
-            <button onClick={handleOpenAddProduct} className="enterprise-btn-primary">
-              <Plus style={{ width: 16, height: 16 }} /> Create Prop
-            </button>
           </div>
         </header>
 
@@ -488,11 +776,11 @@ export default function AdminDashboardPage() {
                           type="text"
                           placeholder="Search by prop name or category..."
                           value={productSearch}
-                          onChange={(e) => setProductSearch(e.target.value)}
+                          onChange={(e) => { setProductSearch(e.target.value); setProductPage(1); }}
                         />
                       </div>
                       <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600 }}>
-                        Showing {filteredProducts.length} of {products.length} Props
+                        Showing {filteredProducts.length} Props
                       </span>
                     </div>
 
@@ -510,7 +798,7 @@ export default function AdminDashboardPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredProducts.map((p) => (
+                          {paginatedProducts.map((p) => (
                             <tr key={p.id}>
                               <td>
                                 <img
@@ -545,6 +833,34 @@ export default function AdminDashboardPage() {
                         </tbody>
                       </table>
                     </div>
+
+                    {/* Pagination Footer */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderTop: '1px solid #E2E8F0', flexWrap: 'wrap', gap: 12 }}>
+                      <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+                        Showing <strong>{filteredProducts.length > 0 ? (productPage - 1) * productsPerPage + 1 : 0}</strong> to <strong>{Math.min(productPage * productsPerPage, filteredProducts.length)}</strong> of <strong>{filteredProducts.length}</strong> props
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <button
+                          disabled={productPage <= 1}
+                          onClick={() => setProductPage(p => Math.max(1, p - 1))}
+                          className="enterprise-btn-secondary"
+                          style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: productPage <= 1 ? 0.5 : 1, cursor: productPage <= 1 ? 'not-allowed' : 'pointer' }}
+                        >
+                          Previous
+                        </button>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A', padding: '0 6px' }}>
+                          Page {productPage} of {totalProductPages}
+                        </span>
+                        <button
+                          disabled={productPage >= totalProductPages}
+                          onClick={() => setProductPage(p => Math.min(totalProductPages, p + 1))}
+                          className="enterprise-btn-secondary"
+                          style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: productPage >= totalProductPages ? 0.5 : 1, cursor: productPage >= totalProductPages ? 'not-allowed' : 'pointer' }}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -567,13 +883,13 @@ export default function AdminDashboardPage() {
                           type="text"
                           placeholder="Search Ref Code, customer, UTR number..."
                           value={orderSearch}
-                          onChange={(e) => setOrderSearch(e.target.value)}
+                          onChange={(e) => { setOrderSearch(e.target.value); setOrderPage(1); }}
                         />
                       </div>
 
                       <select
                         value={orderStatusFilter}
-                        onChange={(e) => setOrderStatusFilter(e.target.value)}
+                        onChange={(e) => { setOrderStatusFilter(e.target.value); setOrderPage(1); }}
                         className="enterprise-btn-secondary"
                         style={{ outline: 'none' }}
                       >
@@ -601,7 +917,7 @@ export default function AdminDashboardPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredOrders.map((o) => (
+                          {paginatedOrders.map((o) => (
                             <tr key={o.id}>
                               <td>
                                 <code style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0F172A', background: '#F1F5F9', padding: '4px 8px', borderRadius: 4 }}>
@@ -653,11 +969,39 @@ export default function AdminDashboardPage() {
                         </tbody>
                       </table>
                     </div>
+
+                    {/* Pagination Footer */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderTop: '1px solid #E2E8F0', flexWrap: 'wrap', gap: 12 }}>
+                      <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+                        Showing <strong>{filteredOrders.length > 0 ? (orderPage - 1) * ordersPerPage + 1 : 0}</strong> to <strong>{Math.min(orderPage * ordersPerPage, filteredOrders.length)}</strong> of <strong>{filteredOrders.length}</strong> orders
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <button
+                          disabled={orderPage <= 1}
+                          onClick={() => setOrderPage(p => Math.max(1, p - 1))}
+                          className="enterprise-btn-secondary"
+                          style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: orderPage <= 1 ? 0.5 : 1, cursor: orderPage <= 1 ? 'not-allowed' : 'pointer' }}
+                        >
+                          Previous
+                        </button>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A', padding: '0 6px' }}>
+                          Page {orderPage} of {totalOrderPages}
+                        </span>
+                        <button
+                          disabled={orderPage >= totalOrderPages}
+                          onClick={() => setOrderPage(p => Math.min(totalOrderPages, p + 1))}
+                          className="enterprise-btn-secondary"
+                          style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: orderPage >= totalOrderPages ? 0.5 : 1, cursor: orderPage >= totalOrderPages ? 'not-allowed' : 'pointer' }}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* 4. CUSTOM QUOTES TAB */}
+              {/* 4. CUSTOM QUOTES TAB (Image 4 Enhanced) */}
               {activeTab === 'quotes' && (
                 <div>
                   <div className="admin-page-header">
@@ -668,31 +1012,167 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="admin-card-container">
+                    {/* Filters & Search Bar */}
+                    <div className="admin-filter-bar" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                      <div className="search-field" style={{ flexGrow: 1, minWidth: 220 }}>
+                        <Search style={{ width: 16, height: 16, color: '#94A3B8' }} />
+                        <input
+                          type="text"
+                          placeholder="Search inquiry ID, contact info, or texture..."
+                          value={quoteSearch}
+                          onChange={(e) => { setQuoteSearch(e.target.value); setQuotePage(1); }}
+                        />
+                      </div>
+
+                      <select
+                        value={quoteStatusFilter}
+                        onChange={(e) => { setQuoteStatusFilter(e.target.value); setQuotePage(1); }}
+                        className="enterprise-btn-secondary"
+                        style={{ outline: 'none' }}
+                      >
+                        <option value="all">All Statuses</option>
+                        <option value="Pending">Pending / New</option>
+                        <option value="Contacted">Contacted</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Quoted">Quoted</option>
+                        <option value="Fulfilled">Fulfilled</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+
+                      <select
+                        value={quoteTextureFilter}
+                        onChange={(e) => { setQuoteTextureFilter(e.target.value); setQuotePage(1); }}
+                        className="enterprise-btn-secondary"
+                        style={{ outline: 'none' }}
+                      >
+                        <option value="all">All Textures</option>
+                        <option value="smooth">Smooth Fondant</option>
+                        <option value="textured">Stone & Plaster</option>
+                        <option value="gold">24K Gold Gilding</option>
+                        <option value="naked">Naked Rustic</option>
+                      </select>
+                    </div>
+
                     <div className="table-responsive-wrapper">
                       <table className="enterprise-table">
                         <thead>
                           <tr>
-                            <th>Inquiry ID</th>
-                            <th>Contact Information</th>
-                            <th>Tiers Count</th>
-                            <th>Finish Texture</th>
-                            <th>Calculated Estimate</th>
-                            <th>Submission Date</th>
+                            <th>INQUIRY ID</th>
+                            <th>CONTACT INFORMATION</th>
+                            <th>TIERS COUNT</th>
+                            <th>FINISH TEXTURE</th>
+                            <th>CALCULATED ESTIMATE</th>
+                            <th>SUBMISSION DATE</th>
+                            <th>WORKFLOW STATUS</th>
+                            <th>ACTIONS</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {quotes.map((q) => (
-                            <tr key={q.id}>
-                              <td><code style={{ fontWeight: 800, background: '#F1F5F9', padding: '2px 8px', borderRadius: 4 }}>#{q.id}</code></td>
-                              <td><strong style={{ color: '#0F172A' }}>{q.contact_info}</strong></td>
-                              <td>{q.tiers_count} Tiers</td>
-                              <td><span className="status-pill blue">{q.finish_texture}</span></td>
-                              <td><strong style={{ color: '#059669', fontSize: '0.95rem' }}>${parseFloat(q.estimated_price).toFixed(2)}</strong></td>
-                              <td>{new Date(q.created_at).toLocaleDateString()}</td>
+                          {paginatedQuotes.length === 0 ? (
+                            <tr>
+                              <td colSpan="8" style={{ textAlign: 'center', padding: 32, color: '#64748B' }}>
+                                No custom quote inquiries match your filter criteria.
+                              </td>
                             </tr>
-                          ))}
+                          ) : (
+                            paginatedQuotes.map((q) => {
+                              const status = q.status || 'Pending';
+                              const statusColors = {
+                                'Pending': { bg: '#FEF3C7', text: '#B45309' },
+                                'Contacted': { bg: '#DBEAFE', text: '#1D4ED8' },
+                                'In Progress': { bg: '#F3E8FF', text: '#6B21A8' },
+                                'Quoted': { bg: '#CCFBF1', text: '#0F766E' },
+                                'Fulfilled': { bg: '#D1FAE5', text: '#047857' },
+                                'Cancelled': { bg: '#FEE2E2', text: '#B91C1C' }
+                              };
+                              const sColor = statusColors[status] || statusColors['Pending'];
+
+                              return (
+                                <tr key={q.id}>
+                                  <td><code style={{ fontWeight: 800, background: '#F1F5F9', padding: '3px 8px', borderRadius: 4 }}>#{q.id}</code></td>
+                                  <td><strong style={{ color: '#0F172A' }}>{q.contact_info}</strong></td>
+                                  <td>{q.tiers_count} Tiers</td>
+                                  <td><span className="status-pill blue">{q.finish_texture}</span></td>
+                                  <td><strong style={{ color: '#059669', fontSize: '0.95rem' }}>${parseFloat(q.estimated_price).toFixed(2)}</strong></td>
+                                  <td>{new Date(q.created_at).toLocaleDateString()}</td>
+                                  <td>
+                                    <select
+                                      value={status}
+                                      onChange={(e) => handleQuoteStatusChange(q.id, e.target.value)}
+                                      style={{
+                                        padding: '6px 12px',
+                                        borderRadius: 999,
+                                        fontSize: '0.78rem',
+                                        fontWeight: 700,
+                                        border: '1px solid #CBD5E1',
+                                        outline: 'none',
+                                        cursor: 'pointer',
+                                        background: sColor.bg,
+                                        color: sColor.text
+                                      }}
+                                    >
+                                      <option value="Pending">Pending / New</option>
+                                      <option value="Contacted">Contacted</option>
+                                      <option value="In Progress">In Progress</option>
+                                      <option value="Quoted">Quoted</option>
+                                      <option value="Fulfilled">Fulfilled</option>
+                                      <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                  </td>
+                                  <td>
+                                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                                      {status === 'Pending' && (
+                                        <button
+                                          onClick={() => handleQuoteStatusChange(q.id, 'Contacted')}
+                                          className="enterprise-btn-secondary"
+                                          style={{ padding: '4px 10px', fontSize: '0.75rem', background: '#EFF6FF', color: '#1D4ED8', borderColor: '#BFDBFE' }}
+                                        >
+                                          Mark Contacted
+                                        </button>
+                                      )}
+                                      <button
+                                        onClick={() => handleDeleteQuote(q.id)}
+                                        className="action-icon-btn delete"
+                                        title="Delete Inquiry"
+                                      >
+                                        <Trash2 style={{ width: 14, height: 14 }} />
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )}
                         </tbody>
                       </table>
+                    </div>
+
+                    {/* Pagination Footer */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderTop: '1px solid #E2E8F0', flexWrap: 'wrap', gap: 12 }}>
+                      <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+                        Showing <strong>{filteredQuotes.length > 0 ? (quotePage - 1) * quotesPerPage + 1 : 0}</strong> to <strong>{Math.min(quotePage * quotesPerPage, filteredQuotes.length)}</strong> of <strong>{filteredQuotes.length}</strong> inquiries
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <button
+                          disabled={quotePage <= 1}
+                          onClick={() => setQuotePage(p => Math.max(1, p - 1))}
+                          className="enterprise-btn-secondary"
+                          style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: quotePage <= 1 ? 0.5 : 1, cursor: quotePage <= 1 ? 'not-allowed' : 'pointer' }}
+                        >
+                          Previous
+                        </button>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A', padding: '0 6px' }}>
+                          Page {quotePage} of {totalQuotePages}
+                        </span>
+                        <button
+                          disabled={quotePage >= totalQuotePages}
+                          onClick={() => setQuotePage(p => Math.min(totalQuotePages, p + 1))}
+                          className="enterprise-btn-secondary"
+                          style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: quotePage >= totalQuotePages ? 0.5 : 1, cursor: quotePage >= totalQuotePages ? 'not-allowed' : 'pointer' }}
+                        >
+                          Next
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -754,7 +1234,7 @@ export default function AdminDashboardPage() {
                         />
                       </div>
 
-                      <button onClick={() => alert('Bank configuration updated!')} className="enterprise-btn-primary">
+                      <button onClick={async () => await showAlert('Settings Saved', 'Bank configuration updated successfully!', 'success')} className="enterprise-btn-primary">
                         <CheckCircle2 style={{ width: 16, height: 16 }} /> Save Bank Settings
                       </button>
                     </div>
@@ -776,6 +1256,268 @@ export default function AdminDashboardPage() {
                           Sort/IFSC Code: <strong style={{ color: '#FFF' }}>{ifscCode}</strong>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ANNOUNCEMENTS TAB */}
+              {activeTab === 'announcements' && (
+                <div>
+                  <div className="admin-page-header">
+                    <div>
+                      <h1 className="admin-page-title">Top Announcement Bar</h1>
+                      <p className="admin-page-subtitle">Manage the top header promo notification bar shown to store visitors.</p>
+                    </div>
+                  </div>
+
+                  <div className="admin-card" style={{ marginBottom: 24 }}>
+                    <h3 style={{ fontSize: '1.1rem', marginBottom: 14 }}>Add Announcement Message</h3>
+                    <form onSubmit={handleCreateAnnouncement} style={{ display: 'flex', gap: 12 }}>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="e.g. Free Express Crate Shipping on orders over $150!"
+                        value={annMsg}
+                        onChange={(e) => setAnnMsg(e.target.value)}
+                        required
+                        style={{ flexGrow: 1 }}
+                      />
+                      <button type="submit" className="enterprise-btn-primary">
+                        <Plus style={{ width: 16, height: 16 }} /> Add Message
+                      </button>
+                    </form>
+                  </div>
+
+                  <div className="admin-card">
+                    <h3 style={{ fontSize: '1.1rem', marginBottom: 16 }}>Active Announcements ({announcements.length})</h3>
+                    {announcements.map((a) => (
+                      <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#F8FAFC', borderRadius: 8, marginBottom: 10, border: '1px solid #E2E8F0' }}>
+                        <div>
+                          <strong>{a.message}</strong>
+                        </div>
+                        <button onClick={() => handleDeleteAnnouncement(a.id)} className="action-icon-btn delete" title="Delete Announcement">
+                          <Trash2 style={{ width: 16, height: 16 }} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* BANNERS TAB */}
+              {activeTab === 'banners' && (
+                <div>
+                  <div className="admin-page-header">
+                    <div>
+                      <h1 className="admin-page-title">Category Visual Banners</h1>
+                      <p className="admin-page-subtitle">Manage 4-card homepage category showcase banners with high-res photos.</p>
+                    </div>
+                  </div>
+
+                  <div className="admin-card" style={{ marginBottom: 24 }}>
+                    <h3 style={{ fontSize: '1.1rem', marginBottom: 14 }}>Add Category Banner</h3>
+                    <form onSubmit={handleCreateBanner} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                      <div>
+                        <label className="form-label">Banner Title *</label>
+                        <input type="text" className="form-input" placeholder="e.g. Custom Cake Props" value={bannerTitle} onChange={(e) => setBannerTitle(e.target.value)} required />
+                      </div>
+                      <div>
+                        <label className="form-label">Image URL / Path *</label>
+                        <input type="text" className="form-input" placeholder="/images/hero_cake_prop.png" value={bannerImage} onChange={(e) => setBannerImage(e.target.value)} required />
+                      </div>
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <label className="form-label">Subtitle Description</label>
+                        <input type="text" className="form-input" placeholder="Bespoke polymer prop design & multi-tier dummy configurations." value={bannerSubtitle} onChange={(e) => setBannerSubtitle(e.target.value)} />
+                      </div>
+                      <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end' }}>
+                        <button type="submit" className="enterprise-btn-primary">
+                          <Plus style={{ width: 16, height: 16 }} /> Save Category Banner
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
+                    {banners.map((b) => (
+                      <div key={b.id} className="admin-card" style={{ overflow: 'hidden', padding: 0 }}>
+                        <div style={{ height: 160, overflow: 'hidden', background: '#F1F5F9' }}>
+                          <img src={b.image_url} alt={b.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        <div style={{ padding: 16 }}>
+                          <h4 style={{ margin: '0 0 6px', fontSize: '1.1rem', color: '#0F172A' }}>{b.title}</h4>
+                          <p style={{ fontSize: '0.82rem', color: '#64748B', marginBottom: 14 }}>{b.subtitle}</p>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <button onClick={() => handleDeleteBanner(b.id)} className="action-icon-btn delete" title="Delete Banner">
+                              <Trash2 style={{ width: 16, height: 16 }} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* GALLERY TAB */}
+              {activeTab === 'gallery' && (
+                <div>
+                  <div className="admin-page-header">
+                    <div>
+                      <h1 className="admin-page-title">Gallery Showcase Items</h1>
+                      <p className="admin-page-subtitle">Manage high-res studio showcase photos for the homepage gallery lightbox.</p>
+                    </div>
+                  </div>
+
+                  <div className="admin-card" style={{ marginBottom: 24 }}>
+                    <h3 style={{ fontSize: '1.1rem', marginBottom: 14 }}>Add Gallery Item</h3>
+                    <form onSubmit={handleCreateGallery} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                      <div>
+                        <label className="form-label">Photo Title *</label>
+                        <input type="text" className="form-input" placeholder="e.g. Aurelia 4-Tier Display" value={galleryTitle} onChange={(e) => setGalleryTitle(e.target.value)} required />
+                      </div>
+                      <div>
+                        <label className="form-label">Category Tag *</label>
+                        <input type="text" className="form-input" placeholder="e.g. Wedding Showcase" value={galleryCat} onChange={(e) => setGalleryCat(e.target.value)} required />
+                      </div>
+                      <div>
+                        <label className="form-label">Image Path / URL *</label>
+                        <input type="text" className="form-input" placeholder="/images/wedding_tier_prop.png" value={galleryImg} onChange={(e) => setGalleryImg(e.target.value)} required />
+                      </div>
+                      <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end' }}>
+                        <button type="submit" className="enterprise-btn-primary">
+                          <Plus style={{ width: 16, height: 16 }} /> Add Gallery Showcase Photo
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
+                    {galleryItems.map((g) => (
+                      <div key={g.id} className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
+                        <div style={{ height: 180, background: '#F1F5F9' }}>
+                          <img src={g.image_url} alt={g.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        <div style={{ padding: 14 }}>
+                          <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: '#0FB3B6', fontWeight: 700 }}>{g.category}</span>
+                          <h4 style={{ margin: '4px 0 10px', fontSize: '1rem', color: '#0F172A' }}>{g.title}</h4>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <button onClick={() => handleDeleteGallery(g.id)} className="action-icon-btn delete" title="Delete Item">
+                              <Trash2 style={{ width: 16, height: 16 }} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* REVIEWS MODERATION TAB */}
+              {activeTab === 'reviews' && (
+                <div>
+                  <div className="admin-page-header">
+                    <div>
+                      <h1 className="admin-page-title">Customer Reviews Verification</h1>
+                      <p className="admin-page-subtitle">Verify pending reviews submitted by customers before they are published on the live storefront.</p>
+                    </div>
+                  </div>
+
+                  <div className="admin-card">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Customer</th>
+                          <th>Rating & Review</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {paginatedReviews.length === 0 ? (
+                          <tr>
+                            <td colSpan="4" style={{ textAlign: 'center', padding: 30, color: '#64748B' }}>No customer reviews submitted yet.</td>
+                          </tr>
+                        ) : (
+                          paginatedReviews.map((r) => (
+                            <tr key={r.id}>
+                              <td>
+                                <strong>{r.reviewer_name}</strong>
+                                <div style={{ fontSize: '0.78rem', color: '#64748B' }}>{r.reviewer_role}</div>
+                              </td>
+                              <td style={{ maxWidth: 360 }}>
+                                <div style={{ display: 'flex', gap: 2, marginBottom: 4 }}>
+                                  {[...Array(r.rating || 5)].map((_, i) => (
+                                    <Star key={i} style={{ width: 14, height: 14, fill: '#0FB3B6', color: '#0FB3B6' }} />
+                                  ))}
+                                </div>
+                                <p style={{ fontSize: '0.85rem', color: '#334155', margin: 0 }}>"{r.comment}"</p>
+                              </td>
+                              <td>
+                                {r.is_verified === 1 ? (
+                                  <span className="status-pill green">Published (Verified)</span>
+                                ) : (
+                                  <span className="status-pill blue" style={{ background: 'rgba(54, 223, 226, 0.15)', color: '#0FB3B6', border: '1px solid rgba(54, 223, 226, 0.35)' }}>
+                                    Pending Approval
+                                  </span>
+                                )}
+                              </td>
+                              <td>
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                  {r.is_verified === 0 ? (
+                                    <button
+                                      onClick={() => handleVerifyReview(r.id, true)}
+                                      className="enterprise-btn-primary"
+                                      style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                                    >
+                                      <Check style={{ width: 14, height: 14 }} /> Verify & Publish
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={() => handleVerifyReview(r.id, false)}
+                                      className="enterprise-btn-secondary"
+                                      style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                                    >
+                                      Unpublish
+                                    </button>
+                                  )}
+                                  <button onClick={() => handleDeleteReview(r.id)} className="action-icon-btn delete" title="Delete Review">
+                                    <Trash2 style={{ width: 16, height: 16 }} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pagination Footer */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderTop: '1px solid #E2E8F0', flexWrap: 'wrap', gap: 12 }}>
+                    <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+                      Showing <strong>{reviews.length > 0 ? (reviewPage - 1) * reviewsPerPage + 1 : 0}</strong> to <strong>{Math.min(reviewPage * reviewsPerPage, reviews.length)}</strong> of <strong>{reviews.length}</strong> reviews
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button
+                        disabled={reviewPage <= 1}
+                        onClick={() => setReviewPage(p => Math.max(1, p - 1))}
+                        className="enterprise-btn-secondary"
+                        style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: reviewPage <= 1 ? 0.5 : 1, cursor: reviewPage <= 1 ? 'not-allowed' : 'pointer' }}
+                      >
+                        Previous
+                      </button>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A', padding: '0 6px' }}>
+                        Page {reviewPage} of {totalReviewPages}
+                      </span>
+                      <button
+                        disabled={reviewPage >= totalReviewPages}
+                        onClick={() => setReviewPage(p => Math.min(totalReviewPages, p + 1))}
+                        className="enterprise-btn-secondary"
+                        style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: reviewPage >= totalReviewPages ? 0.5 : 1, cursor: reviewPage >= totalReviewPages ? 'not-allowed' : 'pointer' }}
+                      >
+                        Next
+                      </button>
                     </div>
                   </div>
                 </div>

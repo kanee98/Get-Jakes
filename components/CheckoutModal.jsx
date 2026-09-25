@@ -2,6 +2,7 @@
 
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { useModal } from '@/context/ModalContext';
 import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { X, Landmark, CheckCircle2 } from 'lucide-react';
@@ -10,6 +11,7 @@ import { useRouter } from 'next/navigation';
 export default function CheckoutModal() {
   const { cart, isCheckoutOpen, setIsCheckoutOpen, totalAmount, clearCart } = useCart();
   const { user } = useAuth();
+  const { showAlert } = useModal();
   const router = useRouter();
 
   const [custName, setCustName] = useState('');
@@ -68,7 +70,7 @@ export default function CheckoutModal() {
       setIsCheckoutOpen(false);
       router.push('/my-orders');
     } catch (err) {
-      alert('Error placing order: ' + err.message);
+      await showAlert('Order Error', 'Error placing order: ' + err.message, 'warning');
     } finally {
       setSubmitting(false);
     }

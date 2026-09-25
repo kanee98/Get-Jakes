@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Calculator, Send } from 'lucide-react';
+import { useModal } from '@/context/ModalContext';
 
 export default function CustomQuote() {
+  const { showAlert } = useModal();
   const [tiers, setTiers] = useState('3');
   const [finish, setFinish] = useState('smooth');
   const [contact, setContact] = useState('');
@@ -39,10 +41,14 @@ export default function CustomQuote() {
         origin: { y: 0.6 }
       });
 
-      alert(`Thank you! Custom quote request for ${contact} received. Our master artisan will reach out within 2 hours.`);
+      await showAlert(
+        'Quote Request Received',
+        `Thank you! Custom quote request for ${contact} received. Our master artisan will reach out within 2 hours.`,
+        'success'
+      );
       setContact('');
     } catch (err) {
-      alert('Failed to submit quote request');
+      await showAlert('Submission Error', 'Failed to submit quote request. Please try again.', 'warning');
     } finally {
       setSubmitting(false);
     }

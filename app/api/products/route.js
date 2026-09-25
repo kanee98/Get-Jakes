@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '@/database/db.js';
 
+export const dynamic = 'force-dynamic';
+
 function formatProduct(row) {
   return {
     id: row.id,

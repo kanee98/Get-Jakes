@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
-import { Star, Eye, Plus, Check, X } from 'lucide-react';
+import { useModal } from '@/context/ModalContext';
+import { Star, Eye, Plus, Check, X, ChevronRight } from 'lucide-react';
 
 const DEFAULT_PRODUCTS = [
   {
@@ -85,29 +86,154 @@ const DEFAULT_PRODUCTS = [
   }
 ];
 
+const DEFAULT_CATEGORY_BANNERS = [
+  {
+    id: 1,
+    title: 'Custom Cake Props',
+    subtitle: 'Bespoke polymer prop design & multi-tier dummy configurations.',
+    image_url: '/images/hero_cake_prop.png',
+    link_url: '#customQuote'
+  },
+  {
+    id: 2,
+    title: 'Dummy Cake Tiers',
+    subtitle: 'Pre-coated smooth & textured 1 to 5 tier display dummies.',
+    image_url: '/images/wedding_tier_prop.png',
+    link_url: '#shop'
+  },
+  {
+    id: 3,
+    title: 'Food Studio Kits',
+    subtitle: 'Realistic faux cake slices & photo backdrop risers.',
+    image_url: '/images/photo_prop_set.png',
+    link_url: '#shop'
+  },
+  {
+    id: 4,
+    title: 'Display Pedestals',
+    subtitle: 'Architectural ribbed cylinders & plaster riser sets.',
+    image_url: '/images/pedestal_prop_set.png',
+    link_url: '#shop'
+  }
+];
+
+const DEFAULT_REVIEWS = [
+  {
+    id: 1,
+    reviewer_name: 'Bonnie D.',
+    reviewer_role: 'Verified Customer',
+    rating: 5,
+    comment: 'Great quality and loved they were pre cut! Saved sooo much time!',
+    image_url: '/images/photo_prop_set.png'
+  },
+  {
+    id: 2,
+    reviewer_name: 'Jade G.',
+    reviewer_role: 'Verified Customer',
+    rating: 5,
+    comment: 'Loved this product! Colours were great and picture was very clear. Customer support was great...',
+    image_url: '/images/hero_cake_prop.png'
+  },
+  {
+    id: 3,
+    reviewer_name: 'Megan R.',
+    reviewer_role: 'Verified Customer',
+    rating: 5,
+    comment: 'Absolutely fabulous ! Turn around and communication with the team was exceptional. As a novice...',
+    image_url: '/images/wedding_tier_prop.png'
+  },
+  {
+    id: 4,
+    reviewer_name: 'Peter R.',
+    reviewer_role: 'Verified Customer',
+    rating: 5,
+    comment: 'Very happy. The image was crisp and the colours strong. Great to have the option of picking up in...',
+    image_url: '/images/pedestal_prop_set.png'
+  }
+];
+
 export default function ShopCatalog() {
+  const { showAlert } = useModal();
+  const reviewsContainerRef = useRef(null);
   const [products, setProducts] = useState(DEFAULT_PRODUCTS);
+  const [banners, setBanners] = useState(DEFAULT_CATEGORY_BANNERS);
+  const [reviews, setReviews] = useState(DEFAULT_REVIEWS);
   const [activeCategory, setActiveCategory] = useState('all');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Customer Review Modal State
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [newReviewName, setNewReviewName] = useState('');
+  const [newReviewRole, setNewReviewRole] = useState('');
+  const [newReviewRating, setNewReviewRating] = useState(5);
+  const [newReviewComment, setNewReviewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+
   const { addToCart } = useCart();
 
   useEffect(() => {
-    async function loadProducts() {
+    async function loadData() {
       try {
-        const res = await fetch('/api/products');
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setProducts(data);
-          }
+        const [resProd, resBanners, resRev] = await Promise.all([
+          fetch('/api/products'),
+          fetch('/api/category-banners'),
+          fetch('/api/reviews')
+        ]);
+
+        if (resProd.ok) {
+          const dProd = await resProd.json();
+          if (Array.isArray(dProd) && dProd.length > 0) setProducts(dProd);
+        }
+
+        if (resBanners.ok) {
+          const dBanners = await resBanners.json();
+          if (Array.isArray(dBanners) && dBanners.length > 0) setBanners(dBanners);
+        }
+
+        if (resRev.ok) {
+          const dRev = await resRev.json();
+          if (Array.isArray(dRev) && dRev.length > 0) setReviews(dRev);
         }
       } catch (err) {
-        console.error('Failed to load products from database, using fallback:', err);
+        console.error('Data load error:', err);
       }
     }
-    loadProducts();
+    loadData();
   }, []);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!newReviewName.trim() || !newReviewComment.trim()) return;
+
+    setSubmittingReview(true);
+    try {
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reviewerName: newReviewName,
+          reviewerRole: newReviewRole || 'Verified Customer',
+          rating: parseInt(newReviewRating, 10),
+          comment: newReviewComment
+        })
+      });
+
+      if (res.ok) {
+        await showAlert('Review Submitted', 'Thank you! Your review has been submitted for studio admin verification.', 'success');
+        setIsReviewModalOpen(false);
+        setNewReviewName('');
+        setNewReviewRole('');
+        setNewReviewComment('');
+      } else {
+        await showAlert('Submission Failed', 'Failed to submit review. Please try again.', 'warning');
+      }
+    } catch (err) {
+      await showAlert('Submission Error', 'Error submitting review. Please try again.', 'warning');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   const filtered = activeCategory === 'all'
     ? products
@@ -184,7 +310,7 @@ export default function ShopCatalog() {
                     </div>
                     <h3 className="product-title">{p.name}</h3>
                     <p className="product-desc">{p.description}</p>
-                    
+
                     <div className="product-price-row">
                       <div>
                         <span className="product-price">${parseFloat(p.price).toFixed(2)}</span>
@@ -217,121 +343,312 @@ export default function ShopCatalog() {
         </div>
       </section>
 
-      {/* Category Visual Banners Grid (printsoncakes.com.au style) */}
+      {/* Category Visual Banners Grid with High-Res Images */}
       <section className="section category-banners-section" style={{ background: '#FFFFFF', paddingTop: 40, paddingBottom: 80 }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-            <div className="category-banner-card" style={{ background: '#F8FAFC', borderRadius: 'var(--radius-md)', padding: 32, border: '1px solid rgba(10,13,18,0.08)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0A0D12', marginBottom: 8, fontFamily: 'var(--font-heading)' }}>
-                  Custom Cake Props
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: 20 }}>
-                  Bespoke polymer prop design & multi-tier dummy configurations.
-                </p>
+            {banners.map((b) => (
+              <div
+                key={b.id}
+                className="category-banner-card"
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: 'var(--radius-md)',
+                  overflow: 'hidden',
+                  border: '1px solid rgba(10,13,18,0.08)',
+                  boxShadow: '0 6px 20px rgba(10,13,18,0.04)',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+              >
+                <div style={{ height: 180, overflow: 'hidden', background: '#F8FAFC' }}>
+                  <img
+                    src={b.image_url}
+                    alt={b.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+                <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0A0D12', marginBottom: 8, fontFamily: 'var(--font-heading)' }}>
+                      {b.title}
+                    </h3>
+                    <p style={{ fontSize: '0.88rem', color: '#475569', marginBottom: 20, lineHeight: 1.5 }}>
+                      {b.subtitle}
+                    </p>
+                  </div>
+                  <a
+                    href={b.link_url || '#shop'}
+                    style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0FB3B6', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  >
+                    View Collection →
+                  </a>
+                </div>
               </div>
-              <a href="#customQuote" style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0FB3B6', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                Configure Custom Prop →
-              </a>
-            </div>
-
-            <div className="category-banner-card" style={{ background: '#F8FAFC', borderRadius: 'var(--radius-md)', padding: 32, border: '1px solid rgba(10,13,18,0.08)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0A0D12', marginBottom: 8, fontFamily: 'var(--font-heading)' }}>
-                  Dummy Cake Tiers
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: 20 }}>
-                  Pre-coated smooth & textured 1 to 5 tier display dummies.
-                </p>
-              </div>
-              <a href="#shop" onClick={() => setActiveCategory('wedding')} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0FB3B6', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                View Tier Catalog →
-              </a>
-            </div>
-
-            <div className="category-banner-card" style={{ background: '#F8FAFC', borderRadius: 'var(--radius-md)', padding: 32, border: '1px solid rgba(10,13,18,0.08)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0A0D12', marginBottom: 8, fontFamily: 'var(--font-heading)' }}>
-                  Food Studio Kits
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: 20 }}>
-                  Realistic faux cake slices & photo backdrop risers.
-                </p>
-              </div>
-              <a href="#shop" onClick={() => setActiveCategory('photography')} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0FB3B6', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                Explore Studio Kits →
-              </a>
-            </div>
-
-            <div className="category-banner-card" style={{ background: '#F8FAFC', borderRadius: 'var(--radius-md)', padding: 32, border: '1px solid rgba(10,13,18,0.08)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0A0D12', marginBottom: 8, fontFamily: 'var(--font-heading)' }}>
-                  Display Pedestals
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: 20 }}>
-                  Architectural ribbed cylinders & plaster riser sets.
-                </p>
-              </div>
-              <a href="#shop" onClick={() => setActiveCategory('pedestal')} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0FB3B6', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                View Risers & Pedestals →
-              </a>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* "Get inspired from our customers" Reviews Section (printsoncakes.com.au style) */}
-      <section className="section reviews-section" style={{ background: '#F8FAFC', padding: '80px 0' }}>
-        <div className="container">
-          <div className="section-header" style={{ textAlign: 'center', marginBottom: 44 }}>
-            <h2 className="section-title">Get inspired from our customers</h2>
-            <p className="section-subtitle">
-              Read real reviews from master event planners, food stylists, and luxury bakeries using Get Jakes props.
+      {/* "Get inspired from our customers" Reviews Section with Image 1 styling */}
+      <section className="section reviews-section" style={{ background: '#FFFFFF', padding: '80px 0 60px', position: 'relative' }}>
+        <div className="container" style={{ maxWidth: 1140 }}>
+          {/* Centered Title, Subtitle, & Red Pill Button */}
+          <div className="section-header" style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto 28px' }}>
+            <h2 className="section-title" style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0F172A', marginBottom: 16 }}>
+              Get inspired from our customers
+            </h2>
+            <p style={{ fontSize: '0.92rem', color: '#64748B', lineHeight: 1.6, margin: '0 auto 24px', maxWidth: 680 }}>
+              Uncover how customers creatively enhance products with our edible images, driving our success and inspiration. Prints On Cakes has amassed over 2,000 5-star reviews for our images, with more on the horizon!
             </p>
+
+            <button
+              onClick={() => setIsReviewModalOpen(true)}
+              style={{
+                background: '#E52E4D',
+                color: '#FFFFFF',
+                padding: '12px 32px',
+                borderRadius: 999,
+                fontWeight: 700,
+                fontSize: '0.92rem',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(229, 46, 77, 0.35)',
+                transition: 'all 0.2s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = '#D02340'}
+              onMouseOut={(e) => e.currentTarget.style.background = '#E52E4D'}
+            >
+              Write a Customer Review
+            </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
-            <div style={{ background: '#FFFFFF', padding: 24, borderRadius: 'var(--radius-md)', border: '1px solid rgba(10,13,18,0.08)', boxShadow: '0 4px 14px rgba(10,13,18,0.03)' }}>
-              <div style={{ display: 'flex', gap: 4, marginBottom: 12 }}>
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} style={{ width: 16, height: 16, fill: '#0FB3B6', color: '#0FB3B6' }} />
-                ))}
-              </div>
-              <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.6, marginBottom: 14 }}>
-                "The 4-tier Aurelia prop survived 3 outdoor summer wedding expos without a single mark. The polymer coating is unbelievably durable."
-              </p>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0A0D12' }}>Renee C.</div>
-              <div style={{ fontSize: '0.78rem', color: '#64748B' }}>Luxury Event Stylist, Sydney</div>
+          {/* Review Cards Carousel Slider */}
+          <div style={{ position: 'relative', marginTop: 36, marginBottom: 36 }}>
+            <div
+              ref={reviewsContainerRef}
+              style={{
+                display: 'flex',
+                gap: 20,
+                overflowX: 'auto',
+                scrollBehavior: 'smooth',
+                padding: '10px 4px 20px',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
+            >
+              {reviews.map((r, idx) => {
+                const sampleImages = [
+                  '/images/photo_prop_set.png',
+                  '/images/hero_cake_prop.png',
+                  '/images/wedding_tier_prop.png',
+                  '/images/pedestal_prop_set.png'
+                ];
+                const imgSrc = r.image_url || sampleImages[idx % sampleImages.length];
+
+                return (
+                  <div
+                    key={r.id || idx}
+                    style={{
+                      flex: '0 0 255px',
+                      width: 255,
+                      background: '#FFFFFF',
+                      borderRadius: 14,
+                      border: '1px solid #E2E8F0',
+                      boxShadow: '0 4px 18px rgba(0,0,0,0.06)',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      position: 'relative'
+                    }}
+                  >
+                    {/* Card Top Image */}
+                    <div style={{ width: '100%', height: 165, position: 'relative', background: '#F8FAFC' }}>
+                      <img
+                        src={imgSrc}
+                        alt={r.reviewer_name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+
+                    {/* Floating Star Rating Badge */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 2,
+                        background: '#FFFFFF',
+                        padding: '5px 14px',
+                        borderRadius: 999,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+                        width: 'fit-content',
+                        margin: '-16px auto 12px',
+                        zIndex: 2,
+                        border: '1px solid #F1F5F9'
+                      }}
+                    >
+                      {[...Array(r.rating || 5)].map((_, i) => (
+                        <Star key={i} style={{ width: 14, height: 14, fill: '#F59E0B', color: '#F59E0B' }} />
+                      ))}
+                    </div>
+
+                    {/* Card Text & Author Details */}
+                    <div style={{ padding: '0 16px 20px', textAlign: 'center', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, marginBottom: 8 }}>
+                          {r.reviewer_name}
+                          <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 14, height: 14, background: '#0F172A', borderRadius: '50%', color: '#FFF', fontSize: '0.58rem', fontWeight: 900 }}>
+                            ✓
+                          </span>
+                        </div>
+                        <p style={{ fontSize: '0.84rem', color: '#475569', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {r.comment}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            <div style={{ background: '#FFFFFF', padding: 24, borderRadius: 'var(--radius-md)', border: '1px solid rgba(10,13,18,0.08)', boxShadow: '0 4px 14px rgba(10,13,18,0.03)' }}>
-              <div style={{ display: 'flex', gap: 4, marginBottom: 12 }}>
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} style={{ width: 16, height: 16, fill: '#0FB3B6', color: '#0FB3B6' }} />
-                ))}
-              </div>
-              <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.6, marginBottom: 14 }}>
-                "Get Jakes studio photo kits elevated our commercial bakery portfolio photos. Zero reflection glare and perfectly clean texture."
-              </p>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0A0D12' }}>Marcus T.</div>
-              <div style={{ fontSize: '0.78rem', color: '#64748B' }}>Commercial Food Photographer</div>
-            </div>
+            {/* Carousel Right Arrow Button */}
+            <button
+              onClick={() => {
+                if (reviewsContainerRef.current) {
+                  reviewsContainerRef.current.scrollBy({ left: 275, behavior: 'smooth' });
+                }
+              }}
+              aria-label="Next reviews"
+              style={{
+                position: 'absolute',
+                right: -14,
+                top: '45%',
+                transform: 'translateY(-50%)',
+                width: 44,
+                height: 44,
+                borderRadius: '50%',
+                background: '#FFFFFF',
+                border: '1px solid #E2E8F0',
+                boxShadow: '0 6px 20px rgba(0,0,0,0.14)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#0F172A',
+                zIndex: 10,
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <ChevronRight style={{ width: 22, height: 22 }} />
+            </button>
+          </div>
 
-            <div style={{ background: '#FFFFFF', padding: 24, borderRadius: 'var(--radius-md)', border: '1px solid rgba(10,13,18,0.08)', boxShadow: '0 4px 14px rgba(10,13,18,0.03)' }}>
-              <div style={{ display: 'flex', gap: 4, marginBottom: 12 }}>
+          {/* Rating Summary Card (Bottom-Left) */}
+          <div
+            style={{
+              display: 'inline-block',
+              background: '#FFFFFF',
+              padding: '12px 20px',
+              borderRadius: 8,
+              border: '1px solid #CBD5E1',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+              textAlign: 'left'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+              <div style={{ display: 'flex', gap: 2 }}>
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} style={{ width: 16, height: 16, fill: '#0FB3B6', color: '#0FB3B6' }} />
+                  <Star key={i} style={{ width: 14, height: 14, fill: '#F59E0B', color: '#F59E0B' }} />
                 ))}
               </div>
-              <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.6, marginBottom: 14 }}>
-                "Fast crate shipping and the custom quote preview gave us total confidence for our grand ballroom hotel installation."
-              </p>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0A0D12' }}>Sarah & David</div>
-              <div style={{ fontSize: '0.78rem', color: '#64748B' }}>Grand Ballroom Planners</div>
+              <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F172A' }}>4.9/5</span>
+            </div>
+            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0F172A' }}>
+              6,092 reviews
             </div>
           </div>
         </div>
       </section>
+
+      {/* Customer Review Submit Modal */}
+      {isReviewModalOpen && (
+        <div className="modal-overlay open">
+          <div className="modal-content" style={{ padding: 32, maxWidth: 560, background: '#FFFFFF', color: '#0A0D12', borderRadius: 'var(--radius-md)' }}>
+            <button onClick={() => setIsReviewModalOpen(false)} className="modal-close-btn" style={{ color: '#0A0D12' }}>
+              <X style={{ width: 20, height: 20 }} />
+            </button>
+            <h3 style={{ fontSize: '1.4rem', color: '#0A0D12', marginBottom: 6, fontFamily: 'var(--font-heading)' }}>
+              Write a Customer Review
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: 20 }}>
+              Share your experience with Get Jakes props. Submitted reviews will be verified by our studio team.
+            </p>
+
+            <form onSubmit={handleReviewSubmit}>
+              <div style={{ marginBottom: 14 }}>
+                <label className="form-label">Your Full Name *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={newReviewName}
+                  onChange={(e) => setNewReviewName(e.target.value)}
+                  placeholder="e.g. Eleanor Vance"
+                  required
+                />
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label className="form-label">Role / Bakery Studio Name (Optional)</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={newReviewRole}
+                  onChange={(e) => setNewReviewRole(e.target.value)}
+                  placeholder="e.g. Wedding Planner / Chateau Bakery"
+                />
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label className="form-label">Star Rating</label>
+                <select
+                  className="form-select"
+                  value={newReviewRating}
+                  onChange={(e) => setNewReviewRating(e.target.value)}
+                >
+                  <option value="5">5 Stars ★★★★★ (Exceptional Quality)</option>
+                  <option value="4">4 Stars ★★★★☆ (Great Product)</option>
+                  <option value="3">3 Stars ★★★☆☆ (Average)</option>
+                </select>
+              </div>
+
+              <div style={{ marginBottom: 20 }}>
+                <label className="form-label">Your Review *</label>
+                <textarea
+                  className="form-input"
+                  rows={4}
+                  value={newReviewComment}
+                  onChange={(e) => setNewReviewComment(e.target.value)}
+                  placeholder="Tell us about the prop quality, durability, delivery, or event display..."
+                  required
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingReview}
+                className="btn-primary"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                {submittingReview ? 'Submitting...' : 'Submit Review For Verification'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Quick View Modal */}
       {quickViewProduct && (
@@ -383,7 +700,3 @@ export default function ShopCatalog() {
     </>
   );
 }
-
-
-
-

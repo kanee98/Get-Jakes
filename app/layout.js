@@ -1,6 +1,7 @@
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
+import { ModalProvider } from '@/context/ModalContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
@@ -28,12 +29,14 @@ export default function RootLayout({ children }) {
         <LoaderScreen />
         <AuthProvider>
           <CartProvider>
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
-            <CartDrawer />
-            <CheckoutModal />
-            <ChatWidget />
+            <ModalProvider>
+              <Navbar />
+              <main>{children}</main>
+              <Footer />
+              <CartDrawer />
+              <CheckoutModal />
+              <ChatWidget />
+            </ModalProvider>
           </CartProvider>
         </AuthProvider>
       </body>

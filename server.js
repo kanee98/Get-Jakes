@@ -377,6 +377,34 @@ app.get('/api/custom-quotes', async (req, res) => {
   }
 });
 
+app.put('/api/custom-quotes', async (req, res) => {
+  try {
+    const { id, status } = req.body;
+    if (!id || !status) {
+      return res.status(400).json({ error: 'ID and status required' });
+    }
+    await pool.query('UPDATE custom_quotes SET status = ? WHERE id = ?', [status, id]);
+    res.json({ success: true, message: 'Custom quote status updated' });
+  } catch (err) {
+    console.error('Error updating custom quote:', err);
+    res.status(500).json({ error: 'Failed to update quote status' });
+  }
+});
+
+app.delete('/api/custom-quotes', async (req, res) => {
+  try {
+    const { id } = req.query;
+    if (!id) {
+      return res.status(400).json({ error: 'ID required' });
+    }
+    await pool.query('DELETE FROM custom_quotes WHERE id = ?', [id]);
+    res.json({ success: true, message: 'Custom quote deleted' });
+  } catch (err) {
+    console.error('Error deleting custom quote:', err);
+    res.status(500).json({ error: 'Failed to delete quote' });
+  }
+});
+
 // ----------------------------------------------------------------------------
 // Auth Endpoints
 // ----------------------------------------------------------------------------
