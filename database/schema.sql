@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `tiers_spec` VARCHAR(100) NULL,
   `material_spec` VARCHAR(255) NULL,
   `weight_spec` VARCHAR(100) NULL,
+  `stock_status` VARCHAR(150) DEFAULT 'In Stock & Ready for Express Dispatch',
   `is_active` TINYINT(1) DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

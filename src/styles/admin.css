@@ -376,16 +376,16 @@
   overflow-x: auto;
 }
 
-.enterprise-table {
+.enterprise-table, .admin-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
   font-size: 0.88rem;
 }
 
-.enterprise-table th {
+.enterprise-table th, .admin-table th {
   background: #F8FAFC;
-  padding: 12px 20px;
+  padding: 14px 20px;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -395,19 +395,18 @@
   white-space: nowrap;
 }
 
-.enterprise-table td {
+.enterprise-table td, .admin-table td {
   padding: 16px 20px;
   border-bottom: 1px solid #F1F5F9;
   color: #334155;
   vertical-align: middle;
-  white-space: nowrap;
 }
 
-.enterprise-table tbody tr {
+.enterprise-table tbody tr, .admin-table tbody tr {
   transition: background-color 0.15s ease;
 }
 
-.enterprise-table tbody tr:hover {
+.enterprise-table tbody tr:hover, .admin-table tbody tr:hover {
   background-color: #F8FAFC;
 }
 

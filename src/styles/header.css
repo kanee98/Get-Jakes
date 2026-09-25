@@ -1,7 +1,7 @@
 /* Header & Navigation Styles (Printsoncakes.com.au Style) */
 .announcement-bar {
-  background: #0A0D12;
-  color: #FFFFFF;
+  background: #36DFE2;
+  color: #0A0D12;
   padding: 8px 0;
   font-size: 0.82rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -145,7 +145,8 @@
   white-space: nowrap;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
   color: #0FB3B6;
 }
 
@@ -179,7 +180,7 @@
   position: relative;
   transition: all var(--transition-fast);
   border: 1px solid rgba(10, 13, 18, 0.1);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   cursor: pointer;
 }
 
@@ -255,7 +256,3 @@
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
   }
 }
-
-
-
-

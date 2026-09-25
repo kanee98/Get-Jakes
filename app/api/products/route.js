@@ -15,6 +15,7 @@ function formatProduct(row) {
     image: row.image_url,
     tag: row.tag || 'Handcrafted',
     description: row.description,
+    stockStatus: row.stock_status || 'In Stock & Ready for Express Dispatch',
     specs: {
       height: row.height_spec || 'Standard',
       tiers: row.tiers_spec || 'Single / Modular',
@@ -31,6 +32,7 @@ async function ensureProductColumns() {
   try { await pool.query('ALTER TABLE products ADD COLUMN sizes_spec TEXT NULL'); } catch (e) {}
   try { await pool.query('ALTER TABLE products ADD COLUMN finishes_spec TEXT NULL'); } catch (e) {}
   try { await pool.query('ALTER TABLE products ADD COLUMN is_deleted TINYINT(1) DEFAULT 0'); } catch (e) {}
+  try { await pool.query("ALTER TABLE products ADD COLUMN stock_status VARCHAR(150) DEFAULT 'In Stock & Ready for Express Dispatch'"); } catch (e) {}
 }
 
 const DEFAULT_PRODUCTS = [
@@ -45,6 +47,7 @@ const DEFAULT_PRODUCTS = [
     image: '/images/wedding_tier_prop.png',
     tag: 'Bestseller',
     description: 'Hand-finished 4-tier wedding dummy cake with durable faux fondant coating, pearl trim, and sugar rose replicas.',
+    stockStatus: 'In Stock & Ready for Express Dispatch',
     specs: {
       height: '28 inches',
       tiers: '4 Tiers (6", 8", 10", 12")',
@@ -65,6 +68,7 @@ const DEFAULT_PRODUCTS = [
     image: '/images/hero_cake_prop.png',
     tag: 'Handcrafted',
     description: 'Minimalist 3-tier organic textured white cake with authentic metallic leaf gilding and Get Jakes signature finish.',
+    stockStatus: 'In Stock & Ready for Express Dispatch',
     specs: {
       height: '22 inches',
       tiers: '3 Tiers (6", 8", 10")',
@@ -85,6 +89,7 @@ const DEFAULT_PRODUCTS = [
     image: '/images/photo_prop_set.png',
     tag: 'Studio Special',
     description: 'Set of 6 realistic faux cake slices, geometric acrylic blocks, and pastel dummy mini cakes.',
+    stockStatus: 'In Stock & Ready for Express Dispatch',
     specs: {
       height: 'Modular Set',
       tiers: '6-Piece Modular Props',
@@ -105,6 +110,7 @@ const DEFAULT_PRODUCTS = [
     image: '/images/pedestal_prop_set.png',
     tag: 'Trending',
     description: 'Pair of ribbed architectural cylinder pedestals in warm plaster white and cyan-brushed accents.',
+    stockStatus: 'In Stock & Ready for Express Dispatch',
     specs: {
       height: '12" and 18" Elevated Risers',
       tiers: '10" Top Surface',
@@ -134,7 +140,7 @@ export async function POST(request) {
   try {
     await ensureProductColumns();
     const body = await request.json();
-    const { id, name, category, price, originalPrice, tag, description, specs, image } = body;
+    const { id, name, category, price, originalPrice, tag, description, stockStatus, specs, image } = body;
 
     const productId = id || `prop-${Date.now().toString().slice(-4)}`;
     const heightSpec = specs?.height || null;
@@ -144,16 +150,17 @@ export async function POST(request) {
     const sizesSpec = specs?.sizes || null;
     const finishesSpec = specs?.finishes || null;
     const imageUrl = image || '/images/hero_cake_prop.png';
+    const statusVal = stockStatus || 'In Stock & Ready for Express Dispatch';
 
     const sql = `
       INSERT INTO products 
-      (id, name, category_id, price, original_price, image_url, tag, description, height_spec, tiers_spec, material_spec, weight_spec, sizes_spec, finishes_spec)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, name, category_id, price, original_price, image_url, tag, description, stock_status, height_spec, tiers_spec, material_spec, weight_spec, sizes_spec, finishes_spec)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     await pool.query(sql, [
       productId, name, category || 'wedding', price, originalPrice || null,
-      imageUrl, tag || 'New Arrival', description || '',
+      imageUrl, tag || 'New Arrival', description || '', statusVal,
       heightSpec, tiersSpec, materialSpec, weightSpec, sizesSpec, finishesSpec
     ]);
 
@@ -169,7 +176,7 @@ export async function PUT(request) {
   try {
     await ensureProductColumns();
     const body = await request.json();
-    const { id, name, category, price, originalPrice, tag, description, specs, image } = body;
+    const { id, name, category, price, originalPrice, tag, description, stockStatus, specs, image } = body;
 
     const heightSpec = specs?.height || null;
     const tiersSpec = specs?.tiers || null;
@@ -177,11 +184,12 @@ export async function PUT(request) {
     const weightSpec = specs?.weight || null;
     const sizesSpec = specs?.sizes || null;
     const finishesSpec = specs?.finishes || null;
+    const statusVal = stockStatus || 'In Stock & Ready for Express Dispatch';
 
     const sql = `
       UPDATE products SET
         name = ?, category_id = ?, price = ?, original_price = ?,
-        image_url = ?, tag = ?, description = ?,
+        image_url = ?, tag = ?, description = ?, stock_status = ?,
         height_spec = ?, tiers_spec = ?, material_spec = ?, weight_spec = ?,
         sizes_spec = ?, finishes_spec = ?
       WHERE id = ?
@@ -189,7 +197,7 @@ export async function PUT(request) {
 
     await pool.query(sql, [
       name, category, price, originalPrice || null,
-      image, tag, description,
+      image, tag, description, statusVal,
       heightSpec, tiersSpec, materialSpec, weightSpec,
       sizesSpec, finishesSpec,
       id

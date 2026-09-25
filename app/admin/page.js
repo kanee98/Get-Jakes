@@ -64,6 +64,7 @@ export default function AdminDashboardPage() {
   const [productSearch, setProductSearch] = useState('');
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+  const [reviewSearch, setReviewSearch] = useState('');
 
   // Custom Quote Search & Filters
   const [quoteSearch, setQuoteSearch] = useState('');
@@ -92,6 +93,7 @@ export default function AdminDashboardPage() {
   const [prodReviews, setProdReviews] = useState('18');
   const [prodImage, setProdImage] = useState('/images/wedding_tier_prop.png');
   const [prodDesc, setProdDesc] = useState('');
+  const [prodStockStatus, setProdStockStatus] = useState('In Stock & Ready for Express Dispatch');
   const [prodHeight, setProdHeight] = useState('28 inches');
   const [prodTiers, setProdTiers] = useState('4 Tiers');
   const [prodMaterial, setProdMaterial] = useState('EPS Foam + Fondant');
@@ -346,6 +348,7 @@ export default function AdminDashboardPage() {
     setProdReviews('18');
     setProdImage('/images/wedding_tier_prop.png');
     setProdDesc('');
+    setProdStockStatus('In Stock & Ready for Express Dispatch');
     setProdHeight('28 inches');
     setProdTiers('4 Tiers');
     setProdMaterial('EPS Foam + Fondant');
@@ -366,6 +369,7 @@ export default function AdminDashboardPage() {
     setProdReviews(p.reviewsCount);
     setProdImage(p.image);
     setProdDesc(p.description);
+    setProdStockStatus(p.stockStatus || 'In Stock & Ready for Express Dispatch');
     setProdHeight(p.specs?.height || '28 inches');
     setProdTiers(p.specs?.tiers || '4 Tiers');
     setProdMaterial(p.specs?.material || 'EPS Foam');
@@ -388,6 +392,7 @@ export default function AdminDashboardPage() {
       reviewsCount: parseInt(prodReviews, 10),
       image: prodImage,
       description: sanitizeInput(prodDesc),
+      stockStatus: sanitizeInput(prodStockStatus),
       specs: {
         height: sanitizeInput(prodHeight),
         tiers: sanitizeInput(prodTiers),
@@ -478,8 +483,14 @@ export default function AdminDashboardPage() {
     quotePage * quotesPerPage
   );
 
-  const totalReviewPages = Math.ceil(reviews.length / reviewsPerPage) || 1;
-  const paginatedReviews = reviews.slice(
+  const filteredReviews = reviews.filter(
+    (r) =>
+      (r.reviewer_name || '').toLowerCase().includes(reviewSearch.toLowerCase()) ||
+      (r.comment || '').toLowerCase().includes(reviewSearch.toLowerCase()) ||
+      (r.reviewer_role || '').toLowerCase().includes(reviewSearch.toLowerCase())
+  );
+  const totalReviewPages = Math.ceil(filteredReviews.length / reviewsPerPage) || 1;
+  const paginatedReviews = filteredReviews.slice(
     (reviewPage - 1) * reviewsPerPage,
     reviewPage * reviewsPerPage
   );
@@ -1511,101 +1522,133 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="admin-card">
-                    <table className="admin-table">
-                      <thead>
-                        <tr>
-                          <th>Customer</th>
-                          <th>Rating & Review</th>
-                          <th>Status</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {paginatedReviews.length === 0 ? (
+                  <div className="admin-card-container">
+                    <div className="admin-filter-bar">
+                      <div className="search-field">
+                        <Search style={{ width: 16, height: 16, color: '#94A3B8' }} />
+                        <input
+                          type="text"
+                          placeholder="Search customer reviews..."
+                          value={reviewSearch}
+                          onChange={(e) => { setReviewSearch(e.target.value); setReviewPage(1); }}
+                        />
+                      </div>
+                      <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600 }}>
+                        Showing {filteredReviews.length} Reviews
+                      </span>
+                    </div>
+
+                    <div className="table-responsive-wrapper">
+                      <table className="enterprise-table">
+                        <thead>
                           <tr>
-                            <td colSpan="4" style={{ textAlign: 'center', padding: 30, color: '#64748B' }}>No customer reviews submitted yet.</td>
+                            <th style={{ width: '35%' }}>Customer Rating & Review</th>
+                            <th style={{ width: '15%' }}>Attached Photo</th>
+                            <th style={{ width: '25%' }}>Status</th>
+                            <th style={{ width: '25%' }}>Actions</th>
                           </tr>
-                        ) : (
-                          paginatedReviews.map((r) => (
-                            <tr key={r.id}>
-                              <td>
-                                <strong>{r.reviewer_name}</strong>
-                                <div style={{ fontSize: '0.78rem', color: '#64748B' }}>{r.reviewer_role}</div>
-                              </td>
-                              <td style={{ maxWidth: 360 }}>
-                                <div style={{ display: 'flex', gap: 2, marginBottom: 4 }}>
-                                  {[...Array(r.rating || 5)].map((_, i) => (
-                                    <Star key={i} style={{ width: 14, height: 14, fill: '#0FB3B6', color: '#0FB3B6' }} />
-                                  ))}
-                                </div>
-                                <p style={{ fontSize: '0.85rem', color: '#334155', margin: 0 }}>"{r.comment}"</p>
-                              </td>
-                              <td>
-                                {r.is_verified === 1 ? (
-                                  <span className="status-pill green">Published (Verified)</span>
-                                ) : (
-                                  <span className="status-pill blue" style={{ background: 'rgba(54, 223, 226, 0.15)', color: '#0FB3B6', border: '1px solid rgba(54, 223, 226, 0.35)' }}>
-                                    Pending Approval
-                                  </span>
-                                )}
-                              </td>
-                              <td>
-                                <div style={{ display: 'flex', gap: 8 }}>
-                                  {r.is_verified === 0 ? (
-                                    <button
-                                      onClick={() => handleVerifyReview(r.id, true)}
-                                      className="enterprise-btn-primary"
-                                      style={{ padding: '6px 12px', fontSize: '0.78rem' }}
-                                    >
-                                      <Check style={{ width: 14, height: 14 }} /> Verify & Publish
-                                    </button>
-                                  ) : (
-                                    <button
-                                      onClick={() => handleVerifyReview(r.id, false)}
-                                      className="enterprise-btn-secondary"
-                                      style={{ padding: '6px 12px', fontSize: '0.78rem' }}
-                                    >
-                                      Unpublish
-                                    </button>
-                                  )}
-                                  <button onClick={() => handleDeleteReview(r.id)} className="action-icon-btn delete" title="Delete Review">
-                                    <Trash2 style={{ width: 16, height: 16 }} />
-                                  </button>
-                                </div>
+                        </thead>
+                        <tbody>
+                          {paginatedReviews.length === 0 ? (
+                            <tr>
+                              <td colSpan="4" style={{ textAlign: 'center', padding: 32, color: '#64748B' }}>
+                                No customer reviews found.
                               </td>
                             </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* Pagination Footer */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderTop: '1px solid #E2E8F0', flexWrap: 'wrap', gap: 12 }}>
-                    <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
-                      Showing <strong>{reviews.length > 0 ? (reviewPage - 1) * reviewsPerPage + 1 : 0}</strong> to <strong>{Math.min(reviewPage * reviewsPerPage, reviews.length)}</strong> of <strong>{reviews.length}</strong> reviews
+                          ) : (
+                            paginatedReviews.map((r) => (
+                              <tr key={r.id}>
+                                <td>
+                                  <div style={{ fontWeight: 800, color: '#0F172A', fontSize: '0.95rem' }}>{r.reviewer_name}</div>
+                                  {r.reviewer_role && <div style={{ fontSize: '0.78rem', color: '#64748B', marginBottom: 4 }}>{r.reviewer_role}</div>}
+                                  <div style={{ display: 'flex', gap: 2, margin: '4px 0 6px' }}>
+                                    {[...Array(r.rating || 5)].map((_, i) => (
+                                      <Star key={i} style={{ width: 14, height: 14, fill: '#0FB3B6', color: '#0FB3B6' }} />
+                                    ))}
+                                  </div>
+                                  <p style={{ fontSize: '0.86rem', color: '#334155', margin: 0, fontStyle: 'italic', lineHeight: 1.4 }}>
+                                    "{r.comment}"
+                                  </p>
+                                </td>
+                                <td>
+                                  {r.image_url ? (
+                                    <img
+                                      src={r.image_url}
+                                      alt="Review Photo"
+                                      style={{ width: 48, height: 48, borderRadius: 6, objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }}
+                                      onClick={() => window.open(r.image_url, '_blank')}
+                                      title="Click to view full image"
+                                    />
+                                  ) : (
+                                    <span style={{ fontSize: '0.78rem', color: '#94A3B8' }}>No Photo</span>
+                                  )}
+                                </td>
+                                <td>
+                                  {r.is_verified === 1 ? (
+                                    <span className="status-pill emerald">Published (Verified)</span>
+                                  ) : (
+                                    <span className="status-pill blue" style={{ background: 'rgba(54, 223, 226, 0.15)', color: '#0FB3B6', border: '1px solid rgba(54, 223, 226, 0.35)' }}>
+                                      Pending Approval
+                                    </span>
+                                  )}
+                                </td>
+                                <td>
+                                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                    {r.is_verified === 0 ? (
+                                      <button
+                                        onClick={() => handleVerifyReview(r.id, true)}
+                                        className="enterprise-btn-primary"
+                                        style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                                      >
+                                        <Check style={{ width: 14, height: 14 }} /> Verify & Publish
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={() => handleVerifyReview(r.id, false)}
+                                        className="enterprise-btn-secondary"
+                                        style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                                      >
+                                        Unpublish
+                                      </button>
+                                    )}
+                                    <button onClick={() => handleDeleteReview(r.id)} className="action-icon-btn delete" title="Delete Review">
+                                      <Trash2 style={{ width: 16, height: 16 }} />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <button
-                        disabled={reviewPage <= 1}
-                        onClick={() => setReviewPage(p => Math.max(1, p - 1))}
-                        className="enterprise-btn-secondary"
-                        style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: reviewPage <= 1 ? 0.5 : 1, cursor: reviewPage <= 1 ? 'not-allowed' : 'pointer' }}
-                      >
-                        Previous
-                      </button>
-                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A', padding: '0 6px' }}>
-                        Page {reviewPage} of {totalReviewPages}
-                      </span>
-                      <button
-                        disabled={reviewPage >= totalReviewPages}
-                        onClick={() => setReviewPage(p => Math.min(totalReviewPages, p + 1))}
-                        className="enterprise-btn-secondary"
-                        style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: reviewPage >= totalReviewPages ? 0.5 : 1, cursor: reviewPage >= totalReviewPages ? 'not-allowed' : 'pointer' }}
-                      >
-                        Next
-                      </button>
+
+                    {/* Pagination Footer */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderTop: '1px solid #E2E8F0', flexWrap: 'wrap', gap: 12 }}>
+                      <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+                        Showing <strong>{filteredReviews.length > 0 ? (reviewPage - 1) * reviewsPerPage + 1 : 0}</strong> to <strong>{Math.min(reviewPage * reviewsPerPage, filteredReviews.length)}</strong> of <strong>{filteredReviews.length}</strong> reviews
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <button
+                          disabled={reviewPage <= 1}
+                          onClick={() => setReviewPage(p => Math.max(1, p - 1))}
+                          className="enterprise-btn-secondary"
+                          style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: reviewPage <= 1 ? 0.5 : 1, cursor: reviewPage <= 1 ? 'not-allowed' : 'pointer' }}
+                        >
+                          Previous
+                        </button>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A', padding: '0 6px' }}>
+                          Page {reviewPage} of {totalReviewPages}
+                        </span>
+                        <button
+                          disabled={reviewPage >= totalReviewPages}
+                          onClick={() => setReviewPage(p => Math.min(totalReviewPages, p + 1))}
+                          className="enterprise-btn-secondary"
+                          style={{ padding: '6px 14px', fontSize: '0.8rem', opacity: reviewPage >= totalReviewPages ? 0.5 : 1, cursor: reviewPage >= totalReviewPages ? 'not-allowed' : 'pointer' }}
+                        >
+                          Next
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1661,6 +1704,35 @@ export default function AdminDashboardPage() {
                     <option value="Studio Special">Studio Special</option>
                     <option value="New">New</option>
                   </select>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label className="form-label">Availability / Express Dispatch Label *</label>
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  <select
+                    className="form-select"
+                    value={prodStockStatus}
+                    onChange={(e) => setProdStockStatus(e.target.value)}
+                    style={{ flexGrow: 1, minWidth: 200 }}
+                  >
+                    <option value="In Stock & Ready for Express Dispatch">In Stock & Ready for Express Dispatch</option>
+                    <option value="Low Stock - Ready to Dispatch">Low Stock - Ready to Dispatch</option>
+                    <option value="Made to Order (Dispatches in 3-5 Business Days)">Made to Order (Dispatches in 3-5 Business Days)</option>
+                    <option value="Out of Stock - Pre-Order Available">Out of Stock - Pre-Order Available</option>
+                    <option value="Out of Stock / Restocking Soon">Out of Stock / Restocking Soon</option>
+                  </select>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={prodStockStatus}
+                    onChange={(e) => setProdStockStatus(e.target.value)}
+                    placeholder="Or enter custom status label..."
+                    style={{ flexGrow: 1, minWidth: 200 }}
+                  />
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: 4 }}>
+                  Configures the stock badge text on the storefront product details page.
                 </div>
               </div>
 

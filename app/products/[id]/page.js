@@ -186,7 +186,7 @@ export default function ProductDetailPage({ params }) {
             </div>
 
             {/* Pricing Section */}
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24, background: '#F8FAFC', padding: '16px 20px', borderRadius: 12, border: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 24, background: '#F8FAFC', padding: '16px 20px', borderRadius: 12, border: '1px solid #E2E8F0', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '2.2rem', fontWeight: 900, color: '#0F172A' }}>
                 ${parseFloat(product.price).toFixed(2)}
               </span>
@@ -195,9 +195,23 @@ export default function ProductDetailPage({ params }) {
                   ${parseFloat(product.originalPrice).toFixed(2)}
                 </span>
               )}
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#16A34A', background: '#DCFCE7', padding: '2px 8px', borderRadius: 6, marginLeft: 'auto' }}>
-                In Stock & Ready for Express Dispatch
-              </span>
+              {(() => {
+                const status = product.stockStatus || 'In Stock & Ready for Express Dispatch';
+                let badgeBg = '#DCFCE7';
+                let badgeColor = '#16A34A';
+                if (status.toLowerCase().includes('out of stock')) {
+                  badgeBg = '#FEF2F2';
+                  badgeColor = '#EF4444';
+                } else if (status.toLowerCase().includes('low stock') || status.toLowerCase().includes('made to order') || status.toLowerCase().includes('pre-order')) {
+                  badgeBg = '#FFFBEB';
+                  badgeColor = '#D97706';
+                }
+                return (
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: badgeColor, background: badgeBg, padding: '4px 12px', borderRadius: 6, marginLeft: 'auto', border: `1px solid ${badgeColor}33` }}>
+                    {status}
+                  </span>
+                );
+              })()}
             </div>
 
             {/* Options Selection Form */}
