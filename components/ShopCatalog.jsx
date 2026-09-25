@@ -7,7 +7,7 @@ import { useCart } from '@/context/CartContext';
 import { useModal } from '@/context/ModalContext';
 import { processUploadedImage } from '@/utils/imageCompressor';
 import { sanitizeInput } from '@/utils/securitySanitizer';
-import { Star, Eye, Plus, Check, X, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Star, Eye, Plus, Check, X, ChevronRight, ChevronLeft, ShoppingBag, Info } from 'lucide-react';
 
 const DEFAULT_PRODUCTS = [
   {
@@ -164,6 +164,7 @@ export default function ShopCatalog() {
   const [reviews, setReviews] = useState(DEFAULT_REVIEWS);
   const [activeCategory, setActiveCategory] = useState('all');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [selectedReviewModal, setSelectedReviewModal] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Customer Review Modal State
@@ -469,6 +470,7 @@ export default function ShopCatalog() {
                 return (
                   <div
                     key={r.id || idx}
+                    onClick={() => setSelectedReviewModal({ ...r, image_src: imgSrc })}
                     style={{
                       flex: '0 0 255px',
                       width: 255,
@@ -479,7 +481,17 @@ export default function ShopCatalog() {
                       overflow: 'hidden',
                       display: 'flex',
                       flexDirection: 'column',
-                      position: 'relative'
+                      position: 'relative',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow = '0 10px 28px rgba(0,0,0,0.12)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'none';
+                      e.currentTarget.style.boxShadow = '0 4px 18px rgba(0,0,0,0.06)';
                     }}
                   >
                     {/* Card Top Image */}
@@ -821,6 +833,143 @@ export default function ShopCatalog() {
                 >
                   Add to Prop Basket
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Customer Review Lightbox Detail Popup Modal (Matching Image 1) */}
+      {selectedReviewModal && (
+        <div
+          className="modal-overlay open"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.65)',
+            backdropFilter: 'blur(3px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2500,
+            padding: 16
+          }}
+          onClick={() => setSelectedReviewModal(null)}
+        >
+          <div
+            className="modal-content"
+            style={{
+              position: 'relative',
+              maxWidth: 780,
+              width: '94%',
+              background: '#FFFFFF',
+              borderRadius: 16,
+              overflow: 'hidden',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.3)',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              margin: 'auto',
+              maxHeight: '90vh'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Circle Button on Left Image */}
+            <button
+              onClick={() => setSelectedReviewModal(null)}
+              style={{
+                position: 'absolute',
+                top: 14,
+                left: 14,
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: 'rgba(0, 0, 0, 0.45)',
+                color: '#FFFFFF',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 10,
+                transition: 'background 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.75)'}
+              onMouseOut={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.45)'}
+              title="Close review detail"
+            >
+              <X style={{ width: 18, height: 18 }} />
+            </button>
+
+            {/* Left Column: Full Review Photo */}
+            <div style={{ background: '#DCD7D0', position: 'relative', minHeight: 360, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              <SafeImage
+                src={selectedReviewModal.image_src || selectedReviewModal.image_url || '/images/photo_prop_set.png'}
+                alt={selectedReviewModal.reviewer_name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
+
+            {/* Right Column: Customer Feedback Details */}
+            <div style={{ padding: '28px 26px 22px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#FFFFFF' }}>
+              <div>
+                {/* Author Name & Verified Badge Header */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0F172A' }}>
+                    {selectedReviewModal.reviewer_name}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.78rem', color: '#0F172A', fontWeight: 700 }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 14, height: 14, background: '#0F172A', borderRadius: '50%', color: '#FFF', fontSize: '0.6rem', fontWeight: 900 }}>
+                      ✓
+                    </span>
+                    <span>Verified</span>
+                    <Info style={{ width: 14, height: 14, color: '#64748B', marginLeft: 2 }} />
+                  </div>
+                </div>
+
+                {/* Stars & Submission Date */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+                  <div style={{ display: 'flex', gap: 3 }}>
+                    {[...Array(selectedReviewModal.rating || 5)].map((_, i) => (
+                      <Star key={i} style={{ width: 16, height: 16, fill: '#F59E0B', color: '#F59E0B' }} />
+                    ))}
+                  </div>
+                  <span style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 600 }}>
+                    {selectedReviewModal.created_at ? new Date(selectedReviewModal.created_at).toLocaleDateString('en-US') : '4/11/2023'}
+                  </span>
+                </div>
+
+                {/* Review Comment Body */}
+                <p style={{ fontSize: '0.94rem', color: '#334155', lineHeight: 1.6, margin: 0, fontWeight: 500 }}>
+                  "{selectedReviewModal.comment}"
+                </p>
+              </div>
+
+              {/* Bottom Footer Section: Product Info & View Button */}
+              <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: 16, marginTop: 24 }}>
+                <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 12, lineHeight: 1.4 }}>
+                  {selectedReviewModal.product_name || '15 X 5 CM PRE-CUT STANDARD CUPCAKE CUSTOM EDIBLE ICING IMAGES'}
+                </div>
+                <Link
+                  href="/collections"
+                  onClick={() => setSelectedReviewModal(null)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    background: '#F1F5F9',
+                    color: '#0F172A',
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    fontSize: '0.84rem',
+                    fontWeight: 700,
+                    border: '1px solid #E2E8F0',
+                    textDecoration: 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#E2E8F0'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#F1F5F9'}
+                >
+                  <ShoppingBag style={{ width: 14, height: 14 }} /> View product
+                </Link>
               </div>
             </div>
           </div>
