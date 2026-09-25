@@ -5,7 +5,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const [rows] = await pool.query('SELECT * FROM custom_quotes ORDER BY created_at DESC');
+    try {
+      await pool.query('ALTER TABLE custom_quotes ADD COLUMN is_deleted TINYINT(1) DEFAULT 0');
+    } catch (e) {}
+    const [rows] = await pool.query('SELECT * FROM custom_quotes WHERE (is_deleted = 0 OR is_deleted IS NULL) ORDER BY created_at DESC');
     return NextResponse.json(rows);
   } catch (err) {
     console.error('Fetch Custom Quotes Error:', err);
@@ -58,8 +61,8 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    await pool.query('DELETE FROM custom_quotes WHERE id = ?', [id]);
-    return NextResponse.json({ success: true, message: 'Custom quote deleted successfully' });
+    await pool.query('UPDATE custom_quotes SET is_deleted = 1 WHERE id = ?', [id]);
+    return NextResponse.json({ success: true, message: 'Custom quote soft deleted successfully' });
   } catch (err) {
     console.error('Delete Custom Quote Error:', err);
     return NextResponse.json({ error: 'Failed to delete custom quote' }, { status: 500 });

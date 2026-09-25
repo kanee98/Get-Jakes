@@ -12,7 +12,10 @@ const DEFAULT_GALLERY_ITEMS = [
 
 export async function GET() {
   try {
-    const [rows] = await pool.query('SELECT * FROM gallery_items ORDER BY id DESC');
+    try {
+      await pool.query('ALTER TABLE gallery_items ADD COLUMN is_deleted TINYINT(1) DEFAULT 0');
+    } catch (e) {}
+    const [rows] = await pool.query('SELECT * FROM gallery_items WHERE (is_deleted = 0 OR is_deleted IS NULL) ORDER BY id DESC');
     if (rows && rows.length > 0) {
       return NextResponse.json(rows);
     }
@@ -51,8 +54,8 @@ export async function DELETE(request) {
     if (!id) {
       return NextResponse.json({ error: 'ID required' }, { status: 400 });
     }
-    await pool.query('DELETE FROM gallery_items WHERE id = ?', [id]);
-    return NextResponse.json({ success: true });
+    await pool.query('UPDATE gallery_items SET is_deleted = 1 WHERE id = ?', [id]);
+    return NextResponse.json({ success: true, message: 'Gallery item soft deleted' });
   } catch (err) {
     return NextResponse.json({ error: 'Failed to delete gallery item' }, { status: 500 });
   }

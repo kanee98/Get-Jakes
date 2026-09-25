@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useModal } from '@/context/ModalContext';
+import { processUploadedImage } from '@/utils/imageCompressor';
 import { Star, Eye, Plus, Check, X, ChevronRight } from 'lucide-react';
 
 const DEFAULT_PRODUCTS = [
@@ -168,6 +169,8 @@ export default function ShopCatalog() {
   const [newReviewRole, setNewReviewRole] = useState('');
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [newReviewComment, setNewReviewComment] = useState('');
+  const [newReviewImage, setNewReviewImage] = useState(null);
+  const [imageCompressing, setImageCompressing] = useState(false);
   const [submittingReview, setSubmittingReview] = useState(false);
 
   const { addToCart } = useCart();
@@ -215,16 +218,18 @@ export default function ShopCatalog() {
           reviewerName: newReviewName,
           reviewerRole: newReviewRole || 'Verified Customer',
           rating: parseInt(newReviewRating, 10),
-          comment: newReviewComment
+          comment: newReviewComment,
+          imageUrl: newReviewImage
         })
       });
 
       if (res.ok) {
-        await showAlert('Review Submitted', 'Thank you! Your review has been submitted for studio admin verification.', 'success');
+        await showAlert('Review Submitted', 'Thank you! Your review with photo has been submitted for studio admin verification.', 'success');
         setIsReviewModalOpen(false);
         setNewReviewName('');
         setNewReviewRole('');
         setNewReviewComment('');
+        setNewReviewImage(null);
       } else {
         await showAlert('Submission Failed', 'Failed to submit review. Please try again.', 'warning');
       }
@@ -623,6 +628,78 @@ export default function ShopCatalog() {
                   <option value="4">4 Stars ★★★★☆ (Great Product)</option>
                   <option value="3">3 Stars ★★★☆☆ (Average)</option>
                 </select>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label className="form-label">Attach Photo of Cake / Prop (Optional)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      setImageCompressing(true);
+                      const compressed = await processUploadedImage(file, 800, 5 * 1024 * 1024);
+                      setNewReviewImage(compressed);
+                    } catch (err) {
+                      await showAlert('File Upload Limit', err.message, 'warning');
+                      e.target.value = '';
+                    } finally {
+                      setImageCompressing(false);
+                    }
+                  }}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 12px',
+                    fontSize: '0.84rem',
+                    border: '1px solid #CBD5E1',
+                    borderRadius: 8,
+                    background: '#F8FAFC',
+                    cursor: 'pointer'
+                  }}
+                />
+                <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: 4 }}>
+                  Max 5MB file size • Automatically resized & compressed for optimal performance.
+                </div>
+
+                {imageCompressing && (
+                  <div style={{ fontSize: '0.8rem', color: '#36DFE2', marginTop: 6, fontWeight: 700 }}>
+                    Compressing photo for fast loading...
+                  </div>
+                )}
+
+                {newReviewImage && !imageCompressing && (
+                  <div style={{ marginTop: 10, position: 'relative', display: 'inline-block' }}>
+                    <img
+                      src={newReviewImage}
+                      alt="Review Photo Preview"
+                      style={{ width: 84, height: 84, objectFit: 'cover', borderRadius: 8, border: '2px solid #36DFE2' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setNewReviewImage(null)}
+                      style={{
+                        position: 'absolute',
+                        top: -6,
+                        right: -6,
+                        background: '#EF4444',
+                        color: '#FFF',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: 20,
+                        height: 20,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <X style={{ width: 12, height: 12 }} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div style={{ marginBottom: 20 }}>

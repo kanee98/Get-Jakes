@@ -114,7 +114,8 @@ CREATE TABLE IF NOT EXISTS `custom_quotes` (
   `tiers_count` INT NOT NULL DEFAULT 3,
   `finish_texture` VARCHAR(100) NOT NULL DEFAULT 'smooth',
   `estimated_price` DECIMAL(10, 2) NOT NULL,
-  `status` ENUM('Pending', 'Contacted', 'Fulfilled') DEFAULT 'Pending',
+  `status` ENUM('Pending', 'Contacted', 'In Progress', 'Quoted', 'Fulfilled', 'Cancelled') DEFAULT 'Pending',
+  `is_deleted` TINYINT(1) DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -126,6 +127,7 @@ CREATE TABLE IF NOT EXISTS `announcements` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `message` VARCHAR(255) NOT NULL,
   `is_active` TINYINT(1) DEFAULT 1,
+  `is_deleted` TINYINT(1) DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -136,9 +138,10 @@ CREATE TABLE IF NOT EXISTS `category_banners` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `title` VARCHAR(150) NOT NULL,
   `subtitle` TEXT NULL,
-  `image_url` VARCHAR(255) NOT NULL,
+  `image_url` TEXT NOT NULL,
   `link_url` VARCHAR(255) NULL,
   `category_key` VARCHAR(50) NOT NULL DEFAULT 'wedding',
+  `is_deleted` TINYINT(1) DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -149,7 +152,8 @@ CREATE TABLE IF NOT EXISTS `gallery_items` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `title` VARCHAR(200) NOT NULL,
   `category` VARCHAR(100) NOT NULL,
-  `image_url` VARCHAR(255) NOT NULL,
+  `image_url` TEXT NOT NULL,
+  `is_deleted` TINYINT(1) DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -163,7 +167,9 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   `reviewer_role` VARCHAR(150) DEFAULT 'Verified Customer',
   `rating` INT DEFAULT 5,
   `comment` TEXT NOT NULL,
+  `image_url` LONGTEXT NULL,
   `is_verified` TINYINT(1) DEFAULT 0,
+  `is_deleted` TINYINT(1) DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

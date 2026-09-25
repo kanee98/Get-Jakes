@@ -22,8 +22,63 @@
   flex-direction: column;
   flex-shrink: 0;
   border-right: 1px solid #1E293B;
-  transition: transform 0.3s ease;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
   z-index: 1200;
+  position: relative;
+}
+
+.sidebar-collapse-btn {
+  background: #1E293B;
+  color: #94A3B8;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-collapse-btn:hover {
+  background: #36DFE2;
+  color: #0A0D12;
+}
+
+.admin-sidebar.collapsed {
+  width: 76px;
+}
+
+.admin-sidebar.collapsed .admin-header-title-box,
+.admin-sidebar.collapsed .admin-nav-label,
+.admin-sidebar.collapsed .nav-item-text,
+.admin-sidebar.collapsed .nav-badge,
+.admin-sidebar.collapsed .admin-user-details {
+  display: none !important;
+}
+
+.admin-sidebar.collapsed .admin-sidebar-header {
+  padding: 16px 10px;
+  justify-content: center;
+  gap: 6px;
+}
+
+.admin-sidebar.collapsed .admin-nav-group {
+  padding: 16px 8px;
+}
+
+.admin-sidebar.collapsed .admin-nav-item {
+  justify-content: center;
+  padding: 12px 8px;
+  width: 100%;
+}
+
+.admin-sidebar.collapsed .admin-sidebar-user {
+  padding: 16px 8px;
+  justify-content: center;
 }
 
 .admin-sidebar-header {

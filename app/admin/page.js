@@ -5,6 +5,7 @@ import { useModal } from '@/context/ModalContext';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { processUploadedImage } from '@/utils/imageCompressor';
 import {
   ShieldCheck,
   LayoutDashboard,
@@ -25,6 +26,8 @@ import {
   ExternalLink,
   LogOut,
   ChevronRight,
+  ChevronLeft,
+  Upload,
   TrendingUp,
   MessageSquareQuote,
   Megaphone,
@@ -53,6 +56,8 @@ export default function AdminDashboardPage() {
 
   const [loadingData, setLoadingData] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isImageCompressing, setIsImageCompressing] = useState(false);
 
   // Search & Filter States
   const [productSearch, setProductSearch] = useState('');
@@ -473,13 +478,20 @@ export default function AdminDashboardPage() {
   return (
     <div className="admin-body-root">
       {/* Industrial Dark Sidebar */}
-      <aside className={`admin-sidebar ${mobileSidebarOpen ? 'mobile-open' : ''}`}>
+      <aside className={`admin-sidebar ${isSidebarCollapsed ? 'collapsed' : ''} ${mobileSidebarOpen ? 'mobile-open' : ''}`}>
         <div className="admin-sidebar-header">
           <img src="/logo.png" alt="Get Jakes Logo" className="admin-logo-avatar" />
-          <div>
+          <div className="admin-header-title-box">
             <div className="admin-sidebar-title">GET JAKES</div>
             <div className="admin-sidebar-subtitle">STUDIO ADMIN</div>
           </div>
+          <button
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className="sidebar-collapse-btn"
+            title={isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+          >
+            {isSidebarCollapsed ? <ChevronRight style={{ width: 16, height: 16 }} /> : <ChevronLeft style={{ width: 16, height: 16 }} />}
+          </button>
         </div>
 
         <div className="admin-nav-group">
@@ -487,18 +499,22 @@ export default function AdminDashboardPage() {
           <button
             onClick={() => { setActiveTab('overview'); setMobileSidebarOpen(false); }}
             className={`admin-nav-item ${activeTab === 'overview' ? 'active' : ''}`}
+            title="Overview"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <LayoutDashboard style={{ width: 18, height: 18 }} /> Overview
+              <LayoutDashboard style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Overview</span>
             </span>
           </button>
 
           <button
             onClick={() => { setActiveTab('products'); setMobileSidebarOpen(false); }}
             className={`admin-nav-item ${activeTab === 'products' ? 'active' : ''}`}
+            title="Prop Catalog"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Package style={{ width: 18, height: 18 }} /> Prop Catalog
+              <Package style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Prop Catalog</span>
             </span>
             <span className="nav-badge">{products.length}</span>
           </button>
@@ -506,9 +522,11 @@ export default function AdminDashboardPage() {
           <button
             onClick={() => { setActiveTab('orders'); setMobileSidebarOpen(false); }}
             className={`admin-nav-item ${activeTab === 'orders' ? 'active' : ''}`}
+            title="Wire Orders"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Receipt style={{ width: 18, height: 18 }} /> Wire Orders
+              <Receipt style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Wire Orders</span>
             </span>
             <span className="nav-badge">{orders.length}</span>
           </button>
@@ -516,9 +534,11 @@ export default function AdminDashboardPage() {
           <button
             onClick={() => { setActiveTab('quotes'); setMobileSidebarOpen(false); }}
             className={`admin-nav-item ${activeTab === 'quotes' ? 'active' : ''}`}
+            title="Custom Quotes"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <MessageSquareQuote style={{ width: 18, height: 18 }} /> Custom Quotes
+              <MessageSquareQuote style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Custom Quotes</span>
             </span>
             <span className="nav-badge">{quotes.length}</span>
           </button>
@@ -527,9 +547,11 @@ export default function AdminDashboardPage() {
           <button
             onClick={() => { setActiveTab('announcements'); setMobileSidebarOpen(false); }}
             className={`admin-nav-item ${activeTab === 'announcements' ? 'active' : ''}`}
+            title="Top Announcement"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Megaphone style={{ width: 18, height: 18 }} /> Top Announcement
+              <Megaphone style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Top Announcement</span>
             </span>
             <span className="nav-badge">{announcements.length}</span>
           </button>
@@ -537,9 +559,11 @@ export default function AdminDashboardPage() {
           <button
             onClick={() => { setActiveTab('banners'); setMobileSidebarOpen(false); }}
             className={`admin-nav-item ${activeTab === 'banners' ? 'active' : ''}`}
+            title="Category Banners"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Image style={{ width: 18, height: 18 }} /> Category Banners
+              <Image style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Category Banners</span>
             </span>
             <span className="nav-badge">{banners.length}</span>
           </button>
@@ -547,9 +571,11 @@ export default function AdminDashboardPage() {
           <button
             onClick={() => { setActiveTab('gallery'); setMobileSidebarOpen(false); }}
             className={`admin-nav-item ${activeTab === 'gallery' ? 'active' : ''}`}
+            title="Gallery Showcase"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Grid style={{ width: 18, height: 18 }} /> Gallery Showcase
+              <Grid style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Gallery Showcase</span>
             </span>
             <span className="nav-badge">{galleryItems.length}</span>
           </button>
@@ -557,9 +583,11 @@ export default function AdminDashboardPage() {
           <button
             onClick={() => { setActiveTab('reviews'); setMobileSidebarOpen(false); }}
             className={`admin-nav-item ${activeTab === 'reviews' ? 'active' : ''}`}
+            title="Customer Reviews"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Star style={{ width: 18, height: 18 }} /> Customer Reviews
+              <Star style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Customer Reviews</span>
             </span>
             {reviews.filter(r => r.is_verified === 0).length > 0 && (
               <span className="nav-badge" style={{ background: '#36DFE2', color: '#0A0D12' }}>
@@ -572,23 +600,26 @@ export default function AdminDashboardPage() {
           <button
             onClick={() => { setActiveTab('settings'); setMobileSidebarOpen(false); }}
             className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
+            title="Bank & Store Settings"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Settings style={{ width: 18, height: 18 }} /> Bank & Store Settings
+              <Settings style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Bank & Store Settings</span>
             </span>
           </button>
 
           <div className="admin-nav-label" style={{ marginTop: 16 }}>Storefront</div>
-          <Link href="/" className="admin-nav-item" target="_blank">
+          <Link href="/" className="admin-nav-item" target="_blank" title="Live Website">
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <ExternalLink style={{ width: 18, height: 18 }} /> Live Website
+              <ExternalLink style={{ width: 18, height: 18, flexShrink: 0 }} />
+              <span className="nav-item-text">Live Website</span>
             </span>
           </Link>
         </div>
 
         {/* User Account Info */}
         <div className="admin-sidebar-user">
-          <div>
+          <div className="admin-user-details">
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#F8FAFC' }}>
               {user.fullName || 'Admin User'}
             </div>
@@ -599,7 +630,7 @@ export default function AdminDashboardPage() {
             title="Sign Out"
             style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: 4 }}
           >
-            <LogOut style={{ width: 18, height: 18 }} />
+            <LogOut style={{ width: 18, height: 18, flexShrink: 0 }} />
           </button>
         </div>
       </aside>
@@ -1323,8 +1354,32 @@ export default function AdminDashboardPage() {
                         <input type="text" className="form-input" placeholder="e.g. Custom Cake Props" value={bannerTitle} onChange={(e) => setBannerTitle(e.target.value)} required />
                       </div>
                       <div>
-                        <label className="form-label">Image URL / Path *</label>
-                        <input type="text" className="form-input" placeholder="/images/hero_cake_prop.png" value={bannerImage} onChange={(e) => setBannerImage(e.target.value)} required />
+                        <label className="form-label">Banner Image (Upload or URL) *</label>
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <input type="text" className="form-input" placeholder="/images/hero_cake_prop.png" value={bannerImage} onChange={(e) => setBannerImage(e.target.value)} required style={{ flexGrow: 1 }} />
+                          <label className="enterprise-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', padding: '8px 12px', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                            <Upload style={{ width: 14, height: 14 }} /> Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                try {
+                                  setIsImageCompressing(true);
+                                  const compressed = await processUploadedImage(file, 1200, 5 * 1024 * 1024);
+                                  setBannerImage(compressed);
+                                } catch (err) {
+                                  await showAlert('Upload Limit', err.message, 'warning');
+                                  e.target.value = '';
+                                } finally {
+                                  setIsImageCompressing(false);
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
                       </div>
                       <div style={{ gridColumn: '1 / -1' }}>
                         <label className="form-label">Subtitle Description</label>
@@ -1381,8 +1436,32 @@ export default function AdminDashboardPage() {
                         <input type="text" className="form-input" placeholder="e.g. Wedding Showcase" value={galleryCat} onChange={(e) => setGalleryCat(e.target.value)} required />
                       </div>
                       <div>
-                        <label className="form-label">Image Path / URL *</label>
-                        <input type="text" className="form-input" placeholder="/images/wedding_tier_prop.png" value={galleryImg} onChange={(e) => setGalleryImg(e.target.value)} required />
+                        <label className="form-label">Photo (Upload or URL) *</label>
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <input type="text" className="form-input" placeholder="/images/wedding_tier_prop.png" value={galleryImg} onChange={(e) => setGalleryImg(e.target.value)} required style={{ flexGrow: 1 }} />
+                          <label className="enterprise-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', padding: '8px 12px', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                            <Upload style={{ width: 14, height: 14 }} /> Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                try {
+                                  setIsImageCompressing(true);
+                                  const compressed = await processUploadedImage(file, 1000, 5 * 1024 * 1024);
+                                  setGalleryImg(compressed);
+                                } catch (err) {
+                                  await showAlert('Upload Limit', err.message, 'warning');
+                                  e.target.value = '';
+                                } finally {
+                                  setIsImageCompressing(false);
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
                       </div>
                       <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end' }}>
                         <button type="submit" className="enterprise-btn-primary">
@@ -1577,8 +1656,49 @@ export default function AdminDashboardPage() {
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <label className="form-label">Image URL / Path *</label>
-                <input type="text" className="form-input" value={prodImage} onChange={(e) => setProdImage(e.target.value)} required />
+                <label className="form-label">Prop Image (Upload File or Enter URL) *</label>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={prodImage}
+                    onChange={(e) => setProdImage(e.target.value)}
+                    placeholder="/images/wedding_tier_prop.png"
+                    required
+                    style={{ flexGrow: 1 }}
+                  />
+                  <label className="enterprise-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer', padding: '10px 14px', whiteSpace: 'nowrap' }}>
+                    <Upload style={{ width: 16, height: 16 }} />
+                    <span>Upload File</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                          setIsImageCompressing(true);
+                          const compressed = await processUploadedImage(file, 1000, 5 * 1024 * 1024);
+                          setProdImage(compressed);
+                        } catch (err) {
+                          await showAlert('Upload Limit', err.message, 'warning');
+                          e.target.value = '';
+                        } finally {
+                          setIsImageCompressing(false);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: 4 }}>
+                  Max 5MB file limit • Auto-compressed for optimal performance.
+                </div>
+                {prodImage && (
+                  <div style={{ marginTop: 8 }}>
+                    <img src={prodImage} alt="Prop Preview" style={{ height: 64, borderRadius: 6, border: '1px solid #CBD5E1', objectFit: 'cover' }} />
+                  </div>
+                )}
               </div>
 
               <div style={{ marginBottom: 20 }}>

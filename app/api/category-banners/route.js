@@ -40,7 +40,10 @@ const DEFAULT_CATEGORY_BANNERS = [
 
 export async function GET() {
   try {
-    const [rows] = await pool.query('SELECT * FROM category_banners ORDER BY id ASC');
+    try {
+      await pool.query('ALTER TABLE category_banners ADD COLUMN is_deleted TINYINT(1) DEFAULT 0');
+    } catch (e) {}
+    const [rows] = await pool.query('SELECT * FROM category_banners WHERE (is_deleted = 0 OR is_deleted IS NULL) ORDER BY id ASC');
     if (rows && rows.length > 0) {
       return NextResponse.json(rows);
     }
@@ -79,8 +82,8 @@ export async function DELETE(request) {
     if (!id) {
       return NextResponse.json({ error: 'ID required' }, { status: 400 });
     }
-    await pool.query('DELETE FROM category_banners WHERE id = ?', [id]);
-    return NextResponse.json({ success: true });
+    await pool.query('UPDATE category_banners SET is_deleted = 1 WHERE id = ?', [id]);
+    return NextResponse.json({ success: true, message: 'Banner soft deleted' });
   } catch (err) {
     return NextResponse.json({ error: 'Failed to delete category banner' }, { status: 500 });
   }

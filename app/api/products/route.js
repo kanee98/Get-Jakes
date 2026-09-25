@@ -108,7 +108,7 @@ const DEFAULT_PRODUCTS = [
 
 export async function GET() {
   try {
-    const [rows] = await pool.query('SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC');
+    const [rows] = await pool.query('SELECT * FROM products WHERE is_active = 1 AND (is_deleted = 0 OR is_deleted IS NULL) ORDER BY created_at DESC');
     if (rows && rows.length > 0) {
       return NextResponse.json(rows.map(formatProduct));
     }
@@ -196,8 +196,12 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
 
-    await pool.query('DELETE FROM products WHERE id = ?', [id]);
-    return NextResponse.json({ success: true, message: `Deleted product ${id}` });
+    try {
+      await pool.query('ALTER TABLE products ADD COLUMN is_deleted TINYINT(1) DEFAULT 0');
+    } catch (e) {}
+
+    await pool.query('UPDATE products SET is_active = 0, is_deleted = 1 WHERE id = ?', [id]);
+    return NextResponse.json({ success: true, message: `Soft deleted product ${id}` });
   } catch (err) {
     console.error('Delete Product Error:', err);
     return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
