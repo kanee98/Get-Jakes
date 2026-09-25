@@ -4,7 +4,7 @@
 
 # DO NOT REMOVE: cPanel Node.js Application Startup Configuration
 <IfModule mod_passenger.c>
-  PassengerAppRoot "/home/YOUR_CPANEL_USERNAME/getjakes"
+  PassengerAppRoot "/home/domain/public_html/getjakes"
   PassengerBaseURI "/"
   PassengerNodejs "/usr/bin/node"
   PassengerAppType node

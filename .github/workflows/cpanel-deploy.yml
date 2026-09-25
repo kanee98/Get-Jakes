@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-artifact:
+  build-and-deploy:
     name: Build Next.js & Package Artifacts for cPanel
     runs-on: ubuntu-latest
 
@@ -49,23 +49,14 @@ jobs:
           path: deploy-package/
           retention-days: 14
 
-  ftp-deploy:
-    name: Optional Auto FTP Deployment to cPanel
-    runs-on: ubuntu-latest
-    needs: build-and-artifact
-    if: "${{ secrets.FTP_SERVER != '' }}"
-    steps:
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: cpanel-getjakes-release
-          path: ./cpanel-deploy-files
-
-      - name: Sync Files to cPanel via FTP
+      - name: Sync Files to cPanel via FTP (Optional)
+        if: env.FTP_SERVER != ''
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_SERVER_DIR || '/public_html/' }}
-          local-dir: ./cpanel-deploy-files/
+          server-dir: ${{ secrets.FTP_SERVER_DIR || '/public_html/getjakes/' }}
+          local-dir: ./deploy-package/

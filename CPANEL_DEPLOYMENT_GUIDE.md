@@ -4,6 +4,12 @@ This guide details how to publish the **Get Jakes** Next.js application & MySQL 
 
 ---
 
+## 📁 Your Server Setup Paths
+- **Git Repository Location**: `/home/domain/repositories/Get-Jakes`
+- **Domain Web Root Location**: `/home/domain/public_html/getjakes`
+
+---
+
 ## 🚀 Option A: Using GitHub Actions Artifacts (Manual Upload)
 
 Every time you push code to `main` or `master`, GitHub Actions automatically compiles the Next.js production build and generates a deployment package zip.
@@ -15,31 +21,31 @@ Every time you push code to `main` or `master`, GitHub Actions automatically com
 4. Scroll down to the **Artifacts** section at the bottom.
 5. Click **`cpanel-getjakes-release`** to download the pre-built zip artifact.
 
-### Step 2: Upload to cPanel File Manager
+### Step 2: Extract to `/home/domain/public_html/getjakes`
 1. Log in to your **cPanel Dashboard**.
-2. Open **File Manager** and navigate to your application root directory (e.g., `/public_html` or `/home/username/getjakes`).
-3. Click **Upload** and select the downloaded zip file.
+2. Open **File Manager** and navigate to your domain web root folder: `/home/domain/public_html/getjakes`.
+3. Click **Upload** and select the downloaded `cpanel-getjakes-release.zip`.
 4. Once uploaded, right-click the zip file and choose **Extract**.
 
 ---
 
 ## ⚙️ Option B: Automatic Deployment via GitHub Actions (FTP Sync)
 
-To have GitHub automatically upload built files to your cPanel server on every `git push`:
+To have GitHub automatically upload built files directly to `/home/domain/public_html/getjakes` on every `git push`:
 
 1. Go to your GitHub repository -> **Settings** -> **Secrets and variables** -> **Actions**.
 2. Click **New repository secret** and add the following secrets:
    - `FTP_SERVER`: `ftp.yourdomain.com` (or your cPanel IP address)
    - `FTP_USERNAME`: `your_cpanel_ftp_username`
    - `FTP_PASSWORD`: `your_cpanel_ftp_password`
-   - `FTP_SERVER_DIR`: `/public_html/` (or target directory on server)
+   - `FTP_SERVER_DIR`: `/public_html/getjakes/`
 
 ---
 
 ## 🗄️ Database Setup on cPanel MySQL
 
 1. In **cPanel**, open **MySQL Database Wizard**.
-2. Create a new database (e.g., `username_getjakes`).
+2. Create a new database (e.g., `domain_getjakes`).
 3. Create a MySQL user with a strong password and assign **All Privileges** to the database.
 4. Open **phpMyAdmin** in cPanel:
    - Select your newly created database.
@@ -55,17 +61,17 @@ To have GitHub automatically upload built files to your cPanel server on every `
 3. Fill in the fields:
    - **Node.js version**: Choose **20.x** or **18.x**.
    - **Application mode**: Select **Production**.
-   - **Application root**: `getjakes` (or path to uploaded files).
-   - **Application URL**: Select your domain name.
+   - **Application root**: `public_html/getjakes`
+   - **Application URL**: Select your domain name (or `/getjakes` subpath).
    - **Application startup file**: `app.js`
-4. Add **Environment Variables** in the cPanel Node interface (or edit `.env`):
+4. Add **Environment Variables** in the cPanel Node interface:
    - `DB_HOST` = `localhost`
-   - `DB_USER` = `username_getjakes_user`
+   - `DB_USER` = `domain_getjakes_user`
    - `DB_PASSWORD` = `your_db_password`
-   - `DB_NAME` = `username_getjakes`
+   - `DB_NAME` = `domain_getjakes`
    - `DB_PORT` = `3306`
    - `NODE_ENV` = `production`
-5. Click **Save** and then click **Run JS/NPM Install** or **Restart Application**.
+5. Click **Save** and then click **Restart Application**.
 
 ---
 
