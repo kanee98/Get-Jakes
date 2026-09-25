@@ -7,7 +7,7 @@ import { useCart } from '@/context/CartContext';
 import { useModal } from '@/context/ModalContext';
 import { processUploadedImage } from '@/utils/imageCompressor';
 import { sanitizeInput } from '@/utils/securitySanitizer';
-import { Star, Eye, Plus, Check, X, ChevronRight } from 'lucide-react';
+import { Star, Eye, Plus, Check, X, ChevronRight, ChevronLeft } from 'lucide-react';
 
 const DEFAULT_PRODUCTS = [
   {
@@ -532,6 +532,37 @@ export default function ShopCatalog() {
               })}
             </div>
 
+            {/* Carousel Left Arrow Button */}
+            <button
+              onClick={() => {
+                if (reviewsContainerRef.current) {
+                  reviewsContainerRef.current.scrollBy({ left: -275, behavior: 'smooth' });
+                }
+              }}
+              aria-label="Previous reviews"
+              style={{
+                position: 'absolute',
+                left: -14,
+                top: '45%',
+                transform: 'translateY(-50%)',
+                width: 44,
+                height: 44,
+                borderRadius: '50%',
+                background: '#FFFFFF',
+                border: '1px solid #E2E8F0',
+                boxShadow: '0 6px 20px rgba(0,0,0,0.14)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#0F172A',
+                zIndex: 10,
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <ChevronLeft style={{ width: 22, height: 22 }} />
+            </button>
+
             {/* Carousel Right Arrow Button */}
             <button
               onClick={() => {
@@ -564,30 +595,39 @@ export default function ShopCatalog() {
             </button>
           </div>
 
-          {/* Rating Summary Card (Bottom-Left) */}
-          <div
-            style={{
-              display: 'inline-block',
-              background: '#FFFFFF',
-              padding: '12px 20px',
-              borderRadius: 8,
-              border: '1px solid #CBD5E1',
-              boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
-              textAlign: 'left'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-              <div style={{ display: 'flex', gap: 2 }}>
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} style={{ width: 14, height: 14, fill: '#F59E0B', color: '#F59E0B' }} />
-                ))}
+          {/* Rating Summary Card (Bottom-Left: Calculated Dynamically from DB) */}
+          {(() => {
+            const avgRating = reviews.length > 0
+              ? (reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / reviews.length).toFixed(1)
+              : '5.0';
+            const countText = reviews.length > 0 ? `${reviews.length} verified reviews` : '4 verified reviews';
+
+            return (
+              <div
+                style={{
+                  display: 'inline-block',
+                  background: '#FFFFFF',
+                  padding: '12px 20px',
+                  borderRadius: 8,
+                  border: '1px solid #CBD5E1',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+                  textAlign: 'left'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <div style={{ display: 'flex', gap: 2 }}>
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} style={{ width: 14, height: 14, fill: '#F59E0B', color: '#F59E0B' }} />
+                    ))}
+                  </div>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F172A' }}>{avgRating}/5</span>
+                </div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0F172A' }}>
+                  {countText}
+                </div>
               </div>
-              <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F172A' }}>4.9/5</span>
-            </div>
-            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0F172A' }}>
-              6,092 reviews
-            </div>
-          </div>
+            );
+          })()}
         </div>
       </section>
 

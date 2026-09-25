@@ -96,6 +96,8 @@ export default function AdminDashboardPage() {
   const [prodTiers, setProdTiers] = useState('4 Tiers');
   const [prodMaterial, setProdMaterial] = useState('EPS Foam + Fondant');
   const [prodWeight, setProdWeight] = useState('4.2 lbs');
+  const [prodSizes, setProdSizes] = useState('20cm Circle (8"), 15cm Circle (6"), A4 Rectangle (19x27cm), 30 Circles (3.8cm Cupcake), 4-Tier Wedding Set');
+  const [prodFinishes, setProdFinishes] = useState('Signature Smooth Fondant (White/Ivory), Organic Stone & Plaster Texture, Metallic Gold Leaf Gilding, Matte Studio Non-Reflective');
 
   // Management Form States
   const [annMsg, setAnnMsg] = useState('');
@@ -348,6 +350,8 @@ export default function AdminDashboardPage() {
     setProdTiers('4 Tiers');
     setProdMaterial('EPS Foam + Fondant');
     setProdWeight('4.2 lbs');
+    setProdSizes('20cm Circle (8"), 15cm Circle (6"), A4 Rectangle (19x27cm), 30 Circles (3.8cm Cupcake), 4-Tier Wedding Set');
+    setProdFinishes('Signature Smooth Fondant (White/Ivory), Organic Stone & Plaster Texture, Metallic Gold Leaf Gilding, Matte Studio Non-Reflective');
     setIsProductModalOpen(true);
   };
 
@@ -366,6 +370,8 @@ export default function AdminDashboardPage() {
     setProdTiers(p.specs?.tiers || '4 Tiers');
     setProdMaterial(p.specs?.material || 'EPS Foam');
     setProdWeight(p.specs?.weight || '4.2 lbs');
+    setProdSizes(p.specs?.sizes || '20cm Circle (8"), 15cm Circle (6"), A4 Rectangle (19x27cm), 30 Circles (3.8cm Cupcake), 4-Tier Wedding Set');
+    setProdFinishes(p.specs?.finishes || 'Signature Smooth Fondant (White/Ivory), Organic Stone & Plaster Texture, Metallic Gold Leaf Gilding, Matte Studio Non-Reflective');
     setIsProductModalOpen(true);
   };
 
@@ -386,7 +392,9 @@ export default function AdminDashboardPage() {
         height: sanitizeInput(prodHeight),
         tiers: sanitizeInput(prodTiers),
         material: sanitizeInput(prodMaterial),
-        weight: sanitizeInput(prodWeight)
+        weight: sanitizeInput(prodWeight),
+        sizes: sanitizeInput(prodSizes),
+        finishes: sanitizeInput(prodFinishes)
       }
     };
 
@@ -1700,6 +1708,36 @@ export default function AdminDashboardPage() {
                     <img src={prodImage} alt="Prop Preview" style={{ height: 64, borderRadius: 6, border: '1px solid #CBD5E1', objectFit: 'cover' }} />
                   </div>
                 )}
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label className="form-label">Available Sizes / Dimensions (Comma-Separated Dropdown Options) *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={prodSizes}
+                  onChange={(e) => setProdSizes(e.target.value)}
+                  placeholder="e.g. 20cm Circle (8&quot;), 15cm Circle (6&quot;), A4 Rectangle"
+                  required
+                />
+                <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: 4 }}>
+                  Enter options separated by commas. These will populate the Size dropdown on the product page.
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label className="form-label">Available Finishes / Textures (Comma-Separated Dropdown Options) *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={prodFinishes}
+                  onChange={(e) => setProdFinishes(e.target.value)}
+                  placeholder="e.g. Signature Smooth Fondant, Plaster Texture, Metallic Gold Leaf"
+                  required
+                />
+                <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: 4 }}>
+                  Enter options separated by commas. These will populate the Finish dropdown on the product page.
+                </div>
               </div>
 
               <div style={{ marginBottom: 20 }}>

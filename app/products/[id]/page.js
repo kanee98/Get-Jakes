@@ -182,7 +182,7 @@ export default function ProductDetailPage({ params }) {
                 ))}
               </div>
               <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F172A' }}>{product.rating || '4.9'}/5</span>
-              <span style={{ fontSize: '0.86rem', color: '#64748B', marginLeft: 4 }}>({product.reviewsCount || 38} verified customer reviews)</span>
+              <span style={{ fontSize: '0.86rem', color: '#64748B', marginLeft: 4 }}>({product.reviewsCount || 0} verified customer reviews)</span>
             </div>
 
             {/* Pricing Section */}
@@ -201,26 +201,38 @@ export default function ProductDetailPage({ params }) {
             </div>
 
             {/* Options Selection Form */}
-            <div style={{ marginBottom: 20 }}>
-              <label className="form-label" style={{ fontWeight: 800, color: '#0F172A' }}>Select Dimension / Pre-Cut Size *</label>
-              <select className="form-select" value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)}>
-                <option value="20cm Circle (8&quot;)">20 cm (8") Pre-cut Circle Custom Edible Image</option>
-                <option value="15cm Circle (6&quot;)">15 cm (6") Pre-cut Circle Icing Sheet</option>
-                <option value="A4 Rectangle (19x27cm)">A4 Rectangle (19 cm x 27 cm)</option>
-                <option value="30 Circles (3.8cm Cupcake)">30 x 3.8 cm Small Cupcake Icing Circles</option>
-                <option value="4-Tier Wedding Set">4-Tier Complete Dummy Cake Prop Set</option>
-              </select>
-            </div>
+            {(() => {
+              const sizesList = (product.specs?.sizes || '20cm Circle (8"), 15cm Circle (6"), A4 Rectangle (19x27cm), 30 Circles (3.8cm Cupcake), 4-Tier Wedding Set')
+                .split(',')
+                .map(s => s.trim())
+                .filter(Boolean);
+              const finishesList = (product.specs?.finishes || 'Signature Smooth Fondant (White/Ivory), Organic Stone & Plaster Texture, Metallic Gold Leaf Gilding, Matte Studio Non-Reflective')
+                .split(',')
+                .map(f => f.trim())
+                .filter(Boolean);
 
-            <div style={{ marginBottom: 20 }}>
-              <label className="form-label" style={{ fontWeight: 800, color: '#0F172A' }}>Finish Coating / Texture *</label>
-              <select className="form-select" value={selectedFinish} onChange={(e) => setSelectedFinish(e.target.value)}>
-                <option value="Signature Smooth Fondant (White/Ivory)">Signature Smooth Fondant (White/Ivory)</option>
-                <option value="Organic Stone / Plaster Texture">Organic Stone / Plaster Texture</option>
-                <option value="Metallic Gold Leaf Gilding">Metallic Gold Leaf Gilding</option>
-                <option value="Matte Studio Non-Reflective">Matte Studio Non-Reflective</option>
-              </select>
-            </div>
+              return (
+                <>
+                  <div style={{ marginBottom: 20 }}>
+                    <label className="form-label" style={{ fontWeight: 800, color: '#0F172A' }}>Select Dimension / Pre-Cut Size *</label>
+                    <select className="form-select" value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)}>
+                      {sizesList.map((sz, i) => (
+                        <option key={i} value={sz}>{sz}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div style={{ marginBottom: 20 }}>
+                    <label className="form-label" style={{ fontWeight: 800, color: '#0F172A' }}>Finish Coating / Texture *</label>
+                    <select className="form-select" value={selectedFinish} onChange={(e) => setSelectedFinish(e.target.value)}>
+                      {finishesList.map((fn, i) => (
+                        <option key={i} value={fn}>{fn}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              );
+            })()}
 
             {/* Upload Custom Design Option (For Edible Images / Custom Props) */}
             <div style={{ marginBottom: 24, background: '#F0FDFA', padding: 16, borderRadius: 12, border: '1px solid #CCFBF1' }}>

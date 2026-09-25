@@ -19,10 +19,18 @@ function formatProduct(row) {
       height: row.height_spec || 'Standard',
       tiers: row.tiers_spec || 'Single / Modular',
       material: row.material_spec || 'Resin / EPS Compound',
-      weight: row.weight_spec || '3.5 lbs'
+      weight: row.weight_spec || '3.5 lbs',
+      sizes: row.sizes_spec || '20cm Circle (8"), 15cm Circle (6"), A4 Rectangle (19x27cm), 30 Circles (3.8cm Cupcake), 4-Tier Wedding Set',
+      finishes: row.finishes_spec || 'Signature Smooth Fondant (White/Ivory), Organic Stone & Plaster Texture, Metallic Gold Leaf Gilding, Matte Studio Non-Reflective'
     },
     isActive: row.is_active === 1
   };
+}
+
+async function ensureProductColumns() {
+  try { await pool.query('ALTER TABLE products ADD COLUMN sizes_spec TEXT NULL'); } catch (e) {}
+  try { await pool.query('ALTER TABLE products ADD COLUMN finishes_spec TEXT NULL'); } catch (e) {}
+  try { await pool.query('ALTER TABLE products ADD COLUMN is_deleted TINYINT(1) DEFAULT 0'); } catch (e) {}
 }
 
 const DEFAULT_PRODUCTS = [
@@ -37,7 +45,14 @@ const DEFAULT_PRODUCTS = [
     image: '/images/wedding_tier_prop.png',
     tag: 'Bestseller',
     description: 'Hand-finished 4-tier wedding dummy cake with durable faux fondant coating, pearl trim, and sugar rose replicas.',
-    specs: { height: '28 inches', tiers: '4 Tiers (6", 8", 10", 12")', material: 'High-Density EPS Foam + Polymer Coating' }
+    specs: {
+      height: '28 inches',
+      tiers: '4 Tiers (6", 8", 10", 12")',
+      material: 'High-Density EPS Foam + Polymer Coating',
+      weight: '4.2 lbs',
+      sizes: '20cm Circle (8"), 15cm Circle (6"), A4 Rectangle (19x27cm), 30 Circles (3.8cm Cupcake), 4-Tier Wedding Set',
+      finishes: 'Signature Smooth Fondant (White/Ivory), Organic Stone & Plaster Texture, Metallic Gold Leaf Gilding, Matte Studio Non-Reflective'
+    }
   },
   {
     id: 'prop-02',
@@ -50,7 +65,14 @@ const DEFAULT_PRODUCTS = [
     image: '/images/hero_cake_prop.png',
     tag: 'Handcrafted',
     description: 'Minimalist 3-tier organic textured white cake with authentic metallic leaf gilding and Get Jakes signature finish.',
-    specs: { height: '22 inches', tiers: '3 Tiers (6", 8", 10")', material: 'Ultra-Hard Resin Compound Core' }
+    specs: {
+      height: '22 inches',
+      tiers: '3 Tiers (6", 8", 10")',
+      material: 'Ultra-Hard Resin Compound Core',
+      weight: '3.8 lbs',
+      sizes: '20cm Circle (8"), 15cm Circle (6"), A4 Rectangle (19x27cm), 3-Tier Organic Set',
+      finishes: 'Signature Smooth Fondant (White/Ivory), Organic Stone & Plaster Texture, Metallic Gold Leaf Gilding'
+    }
   },
   {
     id: 'prop-03',
@@ -63,7 +85,14 @@ const DEFAULT_PRODUCTS = [
     image: '/images/photo_prop_set.png',
     tag: 'Studio Special',
     description: 'Set of 6 realistic faux cake slices, geometric acrylic blocks, and pastel dummy mini cakes.',
-    specs: { height: 'Modular Set', tiers: '6-Piece Modular Props', material: 'Matte Non-Reflective Foam & Polymer' }
+    specs: {
+      height: 'Modular Set',
+      tiers: '6-Piece Modular Props',
+      material: 'Matte Non-Reflective Foam & Polymer',
+      weight: '2.5 lbs',
+      sizes: '6-Piece Modular Kit, 12-Piece Deluxe Studio Kit',
+      finishes: 'Matte Studio Non-Reflective, Pastel Polymer Coating'
+    }
   },
   {
     id: 'prop-04',
@@ -76,38 +105,20 @@ const DEFAULT_PRODUCTS = [
     image: '/images/pedestal_prop_set.png',
     tag: 'Trending',
     description: 'Pair of ribbed architectural cylinder pedestals in warm plaster white and cyan-brushed accents.',
-    specs: { height: '12" and 18" Elevated Risers', tiers: '10" Top Surface', material: 'Reinforced Fiber Composite' }
-  },
-  {
-    id: 'prop-05',
-    name: 'Botanical Cascading Floral Dummy Cake',
-    category: 'wedding',
-    price: 320.00,
-    originalPrice: null,
-    rating: 4.7,
-    reviewsCount: 15,
-    image: '/images/wedding_tier_prop.png',
-    tag: 'New',
-    description: '3-tier romantic dummy cake pre-decorated with artificial cascading sugar eucalyptus and garden roses.',
-    specs: { height: '24 inches', tiers: '3 Tiers', material: 'Polymer Coated Core + Silk Floral Trim' }
-  },
-  {
-    id: 'prop-06',
-    name: 'Commercial Bakery Window Display Dummy',
-    category: 'custom',
-    price: 495.00,
-    originalPrice: 550.00,
-    rating: 5.0,
-    reviewsCount: 29,
-    image: '/images/hero_cake_prop.png',
-    tag: 'Commercial Grade',
-    description: '5-Tier grand display dummy designed specifically for bakery shop windows with UV protective coating.',
-    specs: { height: '36 inches', tiers: '5 Tiers (6", 8", 10", 12", 14")', material: 'UV-Shield Polymer Compound' }
+    specs: {
+      height: '12" and 18" Elevated Risers',
+      tiers: '10" Top Surface',
+      material: 'Reinforced Fiber Composite',
+      weight: '6.0 lbs',
+      sizes: 'Pair Set (12" & 18" Height), Large Single Pedestal (24" Height)',
+      finishes: 'Warm Plaster White, Cyan-Brushed Architectural Accent'
+    }
   }
 ];
 
 export async function GET() {
   try {
+    await ensureProductColumns();
     const [rows] = await pool.query('SELECT * FROM products WHERE is_active = 1 AND (is_deleted = 0 OR is_deleted IS NULL) ORDER BY created_at DESC');
     if (rows && rows.length > 0) {
       return NextResponse.json(rows.map(formatProduct));
@@ -121,6 +132,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    await ensureProductColumns();
     const body = await request.json();
     const { id, name, category, price, originalPrice, tag, description, specs, image } = body;
 
@@ -129,18 +141,20 @@ export async function POST(request) {
     const tiersSpec = specs?.tiers || null;
     const materialSpec = specs?.material || null;
     const weightSpec = specs?.weight || null;
+    const sizesSpec = specs?.sizes || null;
+    const finishesSpec = specs?.finishes || null;
     const imageUrl = image || '/images/hero_cake_prop.png';
 
     const sql = `
       INSERT INTO products 
-      (id, name, category_id, price, original_price, image_url, tag, description, height_spec, tiers_spec, material_spec, weight_spec)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, name, category_id, price, original_price, image_url, tag, description, height_spec, tiers_spec, material_spec, weight_spec, sizes_spec, finishes_spec)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     await pool.query(sql, [
       productId, name, category || 'wedding', price, originalPrice || null,
       imageUrl, tag || 'New Arrival', description || '',
-      heightSpec, tiersSpec, materialSpec, weightSpec
+      heightSpec, tiersSpec, materialSpec, weightSpec, sizesSpec, finishesSpec
     ]);
 
     const [rows] = await pool.query('SELECT * FROM products WHERE id = ?', [productId]);
@@ -153,6 +167,7 @@ export async function POST(request) {
 
 export async function PUT(request) {
   try {
+    await ensureProductColumns();
     const body = await request.json();
     const { id, name, category, price, originalPrice, tag, description, specs, image } = body;
 
@@ -160,12 +175,15 @@ export async function PUT(request) {
     const tiersSpec = specs?.tiers || null;
     const materialSpec = specs?.material || null;
     const weightSpec = specs?.weight || null;
+    const sizesSpec = specs?.sizes || null;
+    const finishesSpec = specs?.finishes || null;
 
     const sql = `
       UPDATE products SET
         name = ?, category_id = ?, price = ?, original_price = ?,
         image_url = ?, tag = ?, description = ?,
-        height_spec = ?, tiers_spec = ?, material_spec = ?, weight_spec = ?
+        height_spec = ?, tiers_spec = ?, material_spec = ?, weight_spec = ?,
+        sizes_spec = ?, finishes_spec = ?
       WHERE id = ?
     `;
 
@@ -173,6 +191,7 @@ export async function PUT(request) {
       name, category, price, originalPrice || null,
       image, tag, description,
       heightSpec, tiersSpec, materialSpec, weightSpec,
+      sizesSpec, finishesSpec,
       id
     ]);
 
@@ -189,16 +208,13 @@ export async function PUT(request) {
 
 export async function DELETE(request) {
   try {
+    await ensureProductColumns();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
     if (!id) {
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
-
-    try {
-      await pool.query('ALTER TABLE products ADD COLUMN is_deleted TINYINT(1) DEFAULT 0');
-    } catch (e) {}
 
     await pool.query('UPDATE products SET is_active = 0, is_deleted = 1 WHERE id = ?', [id]);
     return NextResponse.json({ success: true, message: `Soft deleted product ${id}` });

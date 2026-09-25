@@ -93,24 +93,23 @@ export default function CollectionsPage({ searchParams }) {
       </section>
 
       <div className="container" style={{ marginTop: 32 }}>
-        {/* Category Pills Bar */}
-        <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 16, marginBottom: 24, borderBottom: '1px solid #E2E8F0' }}>
+        {/* Category Pills Bar (Clean Flex Wrap Layout) */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center', marginBottom: 28, paddingBottom: 16, borderBottom: '1px solid #E2E8F0' }}>
           {Object.keys(CATEGORY_NAMES).map((catKey) => (
             <button
               key={catKey}
               onClick={() => setActiveCategory(catKey)}
               style={{
-                padding: '10px 20px',
+                padding: '10px 22px',
                 borderRadius: 999,
                 fontWeight: 700,
-                fontSize: '0.86rem',
+                fontSize: '0.88rem',
                 border: activeCategory === catKey ? 'none' : '1px solid #CBD5E1',
                 background: activeCategory === catKey ? '#0FB3B6' : '#FFFFFF',
                 color: activeCategory === catKey ? '#FFFFFF' : '#334155',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap',
                 transition: 'all 0.2s ease',
-                boxShadow: activeCategory === catKey ? '0 4px 14px rgba(15,179,182,0.3)' : 'none'
+                boxShadow: activeCategory === catKey ? '0 4px 14px rgba(15,179,182,0.3)' : '0 2px 6px rgba(0,0,0,0.03)'
               }}
             >
               {CATEGORY_NAMES[catKey]}
