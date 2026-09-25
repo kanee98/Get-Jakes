@@ -1,0 +1,71 @@
+name: Build & Deploy Get-Jakes to cPanel
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-artifact:
+    name: Build Next.js & Package Artifacts for cPanel
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Next.js Production App
+        run: npm run build
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Prepare Artifact Package
+        run: |
+          mkdir -p deploy-package
+          cp -r .next deploy-package/
+          cp -r public deploy-package/
+          cp -r database deploy-package/
+          cp package.json deploy-package/
+          cp package-lock.json deploy-package/
+          cp app.js deploy-package/
+          cp next.config.mjs deploy-package/
+          cp .env.example deploy-package/
+          cp .htaccess deploy-package/
+
+      - name: Upload Build Artifacts to GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpanel-getjakes-release
+          path: deploy-package/
+          retention-days: 14
+
+  ftp-deploy:
+    name: Optional Auto FTP Deployment to cPanel
+    runs-on: ubuntu-latest
+    needs: build-and-artifact
+    if: "${{ secrets.FTP_SERVER != '' }}"
+    steps:
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cpanel-getjakes-release
+          path: ./cpanel-deploy-files
+
+      - name: Sync Files to cPanel via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR || '/public_html/' }}
+          local-dir: ./cpanel-deploy-files/

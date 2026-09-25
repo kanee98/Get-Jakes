@@ -1,0 +1,18 @@
+# ==============================================================================
+# Get Jakes - cPanel Apache / Phusion Passenger Configuration
+# ==============================================================================
+
+# DO NOT REMOVE: cPanel Node.js Application Startup Configuration
+<IfModule mod_passenger.c>
+  PassengerAppRoot "/home/YOUR_CPANEL_USERNAME/getjakes"
+  PassengerBaseURI "/"
+  PassengerNodejs "/usr/bin/node"
+  PassengerAppType node
+  PassengerStartupFile app.js
+  PassengerEnvironment production
+</IfModule>
+
+# Ensure HTTPS redirects if SSL is active
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
