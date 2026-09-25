@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { X, Landmark, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { sanitizeInput } from '@/utils/securitySanitizer';
 
 export default function CheckoutModal() {
   const { cart, isCheckoutOpen, setIsCheckoutOpen, totalAmount, clearCart } = useCart();
@@ -46,13 +47,13 @@ export default function CheckoutModal() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customerName: custName,
-          customerEmail: custEmail,
-          shippingAddress: custAddress,
+          customerName: sanitizeInput(custName),
+          customerEmail: sanitizeInput(custEmail),
+          shippingAddress: sanitizeInput(custAddress),
           items: cart,
           total: totalAmount,
           paymentMethod: 'Direct Bank Transfer',
-          utrNumber: custUtr || 'Pending Wire Reference'
+          utrNumber: sanitizeInput(custUtr || 'Pending Wire Reference')
         })
       });
 

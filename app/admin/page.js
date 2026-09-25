@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { processUploadedImage } from '@/utils/imageCompressor';
+import { sanitizeInput } from '@/utils/securitySanitizer';
 import {
   ShieldCheck,
   LayoutDashboard,
@@ -155,7 +156,7 @@ export default function AdminDashboardPage() {
       const res = await fetch('/api/announcements', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: annMsg })
+        body: JSON.stringify({ message: sanitizeInput(annMsg) })
       });
       if (res.ok) {
         setAnnMsg('');
@@ -187,8 +188,8 @@ export default function AdminDashboardPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: bannerTitle,
-          subtitle: bannerSubtitle,
+          title: sanitizeInput(bannerTitle),
+          subtitle: sanitizeInput(bannerSubtitle),
           image_url: bannerImage,
           link_url: bannerLink
         })
@@ -224,8 +225,8 @@ export default function AdminDashboardPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: galleryTitle,
-          category: galleryCat,
+          title: sanitizeInput(galleryTitle),
+          category: sanitizeInput(galleryCat),
           image_url: galleryImg
         })
       });
@@ -372,20 +373,20 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     const productPayload = {
       id: editingProductId,
-      name: prodName,
+      name: sanitizeInput(prodName),
       category: prodCategory,
       price: parseFloat(prodPrice),
       originalPrice: prodOrigPrice ? parseFloat(prodOrigPrice) : null,
-      tag: prodTag,
+      tag: sanitizeInput(prodTag),
       rating: parseFloat(prodRating),
       reviewsCount: parseInt(prodReviews, 10),
       image: prodImage,
-      description: prodDesc,
+      description: sanitizeInput(prodDesc),
       specs: {
-        height: prodHeight,
-        tiers: prodTiers,
-        material: prodMaterial,
-        weight: prodWeight
+        height: sanitizeInput(prodHeight),
+        tiers: sanitizeInput(prodTiers),
+        material: sanitizeInput(prodMaterial),
+        weight: sanitizeInput(prodWeight)
       }
     };
 

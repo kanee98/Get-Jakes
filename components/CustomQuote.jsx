@@ -4,6 +4,7 @@ import { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Calculator, Send } from 'lucide-react';
 import { useModal } from '@/context/ModalContext';
+import { sanitizeInput } from '@/utils/securitySanitizer';
 
 export default function CustomQuote() {
   const { showAlert } = useModal();
@@ -24,11 +25,12 @@ export default function CustomQuote() {
     setSubmitting(true);
 
     try {
+      const sanitizedContact = sanitizeInput(contact);
       await fetch('/api/custom-quotes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contactInfo: contact,
+          contactInfo: sanitizedContact,
           tiersCount: parseInt(tiers, 10),
           finishTexture: finish,
           estimatedPrice

@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import SafeImage from '@/components/SafeImage';
 import { useCart } from '@/context/CartContext';
 import { useModal } from '@/context/ModalContext';
 import { processUploadedImage } from '@/utils/imageCompressor';
+import { sanitizeInput } from '@/utils/securitySanitizer';
 import { Star, Eye, Plus, Check, X, ChevronRight } from 'lucide-react';
 
 const DEFAULT_PRODUCTS = [
@@ -215,10 +218,10 @@ export default function ShopCatalog() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          reviewerName: newReviewName,
-          reviewerRole: newReviewRole || 'Verified Customer',
+          reviewerName: sanitizeInput(newReviewName),
+          reviewerRole: sanitizeInput(newReviewRole || 'Verified Customer'),
           rating: parseInt(newReviewRating, 10),
-          comment: newReviewComment,
+          comment: sanitizeInput(newReviewComment),
           imageUrl: newReviewImage
         })
       });
@@ -303,7 +306,9 @@ export default function ShopCatalog() {
               {filtered.map((p) => (
                 <div key={p.id} className="product-card">
                   <div className="product-image-container">
-                    <img src={p.image} alt={p.name} loading="lazy" />
+                    <Link href={`/products/${p.id}`} style={{ display: 'block', width: '100%', height: '100%' }}>
+                      <SafeImage src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </Link>
                     <button onClick={() => setQuickViewProduct(p)} className="quick-view-overlay-btn">
                       <Eye style={{ width: 14, height: 14 }} /> Quick View
                     </button>
@@ -313,7 +318,9 @@ export default function ShopCatalog() {
                       <Star style={{ width: 14, height: 14, fill: '#0FB3B6', color: '#0FB3B6' }} />
                       <span>{p.rating} ({p.reviewsCount} reviews)</span>
                     </div>
-                    <h3 className="product-title">{p.name}</h3>
+                    <Link href={`/products/${p.id}`}>
+                      <h3 className="product-title" style={{ cursor: 'pointer' }}>{p.name}</h3>
+                    </Link>
                     <p className="product-desc">{p.description}</p>
 
                     <div className="product-price-row">
@@ -367,27 +374,32 @@ export default function ShopCatalog() {
                 }}
               >
                 <div style={{ height: 180, overflow: 'hidden', background: '#F8FAFC' }}>
-                  <img
-                    src={b.image_url}
-                    alt={b.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
+                  <Link href={`/collections/${b.category_key || 'custom'}`} style={{ display: 'block', width: '100%', height: '100%' }}>
+                    <SafeImage
+                      src={b.image_url}
+                      alt={b.title}
+                      fallback="/images/hero_cake_prop.png"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  </Link>
                 </div>
                 <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0A0D12', marginBottom: 8, fontFamily: 'var(--font-heading)' }}>
-                      {b.title}
-                    </h3>
+                    <Link href={`/collections/${b.category_key || 'custom'}`}>
+                      <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0A0D12', marginBottom: 8, fontFamily: 'var(--font-heading)' }}>
+                        {b.title}
+                      </h3>
+                    </Link>
                     <p style={{ fontSize: '0.88rem', color: '#475569', marginBottom: 20, lineHeight: 1.5 }}>
                       {b.subtitle}
                     </p>
                   </div>
-                  <a
-                    href={b.link_url || '#shop'}
+                  <Link
+                    href={`/collections/${b.category_key || 'custom'}`}
                     style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0FB3B6', display: 'inline-flex', alignItems: 'center', gap: 6 }}
                   >
                     View Collection →
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}
@@ -472,7 +484,7 @@ export default function ShopCatalog() {
                   >
                     {/* Card Top Image */}
                     <div style={{ width: '100%', height: 165, position: 'relative', background: '#F8FAFC' }}>
-                      <img
+                      <SafeImage
                         src={imgSrc}
                         alt={r.reviewer_name}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
